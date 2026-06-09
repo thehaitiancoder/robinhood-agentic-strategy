@@ -45,17 +45,16 @@ available through current tools. Confirm preferred behavior:
 - Mixed mode: broker-native exits for whole shares, monitor for fractional
   positions.
 
-## Emergency Green Sells
+## Resolved: Emergency Green Sells
 
-When cash is needed for double-downs, define how to rank green positions below
-10% profit.
+Decision: when cash is needed for double-downs, rank green positions below 10%
+profit by highest positive return first.
 
-Candidate ranking:
+Reason: the strategy should free cash from the strongest available green
+positions first, even if they have not reached the full 10% profit target.
 
-1. Highest positive return.
-2. Largest market value.
-3. Least likely to hit 10% soon.
-4. Oldest position.
+Rejected ranking factors for this rule: largest market value, distance from 10%,
+and oldest position.
 
 ## Taxes and Wash Sales
 

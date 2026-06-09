@@ -190,7 +190,7 @@ def evaluate_strategy(
             )
         )
 
-    decisions.sort(key=lambda decision: (decision.priority, decision.symbol or "", decision.action))
+    decisions.sort(key=_decision_sort_key)
     counts = Counter(decision.action for decision in decisions)
     summary = {
         "portfolio_value": _money(portfolio.total_value),
@@ -323,6 +323,20 @@ def _emergency_sell_candidates(
         key=lambda decision: Decimal(str(decision.metrics["return_pct"]).rstrip("%")),
         reverse=True,
     )
+
+
+def _decision_sort_key(decision: Decision) -> tuple[int, Decimal, str, str]:
+    secondary = ZERO
+    if decision.action == "emergency_green_sell_candidate":
+        secondary = -_pct_metric_value(decision, "return_pct")
+    return (decision.priority, secondary, decision.symbol or "", decision.action)
+
+
+def _pct_metric_value(decision: Decision, key: str) -> Decimal:
+    value = decision.metrics.get(key)
+    if value is None:
+        return ZERO
+    return Decimal(str(value).rstrip("%"))
 
 
 def _return_pct(market_value: Decimal, invested_cost: Decimal) -> Decimal:

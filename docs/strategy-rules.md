@@ -104,8 +104,9 @@ If a double-down is due and there is not enough disposable cash:
 
 1. Pause all new opens and reopens.
 2. Identify positions with positive return below 10%.
-3. Sell green positions as needed to create cash for the due double-down.
-4. In a cash account, wait for settlement before treating sale proceeds as
+3. Rank those green positions by highest positive return first.
+4. Sell green positions as needed to create cash for the due double-down.
+5. In a cash account, wait for settlement before treating sale proceeds as
    spendable.
 
 ## Concentration Cap

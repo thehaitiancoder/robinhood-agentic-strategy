@@ -19,6 +19,8 @@ original rules, and make rule violations visible before money is put at risk.
 - Do not treat unsettled cash as spendable in a cash account.
 - Do not place real orders unless the active broker tool workflow allows it and
   the user has given any required explicit confirmation.
+- When emergency cash is needed, rank green positions below the 10% target by
+  highest positive return first.
 - Record why every skipped action was skipped.
 
 ## Current Broker Tooling Assumptions

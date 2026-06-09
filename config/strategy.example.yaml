@@ -11,6 +11,7 @@ portfolio_rules:
   max_single_position_pct: 0.10
   profit_take_pct: 0.10
   emergency_sell_min_return_pct: 0.00
+  emergency_green_sell_ranking: highest_positive_return
 
 position_opening:
   initial_base_usd: 1.00

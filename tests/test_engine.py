@@ -73,6 +73,35 @@ class StrategyEngineTest(unittest.TestCase):
         self.assertIn("cash_short_double_down", actions)
         self.assertIn("emergency_green_sell_candidate", actions)
 
+    def test_emergency_green_sells_rank_by_highest_positive_return(self) -> None:
+        report = evaluate_strategy(
+            portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("101")),
+            positions=[
+                PositionSnapshot(
+                    symbol="DROP",
+                    quantity=Decimal("1"),
+                    invested_cost=Decimal("10"),
+                    next_trigger_price=Decimal("8"),
+                    next_lot_shares=Decimal("2"),
+                ),
+                PositionSnapshot(symbol="LOW", quantity=Decimal("1"), invested_cost=Decimal("10")),
+                PositionSnapshot(symbol="HIGH", quantity=Decimal("1"), invested_cost=Decimal("10")),
+            ],
+            quotes=[
+                QuoteSnapshot(symbol="DROP", bid_price=Decimal("7.40"), ask_price=Decimal("7.50")),
+                QuoteSnapshot(symbol="LOW", bid_price=Decimal("10.20"), ask_price=Decimal("10.25")),
+                QuoteSnapshot(symbol="HIGH", bid_price=Decimal("10.80"), ask_price=Decimal("10.85")),
+            ],
+            universe=[],
+        )
+
+        candidates = [
+            decision.symbol
+            for decision in report.decisions
+            if decision.action == "emergency_green_sell_candidate"
+        ]
+        self.assertEqual(candidates, ["HIGH", "LOW"])
+
     def test_concentration_cap_blocks_double_down(self) -> None:
         report = evaluate_strategy(
             portfolio=PortfolioSnapshot(total_value=Decimal("100"), buying_power=Decimal("90")),
