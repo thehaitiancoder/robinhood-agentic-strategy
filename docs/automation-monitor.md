@@ -2,17 +2,36 @@
 
 Automation ids:
 
-- `robinhood-strategy-market-monitor`
+- Market-hours slots:
+  - `06-00-pt-rh-mkt`
+  - `06-30-pt-rh-mkt`
+  - `07-00-pt-rh-mkt`
+  - `07-30-pt-rh-mkt`
+  - `08-00-pt-rh-mkt`
+  - `08-30-pt-rh-mkt`
+  - `09-00-pt-rh-mkt`
+  - `09-30-pt-rh-mkt`
+  - `10-00-pt-rh-mkt`
+  - `10-30-pt-rh-mkt`
+  - `11-00-pt-rh-mkt`
+  - `11-30-pt-rh-mkt`
+  - `12-00-pt-rh-mkt`
+  - `12-30-pt-rh-mkt`
 - `robinhood-strategy-1-pm-close-check`
+- `robinhood-strategy-market-monitor` is a paused legacy combined monitor.
 
 Visible automation names:
 
-- `RH MKT 30m`
-- `RH 1PM close`
+- Market-hours slots use `HH:mm PT - RH MKT`, for example
+  `09:00 PT - RH MKT`.
+- `13:00 PT - RH CLOSE`
+- The paused legacy combined monitor is named `RH MKT 30m PAUSED`.
 
 These names are static scheduler labels. They cannot include the current run
-time. The visible per-run chat name must be set by renaming the thread at run
-startup.
+date, and dynamic thread-title tools have not been reliably available inside
+automation runs. The market monitor is therefore split into fixed time-slot
+automations so the visible mobile chat-list title starts with the slot time
+even when runtime thread renaming is unavailable.
 
 Purpose: run the strategy priority loop during regular market hours without the
 user needing to manually remember checks, execute qualifying sell and
@@ -21,7 +40,7 @@ post-market reconciliation that updates local state.
 
 Schedule:
 
-- `robinhood-strategy-market-monitor`: weekdays every 30 minutes from 6:00 AM
+- Market-hours slot automations: weekdays every 30 minutes from 6:00 AM
   through 12:30 PM Pacific.
 - `robinhood-strategy-1-pm-close-check`: weekdays at exactly 1:00 PM Pacific.
 
@@ -31,7 +50,21 @@ Pacific-local `BYHOUR=6,7,8,9,10,11,12,13`; that caused late-night Pacific
 runs around 11:00 PM, 11:30 PM, and midnight. Current intended UTC encodings
 for Pacific daylight time are:
 
-- main monitor: `BYHOUR=13,14,15,16,17,18,19;BYMINUTE=0,30`
+- market slots:
+  - 06:00 PT: `BYHOUR=13;BYMINUTE=0`
+  - 06:30 PT: `BYHOUR=13;BYMINUTE=30`
+  - 07:00 PT: `BYHOUR=14;BYMINUTE=0`
+  - 07:30 PT: `BYHOUR=14;BYMINUTE=30`
+  - 08:00 PT: `BYHOUR=15;BYMINUTE=0`
+  - 08:30 PT: `BYHOUR=15;BYMINUTE=30`
+  - 09:00 PT: `BYHOUR=16;BYMINUTE=0`
+  - 09:30 PT: `BYHOUR=16;BYMINUTE=30`
+  - 10:00 PT: `BYHOUR=17;BYMINUTE=0`
+  - 10:30 PT: `BYHOUR=17;BYMINUTE=30`
+  - 11:00 PT: `BYHOUR=18;BYMINUTE=0`
+  - 11:30 PT: `BYHOUR=18;BYMINUTE=30`
+  - 12:00 PT: `BYHOUR=19;BYMINUTE=0`
+  - 12:30 PT: `BYHOUR=19;BYMINUTE=30`
 - 1 PM close check: `BYHOUR=20;BYMINUTE=0`
 
 If Pacific standard time is in effect and the scheduler still uses UTC fields,
@@ -40,16 +73,21 @@ inside 6:00 AM through 1:00 PM Pacific.
 
 Thread titles:
 
-- Each automation prompt must start by instructing the run to call the Codex
-  `set_thread_title` tool before reading files or checking Robinhood.
-- The title must use the current Pacific date/time followed by a short label.
-- Expected format: `MM-DD HH:mm PT - RH MKT` or
-  `MM-DD HH:mm PT - RH CLOSE`.
-- The timestamp must be at the beginning of the title, not appended to the end,
-  because mobile chat lists truncate long titles.
-- Keep this as the first action in each automation prompt; otherwise the chat
-  list can show the static automation name, such as `RH MKT 30m`, instead of
-  `06-09 09:00 PT - RH MKT`.
+- Market-hours automation names must start with the slot time, for example
+  `09:00 PT - RH MKT`. This is the reliable fallback title in the mobile chat
+  list.
+- Each market-hours prompt must tell the run not to spend time searching for
+  thread-title tools. The first visible response should start with the current
+  `MM-DD HH:mm PT - RH MKT` prefix so the run date is still visible after
+  opening the thread.
+- If the `set_thread_title` tool is available in a future automation run, it
+  may rename the thread to `MM-DD HH:mm PT - RH MKT`, but this is best-effort
+  only and must not delay sell or double-down execution.
+- The 1 PM close automation name is `13:00 PT - RH CLOSE`; its first visible
+  response should start with `MM-DD 13:00 PT - RH CLOSE`.
+- Do not reactivate the paused combined `RH MKT 30m` automation unless the
+  fixed time-slot automations are removed; otherwise duplicate runs or
+  indistinguishable chat titles can return.
 
 Model settings:
 
@@ -71,8 +109,8 @@ automation setting rather than another runnable workspace.
 
 ## Market Monitor Execution
 
-`robinhood-strategy-market-monitor` runs during regular market hours and checks
-in this order:
+The market-hours slot automations run during regular market hours and check in
+this order:
 
 1. sell targets at or above 10% return
 2. due double-downs

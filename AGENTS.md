@@ -48,15 +48,22 @@ See `docs/shortcuts.md` for the committed shortcut reference.
 
 The recurring Codex automations are:
 
-- `robinhood-strategy-market-monitor`: weekday 30-minute checks from 6:00 AM
-  through 12:30 PM Pacific.
+- Market-hours slot automations: weekday checks at 06:00, 06:30, 07:00,
+  07:30, 08:00, 08:30, 09:00, 09:30, 10:00, 10:30, 11:00, 11:30,
+  12:00, and 12:30 Pacific. Their ids follow `HH-MM-pt-rh-mkt`; their
+  visible names start with `HH:mm PT - RH MKT`.
 - `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific
   post-market reconciliation and summary.
 
-`robinhood-strategy-market-monitor` is pre-authorized to place qualifying
+The legacy combined `robinhood-strategy-market-monitor` automation is paused
+because it created repeated threads named `RH MKT 30m` and dynamic thread-title
+renaming was not reliably available inside automation runs. Do not reactivate
+that combined automation unless the fixed slot automations are removed.
+
+The market-hours slot automations are pre-authorized to place qualifying
 strategy sell and double-down orders directly when the broker tool workflow
-allows placement. It emails `rdgustave@gmail.com` after urgent sell or
-double-down orders are executed or blocked. It does not place new-opening buys
+allows placement. They email `rdgustave@gmail.com` after urgent sell or
+double-down orders are executed or blocked. They do not place new-opening buys
 unless the user explicitly authorizes openings in that run.
 
 `robinhood-strategy-1-pm-close-check` must not place buy or sell orders because
@@ -66,14 +73,15 @@ the audit ledger, update `data/private/current-symbols.json`, write
 `data/private/close-summary.md`, and produce a close summary. This 1 PM run is
 explicitly authorized to update repo-local private state.
 
-The active automation names are short (`RH MKT 30m` and `RH 1PM close`) because
-the saved automation name is a static scheduler label. The run thread title
-must be dynamic. Each run's first action should call the Codex
-`set_thread_title` tool with a Pacific timestamp-first title, for example
-`06-09 09:00 PT - RH MKT`, so repeated automation chats are distinguishable on
-mobile. Keep each automation `cwds` setting to the repo root only; adding the
-automation memory directory as a second `cwd` launches duplicate threads. See
-`docs/automation-monitor.md` before changing automation configuration.
+The market automation names intentionally put the time at the front because the
+saved automation name is the reliable mobile chat-list label. Each market run
+should still start its first visible response with `MM-DD HH:mm PT - RH MKT`.
+If a Codex `set_thread_title` tool is available in that run, rename the thread
+to the same timestamp-first format; if it is unavailable, do not spend trading
+time trying to force a rename. Keep each automation `cwds` setting to the repo
+root only; adding the automation memory directory as a second `cwd` launches
+duplicate threads. See `docs/automation-monitor.md` before changing automation
+configuration.
 
 ## Mission
 
