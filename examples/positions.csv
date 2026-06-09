@@ -1,0 +1,6 @@
+symbol,quantity,invested_cost,current_lot_index,next_trigger_price,next_lot_shares
+AAPL,0.003330,1.00,1,270.00,0.006660
+DROP,1,10.00,1,8.00,2
+GREEN,1,10.00,1,8.00,2
+WIN,1,10.00,1,8.00,2
+

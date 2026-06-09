@@ -31,6 +31,28 @@ Do not assume the tool can enumerate every Robinhood-tradable symbol. A universe
 source must be supplied or built, then each candidate must be checked for
 tradability and fractional eligibility before trading.
 
+## Current Implementation
+
+The local Python monitor is read-only. It evaluates snapshots and emits decision
+reports. It does not connect to Robinhood and it does not place orders.
+
+Run it with:
+
+```bash
+PYTHONPATH=src python3 -m agentic_strategy.monitor \
+  --portfolio examples/portfolio.json \
+  --positions examples/positions.csv \
+  --quotes examples/quotes.csv \
+  --universe examples/universe.csv \
+  --config-json config/strategy.example.json
+```
+
+Run tests with:
+
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests
+```
+
 ## Priority Loop
 
 During regular market hours, run the decision loop in this order:
@@ -49,4 +71,3 @@ During regular market hours, run the decision loop in this order:
 Prefer boring, auditable code. Strategy state should be reconstructable from
 broker data plus the local ledger. If broker data and local data disagree, stop
 new buying and reconcile before continuing.
-

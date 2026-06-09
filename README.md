@@ -1,9 +1,9 @@
 # Robinhood Agentic Strategy
 
-This repository documents and will eventually implement the user's Robinhood
-agentic trading strategy. The immediate purpose is to preserve the rules clearly
-enough that future agents can continue without reinterpreting the strategy from
-chat history.
+This repository documents and implements the user's Robinhood agentic trading
+strategy. The immediate purpose is to preserve the rules clearly enough that
+future agents can continue without reinterpreting the strategy from chat
+history.
 
 This is an execution and automation project, not a recommendation engine. The
 strategy rules come from the user and must be treated as configuration and
@@ -22,6 +22,29 @@ operational drift: too many symbols to scan manually, missed sell windows, lack
 of filtering, insufficient reserved cash for required double-downs, and
 overriding hard rules.
 
+## Current Status
+
+Phase 1 has started. The repo now includes a pure-Python read-only monitor that
+evaluates portfolio, position, quote, and universe snapshots. It does not call
+Robinhood and cannot place orders.
+
+Run the example:
+
+```bash
+PYTHONPATH=src python3 -m agentic_strategy.monitor \
+  --portfolio examples/portfolio.json \
+  --positions examples/positions.csv \
+  --quotes examples/quotes.csv \
+  --universe examples/universe.csv \
+  --config-json config/strategy.example.json
+```
+
+Run tests:
+
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests
+```
+
 ## Hard Guardrails
 
 - Keep at least 10% of portfolio value as cash buffer.
@@ -39,7 +62,11 @@ overriding hard rules.
 ## Repository Map
 
 - `AGENTS.md`: required reading for future agents.
+- `src/agentic_strategy/`: read-only strategy engine.
+- `tests/`: unit tests for the hard rules.
+- `examples/`: sample snapshots for local monitor runs.
 - `docs/strategy-rules.md`: strategy rules in plain English.
+- `docs/monitor-usage.md`: how to run the read-only monitor.
 - `docs/operating-model.md`: daily and intraday operating flow.
 - `docs/data-model.md`: entities, fields, and calculations.
 - `docs/risk-controls.md`: hard blocks, warnings, and circuit breakers.
@@ -47,6 +74,7 @@ overriding hard rules.
 - `docs/implementation-roadmap.md`: phased build plan.
 - `docs/open-questions.md`: decisions that must be confirmed before production.
 - `config/strategy.example.yaml`: first machine-readable rules draft.
+- `config/strategy.example.json`: config used by the Python monitor.
 - `data/README.md`: where future universe, fills, and ledger data should live.
 
 ## Source References
@@ -57,4 +85,3 @@ Useful Robinhood support references:
 - Order types: https://robinhood.com/us/en/support/articles/order-types/
 - Extended-hours trading: https://robinhood.com/us/en/support/articles/extendedhours-trading/
 - Settlement and buying power: https://robinhood.com/us/en/support/articles/360001226946/
-

@@ -2,6 +2,8 @@
 
 ## Phase 0: Documentation and Repo Setup
 
+Status: complete.
+
 - Capture the strategy rules.
 - Capture risk controls and operational priorities.
 - Create a first config draft.
@@ -9,13 +11,24 @@
 
 ## Phase 1: Read-Only Monitor
 
-Build a read-only monitor that:
+Status: started.
 
-- Pulls account, portfolio, positions, orders, and quotes.
+The repo now includes a local read-only monitor that:
+
+- Pulls portfolio, position, quote, and universe data from snapshot files.
 - Calculates sell-ready positions.
 - Calculates due double-downs.
-- Calculates eligible new opens.
-- Produces a report without placing orders.
+- Blocks new openings when any double-down is due.
+- Surfaces green emergency-sell candidates.
+- Applies the cash buffer, concentration cap, and start-price cap.
+- Produces a JSON report without placing orders.
+
+Remaining work:
+
+- Add a Robinhood snapshot exporter through the active agent tools.
+- Add quote staleness thresholds.
+- Add persistent ledger reconstruction from fills.
+- Add broader tests against spreadsheet-derived examples.
 
 Success criteria:
 

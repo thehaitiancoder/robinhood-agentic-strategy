@@ -1,0 +1,8 @@
+symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
+AAPL,Apple Inc.,stock,true,true,true,example,2026-06-09
+CHEAP,Example Cheap Co.,stock,true,true,true,example,2026-06-09
+DROP,Example Drop Co.,stock,true,true,true,example,2026-06-09
+GREEN,Example Green Co.,stock,true,true,true,example,2026-06-09
+HIGH,Example High Co.,stock,true,true,true,example,2026-06-09
+WIN,Example Winner Co.,stock,true,true,true,example,2026-06-09
+
