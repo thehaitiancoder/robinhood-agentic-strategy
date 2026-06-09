@@ -9,6 +9,8 @@ The file summarizes:
 
 - portfolio value, cash, and buying power
 - queued equity orders
+- active non-queued orders such as confirmed, unconfirmed, new, or partially
+  filled orders
 - open equity positions and sellable quantities
 - local ledger row counts
 - the required refresh flow

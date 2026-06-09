@@ -73,6 +73,18 @@ class LiveStateTest(unittest.TestCase):
                         "payload_ref": "data/private/latest/next-90-open-review.md",
                     }
                 )
+                writer.writerow(
+                    {
+                        "recorded_at": "2026-06-09T05:35:00Z",
+                        "event_type": "review",
+                        "symbol": "F",
+                        "side": "buy",
+                        "order_type": "market",
+                        "dollar_amount": "1",
+                        "reason": "broker review for next-90-open batch",
+                        "payload_ref": "data/private/latest/next-90-open-review.md",
+                    }
+                )
 
             markdown = render_live_state(
                 portfolio_payload={
@@ -114,6 +126,17 @@ class LiveStateTest(unittest.TestCase):
                                 "dollar_based_amount": {"amount": "1.000000"},
                                 "created_at": "2026-06-09T05:30:15Z",
                             },
+                            {
+                                "id": "order-cl",
+                                "symbol": "CL",
+                                "side": "buy",
+                                "type": "market",
+                                "state": "confirmed",
+                                "quantity": "0.000000",
+                                "cumulative_quantity": "0.000000",
+                                "dollar_based_amount": {"amount": "1.000000"},
+                                "created_at": "2026-06-09T13:05:40Z",
+                            },
                         ]
                     }
                 },
@@ -124,13 +147,16 @@ class LiveStateTest(unittest.TestCase):
             self.assertIn("## Queued Orders (2)", markdown)
             self.assertIn("| AAPL | buy | market | queued | $1 | 0.00333 | 0 |", markdown)
             self.assertIn("| CPT | buy | market | queued | $1 | 0.00885 | 0 |", markdown)
+            self.assertIn("## Active Non-Queued Orders (1)", markdown)
+            self.assertIn("| CL | buy | market | confirmed | $1 | 0 | 0 |", markdown)
             self.assertIn("## Reviewed Opens Pending Confirmation (1)", markdown)
-            self.assertIn("| CL | buy | market | $1 | 2026-06-09T05:34:00Z |", markdown)
+            self.assertIn("| F | buy | market | $1 | 2026-06-09T05:35:00Z |", markdown)
+            self.assertNotIn("| CL | buy | market | $1 | 2026-06-09T05:34:00Z |", markdown)
             self.assertNotIn("| GM | buy | market | $1 | 2026-06-09T05:32:00Z |", markdown)
             self.assertIn("No open equity positions.", markdown)
-            self.assertIn("- Total rows: 5", markdown)
+            self.assertIn("- Total rows: 6", markdown)
             self.assertIn("- order: 2", markdown)
-            self.assertIn("- review: 2", markdown)
+            self.assertIn("- review: 3", markdown)
             self.assertIn("- skip: 1", markdown)
 
 

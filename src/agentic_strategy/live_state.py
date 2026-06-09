@@ -50,9 +50,18 @@ def render_live_state(
     portfolio = _data(portfolio_payload)
     orders = _orders(orders_payload)
     queued_orders = [order for order in orders if _text(order.get("state")).lower() == "queued"]
+    active_non_queued_orders = [
+        order
+        for order in orders
+        if _text(order.get("state")).lower() in _ACTIVE_ORDER_STATES
+        and _text(order.get("state")).lower() != "queued"
+    ]
     positions = _open_positions(positions_payload)
     ledger_rows = _ledger_rows(ledger_path)
-    pending_reviewed_opens = _pending_reviewed_opens(ledger_rows, queued_orders)
+    pending_reviewed_opens = _pending_reviewed_opens(
+        ledger_rows,
+        queued_orders + active_non_queued_orders,
+    )
 
     lines = [
         "# Live Strategy State",
@@ -71,7 +80,20 @@ def render_live_state(
         f"## Queued Orders ({len(queued_orders)})",
         "",
     ]
-    lines.extend(_orders_table(queued_orders))
+    lines.extend(_orders_table(queued_orders, empty_message="No queued equity orders."))
+    lines.extend(
+        [
+            "",
+            f"## Active Non-Queued Orders ({len(active_non_queued_orders)})",
+            "",
+        ]
+    )
+    lines.extend(
+        _orders_table(
+            active_non_queued_orders,
+            empty_message="No active non-queued equity orders.",
+        )
+    )
     lines.extend(
         [
             "",
@@ -124,11 +146,15 @@ def main() -> int:
     return 0
 
 
-def _orders_table(orders: list[dict[str, Any]]) -> list[str]:
+def _orders_table(
+    orders: list[dict[str, Any]],
+    *,
+    empty_message: str = "No matching equity orders.",
+) -> list[str]:
     if not orders:
-        return ["No queued equity orders."]
+        return [empty_message]
     rows = [
-        "| Symbol | Side | Type | State | Amount | Est. Qty | Filled Qty | Created | Order ID |",
+        "| Symbol | Side | Type | State | Amount | Order Qty | Filled Qty | Created | Order ID |",
         "| --- | --- | --- | --- | ---: | ---: | ---: | --- | --- |",
     ]
     for order in sorted(orders, key=lambda item: (_text(item.get("symbol")), _text(item.get("created_at")))):
@@ -225,9 +251,9 @@ def _ledger_summary(rows: list[dict[str, str]]) -> list[str]:
 
 def _pending_reviewed_opens(
     ledger_rows: list[dict[str, str]],
-    queued_orders: list[dict[str, Any]],
+    active_orders: list[dict[str, Any]],
 ) -> list[dict[str, str]]:
-    queued_keys = {_order_match_key(order) for order in queued_orders}
+    active_order_keys = {_order_match_key(order) for order in active_orders}
     order_rows = [row for row in ledger_rows if row.get("event_type") == "order"]
     pending_by_key: dict[tuple[str, str, str, str], dict[str, str]] = {}
 
@@ -235,7 +261,7 @@ def _pending_reviewed_opens(
         if not _is_opening_review(row):
             continue
         key = _ledger_match_key(row)
-        if key in queued_keys:
+        if key in active_order_keys:
             continue
         reviewed_at = row.get("recorded_at", "")
         if any(
@@ -300,6 +326,15 @@ def _orders(payload: dict[str, Any]) -> list[dict[str, Any]]:
     if isinstance(order, dict):
         return [order]
     return []
+
+
+_ACTIVE_ORDER_STATES = {
+    "new",
+    "queued",
+    "unconfirmed",
+    "confirmed",
+    "partially_filled",
+}
 
 
 def _ledger_rows(path: str | Path) -> list[dict[str, str]]:

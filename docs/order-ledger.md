@@ -31,8 +31,8 @@ appears in broker order history with the same order id, state, timestamp, fill
 quantity, and average price.
 
 After importing current order history, regenerate `data/private/LIVE_STATE.md`
-with `agentic_strategy.live_state` so a new agent can see queued orders and
-positions immediately.
+with `agentic_strategy.live_state` so a new agent can see queued orders, active
+confirmed/unfilled orders, and positions immediately.
 
 The ledger writer uses a local lock file to serialize appends. Even so, agents
 should prefer one ledger import or record command per workflow step rather than
