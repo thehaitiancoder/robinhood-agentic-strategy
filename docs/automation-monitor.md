@@ -87,6 +87,9 @@ double-down candidates.
 
 Execution rules:
 
+- Read `data/private/top-10-sell-candidates.md` and
+  `data/private/top-10-buy-candidates.md` if present, then quote those symbols
+  first through Robinhood. These are speed hints only.
 - Process one executable sell or double-down candidate at a time.
 - Refresh the quote immediately before order review.
 - If the broker tool requires review, run the review immediately.
@@ -97,6 +100,10 @@ Execution rules:
 - For new openings, compare `data/universe.csv` against live Robinhood
   positions and active orders. Do not use the local ledger as the owned-symbol
   source during market hours.
+- After all executable sell/DD work and full owned-position checks are complete,
+  update `data/private/top-10-buy-candidates.md` and
+  `data/private/top-10-sell-candidates.md` from the latest positions and quotes
+  as the last cleanup step.
 
 It emails `rdgustave@gmail.com` only for urgent execution outcomes:
 
@@ -128,6 +135,8 @@ should:
   history only
 - generate `data/private/current-symbols.json`
 - generate `data/private/close-summary.md`
+- generate `data/private/top-10-buy-candidates.md`
+- generate `data/private/top-10-sell-candidates.md`
 - include up to 50 eligible open candidates by comparing `data/universe.csv`
   against the broker-derived owned and active-order symbols
 - reconcile queued orders, fills, current positions, position sizes, buying
@@ -153,10 +162,12 @@ Do not use stale `data/private/order-ledger.csv` or
 Do not import broker orders, write the local ledger, regenerate deprecated
 `data/private/LIVE_STATE.md`, or save raw broker payloads during market-hours
 execution unless the user explicitly asks for local persistence in that exact
-run. The 1 PM close automation is the standing exception and should update the
-audit ledger, `data/private/current-symbols.json`, and
-`data/private/close-summary.md`. Local audit/cache writes must never delay a
-qualifying market-hours sell or double-down order.
+run. Updating the top-10 shortlist files at the end of a market-hours run is
+allowed as cleanup only after executable work is complete. The 1 PM close
+automation is the standing exception and should update the audit ledger,
+`data/private/current-symbols.json`, `data/private/close-summary.md`, and both
+shortlist files. Local audit/cache writes must never delay a qualifying
+market-hours sell or double-down order.
 
 ## Trading Boundary
 

@@ -11,6 +11,8 @@ Expected local files:
 - `private/current-symbols.json`: ignored post-market broker-derived symbol
   cache for planning and universe exclusion.
 - `private/close-summary.md`: ignored post-market close summary.
+- `private/top-10-buy-candidates.md`: ignored previous-run DD/buy watchlist.
+- `private/top-10-sell-candidates.md`: ignored previous-run sell watchlist.
 - `private/order-ledger.csv`: ignored append-only audit ledger. It is not the
   market-hours ownership source.
 - `private/LIVE_STATE.md`: deprecated ignored legacy Markdown snapshot.
@@ -30,5 +32,6 @@ symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
 through Robinhood. Mark delisted or rejected symbols as `active=false` and/or
 `tradable=false`; do not delete them by default.
 
-See `docs/current-symbols.md` for the current post-market cache workflow and
+See `docs/current-symbols.md` for the current post-market cache workflow,
+`docs/shortlists.md` for previous-run candidate shortcuts, and
 `docs/order-ledger.md` for the local audit ledger workflow.

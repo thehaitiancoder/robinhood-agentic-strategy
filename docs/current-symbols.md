@@ -11,6 +11,8 @@ reviewing, or cancelling real orders.
 
 - `data/private/current-symbols.json`: compact machine-readable broker snapshot.
 - `data/private/close-summary.md`: human-readable post-market summary.
+- `data/private/top-10-buy-candidates.md`: previous-run downside shortlist.
+- `data/private/top-10-sell-candidates.md`: previous-run upside shortlist.
 - `data/private/order-ledger.csv`: append-only audit history, not ownership
   state.
 - `data/private/LIVE_STATE.md`: deprecated legacy snapshot; do not use it as
@@ -63,3 +65,6 @@ The JSON stores:
 
 Do not commit this file. It can include order ids, quantities, balances, and
 position details.
+
+Use `docs/shortlists.md` for the top-10 buy/sell candidate files that speed up
+the next run's first quote pass.

@@ -5,8 +5,8 @@ Use these short commands when asking any future agent to run the strategy.
 | Shortcut | Meaning |
 | --- | --- |
 | `STRAT CHECK` | Run the full priority loop: sync, sells, double-downs, cash, openings. |
-| `SELL CHECK` | Refresh positions and quotes, then find 10% sell targets first. |
-| `DD CHECK` | Refresh positions and quotes, then find due double-downs. |
+| `SELL CHECK` | Check top sell shortlist first, then refresh full positions/quotes for 10% sell targets. |
+| `DD CHECK` | Check top buy/DD shortlist first, then refresh full positions/quotes for due double-downs. |
 | `CASH CHECK` | Check deployable cash after buffer, queued orders, and obligations. |
 | `SYNC STATE` | Refresh Robinhood and update post-market cache/audit files. |
 | `ORDER CHECK` | Check queued/open/recent equity orders from Robinhood. |
@@ -28,3 +28,8 @@ For "open N" requests, compare `data/universe.csv` against live Robinhood
 positions and active orders. The 1 PM close automation writes
 `data/private/current-symbols.json` for planning, but it is still a
 point-in-time cache.
+
+For `SELL CHECK` and `DD CHECK`, read
+`data/private/top-10-sell-candidates.md` and
+`data/private/top-10-buy-candidates.md` first if they exist. Quote those
+symbols first, then continue the full broker scan if no candidate qualifies.

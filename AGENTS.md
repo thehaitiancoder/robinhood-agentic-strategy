@@ -20,6 +20,13 @@ persistence.
 When a qualifying sell or double-down candidate exists, execution speed is the
 priority. Do not delay a market order for local audit writes or broad reporting.
 
+Shortlist files under `data/private/top-10-buy-candidates.md` and
+`data/private/top-10-sell-candidates.md` are speed hints from the previous run.
+At the start of a market-hours check, quote those symbols first because the next
+DD or sell is likely to come from that set. They are not trading authority:
+refresh Robinhood before acting. Update the shortlist files only after the main
+automation work is complete and no executable order is waiting.
+
 ## User Shortcuts
 
 The user may use short commands. Treat them as exact workflow requests:
@@ -142,14 +149,20 @@ requests and the 1 PM close automation:
   `data/private/current-symbols.json` and `data/private/close-summary.md` from
   fresh broker payloads. This gives agents a compact post-market cache and a
   fast universe exclusion set for planning; refresh Robinhood before trading.
+- `agentic_strategy.shortlists`: writes
+  `data/private/top-10-buy-candidates.md` and
+  `data/private/top-10-sell-candidates.md` from fresh broker positions and
+  quotes. These are previous-run speed hints to check first, then refresh after
+  the main work is complete.
 - `agentic_strategy.live_state`: deprecated legacy Markdown snapshot writer.
   Do not use `data/private/LIVE_STATE.md` as the trading handoff surface.
 
 Do not commit private ledger data, current-symbol cache files, close summaries,
-legacy live-state snapshots, raw broker payloads, or full account numbers. For
-cross-computer work, clone/pull the committed repo and refresh live broker
-state from Robinhood on that machine. Only run local persistence commands when
-the user asks for them or during the 1 PM close automation.
+shortlist files, legacy live-state snapshots, raw broker payloads, or full
+account numbers. For cross-computer work, clone/pull the committed repo and
+refresh live broker state from Robinhood on that machine. Only run local
+persistence commands when the user asks for them, during the 1 PM close
+automation, or for end-of-run shortlist cleanup.
 
 Run it with:
 
@@ -173,13 +186,17 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 During regular market hours, run the decision loop in this order:
 
 1. Reconcile account, positions, orders, and fills from Robinhood.
-2. Quote owned positions.
-3. Identify full-position sells at or above 10% combined return.
-4. Identify due double-downs.
-5. If double-down cash is short, identify green positions to liquidate.
-6. Only if no double-down is due and the cash buffer is safe, open or reopen
+2. Read the previous-run top-10 buy/sell shortlist files if present, then quote
+   those symbols first.
+3. Quote the remaining owned positions in batches.
+4. Identify full-position sells at or above 10% combined return.
+5. Identify due double-downs.
+6. If double-down cash is short, identify green positions to liquidate.
+7. Only if no double-down is due and the cash buffer is safe, open or reopen
    positions from the eligible universe.
-7. Report all candidates, actions, blocks, and stale data. Write local audit or
+8. Report all candidates, actions, blocks, and stale data.
+9. After all executable work is done, update the top-10 buy and sell shortlist
+   files from the just-seen positions and quotes. Write other local audit or
    cache data only when the user explicitly requested persistence in that run.
 
 ## Implementation Standard

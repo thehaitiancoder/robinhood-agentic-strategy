@@ -33,6 +33,8 @@ Priority order:
 
 Run a tight monitor loop over owned positions:
 
+- Read the previous-run top-10 buy and sell shortlist files if present.
+- Quote shortlist symbols first.
 - Quote owned symbols in batches.
 - Calculate sell return using bid-side pricing when available.
 - Surface any `sell_ready` positions immediately.
@@ -48,6 +50,8 @@ Stale data should block new buys and warn on sell decisions.
 - Import broker order history into the audit ledger.
 - Generate `data/private/current-symbols.json`.
 - Generate `data/private/close-summary.md`.
+- Generate `data/private/top-10-buy-candidates.md`.
+- Generate `data/private/top-10-sell-candidates.md`.
 - Treat `data/private/LIVE_STATE.md` as deprecated.
 - Recompute global base coverage.
 - Produce a daily report:

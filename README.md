@@ -74,6 +74,8 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `docs/monitor-usage.md`: how to run the read-only monitor.
 - `docs/current-symbols.md`: post-market current-symbol cache and opening
   candidate selector.
+- `docs/shortlists.md`: previous-run top-10 buy/sell watchlists for faster
+  market checks.
 - `docs/live-state.md`: deprecated legacy live-state handoff workflow.
 - `docs/order-ledger.md`: how to persist local audit ledger events.
 - `docs/shortcuts.md`: short commands the user can give future agents.

@@ -66,6 +66,22 @@ PYTHONPATH=src python -m agentic_strategy.current_symbols \
 Do not use this cache as market-hours trading truth. Refresh Robinhood before
 placing, reviewing, or cancelling orders.
 
+## Generate Candidate Shortlists
+
+After the main automation work is complete, generate the two top-10 shortlist
+documents:
+
+```bash
+PYTHONPATH=src python -m agentic_strategy.shortlists \
+  --positions-json data/private/latest/positions.json \
+  --quotes-json data/private/latest/quotes.json \
+  --buy-output data/private/top-10-buy-candidates.md \
+  --sell-output data/private/top-10-sell-candidates.md
+```
+
+These files are previous-run hints. Read and quote them first in the next
+market-hours run, but do not treat them as trading truth.
+
 ## Refresh The Universe
 
 After tradability is confirmed, merge the validation rows into the canonical
