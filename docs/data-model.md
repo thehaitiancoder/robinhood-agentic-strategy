@@ -16,6 +16,10 @@ live tests. SQLite is enough for the first implementation.
 | `source` | Universe provider |
 | `updated_at` | Last validation time |
 
+Sub-dollar stocks do not need fractional eligibility for the strategy's opening
+logic because they use whole-share quantity sizing instead of dollar-based
+fractional sizing.
+
 ## Position
 
 | Field | Meaning |
@@ -40,6 +44,7 @@ live tests. SQLite is enough for the first implementation.
 | `lot_index` | 1 for initial lot, increasing after each add |
 | `shares` | Shares bought in this lot |
 | `trigger_price` | Ladder trigger price for this lot |
+| `sizing_mode` | `dollar_fractional` or `whole_share_quantity` |
 | `fill_price` | Actual average fill price |
 | `cost` | Filled dollars |
 | `order_id` | Broker order id |

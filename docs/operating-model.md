@@ -59,6 +59,9 @@ Stale data should block new buys and warn on sell decisions.
 The strategy goal is automatic market execution once criteria are met. The user
 does not want to manually monitor orders.
 
+Order sizing depends on price: stocks at or above `$1.00` use dollar-based
+fractional sizing, while sub-dollar stocks use whole-share quantity sizing.
+
 Current live tools may require explicit confirmation for real order placement
 after review. Future code must obey active tool policy at runtime, but that
 confirmation boundary is an external tooling constraint, not a strategy

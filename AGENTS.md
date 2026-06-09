@@ -19,8 +19,11 @@ original rules, and make rule violations visible before money is put at risk.
 - Do not treat unsettled cash as spendable in a cash account.
 - Do not add wash-sale cooldowns or tax-aware trading blocks; strategy decisions
   use actual fill prices and actual dollars invested.
-- All strategy stock orders are market orders; do not design GTC limit target
-  exits or a mixed market/limit executor.
+- Strategy stock orders use immediate market execution; do not design GTC limit
+  target exits or a mixed market/limit executor.
+- Stocks at or above `$1.00` use dollar-based fractional sizing. Sub-dollar
+  penny stocks use whole-share quantity sizing and should not be bought
+  fractionally.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
 - Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,

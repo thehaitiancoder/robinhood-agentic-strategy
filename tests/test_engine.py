@@ -136,6 +136,23 @@ class StrategyEngineTest(unittest.TestCase):
         candidates = [decision.symbol for decision in report.decisions if decision.action == "new_open_candidate"]
         self.assertEqual(candidates, ["CHEAP", "HIGH"])
 
+    def test_new_open_allows_sub_dollar_whole_share_without_fractional_eligibility(self) -> None:
+        report = evaluate_strategy(
+            portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
+            positions=[],
+            quotes=[
+                QuoteSnapshot(symbol="PENNY", bid_price=Decimal("0.49"), ask_price=Decimal("0.50")),
+            ],
+            universe=[UniverseEntry(symbol="PENNY", fractional_eligible=False)],
+            config=StrategyConfig(),
+        )
+
+        candidates = [decision for decision in report.decisions if decision.action == "new_open_candidate"]
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0].symbol, "PENNY")
+        self.assertEqual(candidates[0].metrics["sizing_mode"], "whole_share_quantity")
+        self.assertEqual(candidates[0].metrics["estimated_quantity"], "2")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import Counter
 from decimal import Decimal
 
+from .ladder import lot_shares_for_target, sizing_mode_for_price
 from .models import (
     Decision,
     PortfolioSnapshot,
@@ -229,15 +230,18 @@ def _new_open_candidates(
             continue
         if not entry.tradable:
             continue
-        if not entry.fractional_eligible:
-            continue
 
         quote = quote_by_symbol.get(symbol)
         if quote is None or quote.buy_price is None:
             continue
 
         buy_price = quote.buy_price
-        estimated_cost = config.open_base_usd
+        sizing_mode = sizing_mode_for_price(buy_price)
+        if sizing_mode == "dollar_fractional" and not entry.fractional_eligible:
+            continue
+
+        estimated_quantity = lot_shares_for_target(buy_price, config.open_base_usd)
+        estimated_cost = estimated_quantity * buy_price
         if spend_after_candidates + estimated_cost > disposable_cash:
             decisions.append(
                 Decision(
@@ -277,6 +281,9 @@ def _new_open_candidates(
                 metrics={
                     "buy_price": _money(buy_price),
                     "open_base_usd": _money(config.open_base_usd),
+                    "estimated_quantity": str(estimated_quantity),
+                    "estimated_cost": _money(estimated_cost),
+                    "sizing_mode": sizing_mode,
                     "cash_reserved_after": _money(spend_after_candidates),
                 },
             )

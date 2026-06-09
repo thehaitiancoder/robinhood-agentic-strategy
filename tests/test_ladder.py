@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from decimal import Decimal
 
-from agentic_strategy import build_ladder, drop_pct_for_next_lot
+from agentic_strategy import build_ladder, drop_pct_for_next_lot, lot_shares_for_target, sizing_mode_for_price
 
 
 class LotLadderTest(unittest.TestCase):
@@ -34,6 +34,24 @@ class LotLadderTest(unittest.TestCase):
             Decimal("0.16"),
             Decimal("0.32"),
         ])
+        self.assertEqual({lot.sizing_mode for lot in lots}, {"dollar_fractional"})
+
+    def test_sub_dollar_ladder_uses_whole_shares(self) -> None:
+        lots = build_ladder(entry_price=Decimal("0.50"), base_usd=Decimal("1"), through_lot_index=4)
+
+        self.assertEqual([lot.lot_shares for lot in lots], [
+            Decimal("2"),
+            Decimal("4"),
+            Decimal("8"),
+            Decimal("16"),
+        ])
+        self.assertEqual({lot.sizing_mode for lot in lots}, {"whole_share_quantity"})
+
+    def test_sub_dollar_target_shares_do_not_exceed_target_notional(self) -> None:
+        self.assertEqual(lot_shares_for_target(Decimal("0.75"), Decimal("1")), Decimal("1"))
+        self.assertEqual(lot_shares_for_target(Decimal("0.50"), Decimal("1")), Decimal("2"))
+        self.assertEqual(sizing_mode_for_price(Decimal("0.99")), "whole_share_quantity")
+        self.assertEqual(sizing_mode_for_price(Decimal("1.00")), "dollar_fractional")
 
 
 if __name__ == "__main__":

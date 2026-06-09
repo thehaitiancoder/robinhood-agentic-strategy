@@ -32,13 +32,18 @@ market-on-open are not currently supported.
 
 For this strategy:
 
-- All strategy stock orders should be market orders.
+- Strategy stock orders should use immediate market execution when criteria are
+  met.
 - Do not use broker-native GTC limit target exits as the strategy design.
 - The execution system should monitor criteria and submit market orders when a
   target sell, emergency green sell, double-down, open, or reopen condition is
   met.
+- Stocks at or above `$1.00` use dollar-based fractional sizing when eligible.
+- Sub-dollar penny stocks use whole-share quantity sizing and should not be
+  bought fractionally.
 - Fractional market orders should be treated as regular-hours-only unless live
-  tool review says otherwise.
+  tool review says otherwise. Whole-share sub-dollar orders still need live
+  tradability and broker review/response handling.
 - If current live tools require order review or explicit confirmation, obey that
   as a runtime tooling constraint.
 

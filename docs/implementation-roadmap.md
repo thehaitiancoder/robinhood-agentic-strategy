@@ -56,7 +56,9 @@ Success criteria:
 Use the Agentic account with `$1` base positions:
 
 - Start with a small approved symbol subset.
-- Use market orders for all strategy actions.
+- Use market execution for all strategy actions.
+- Validate dollar-based fractional sizing for stocks at or above `$1.00`.
+- Validate whole-share quantity sizing for sub-dollar stocks.
 - Obey any runtime broker/tool confirmation requirements.
 - Compare broker fills against local ledger.
 - Validate fractional order behavior.

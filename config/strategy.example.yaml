@@ -17,13 +17,17 @@ position_opening:
   initial_base_usd: 1.00
   base_increment_usd: 1.00
   increment_base_after_full_universe_coverage: true
-  # There is no share-price cap for new openings. High-priced stocks can still
-  # be opened with fractional dollar orders when the cash rules allow it.
+  # There is no share-price cap for new openings. Stocks at or above $1 use
+  # dollar-based fractional sizing; sub-dollar stocks use whole-share quantity
+  # sizing that fits within the target lot dollars.
   require_no_due_double_downs: true
   require_cash_buffer_after_order: true
 
 lot_ladder:
   lot_share_multiplier: 2.0
+  fractional_dollar_sizing_min_price: 1.00
+  sub_dollar_sizing: whole_share_floor_to_target_notional
+  sub_dollar_min_whole_shares: 1
   repeat_final_drop_zone_indefinitely: true
   trigger_zones:
     # Lot 1 is the initial open. These ranges describe the drop required from
@@ -45,6 +49,7 @@ lot_ladder:
 execution:
   regular_hours_only_for_fractional_market_orders: true
   automatic_market_execution_when_criteria_met: true
+  execution_style: market
   sell_scan_priority: highest
   buy_scan_priority: after_sells_and_double_downs
   broker_tool_confirmation_policy: obey_runtime_tool_requirements
@@ -59,5 +64,6 @@ execution:
 universe:
   source: data/universe.csv
   require_robinhood_tradable: true
-  require_fractional_eligible_for_dollar_orders: true
+  require_fractional_eligible_for_dollar_orders_at_or_above_1_usd: true
+  allow_sub_dollar_whole_share_orders_without_fractional_eligibility: true
   exclude_halted_or_delisted: true

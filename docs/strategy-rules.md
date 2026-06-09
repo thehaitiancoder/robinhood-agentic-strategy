@@ -45,6 +45,14 @@ There is no share-price cap for opening positions. A high-priced stock can still
 be opened with a `$1` fractional order if the account has deployable cash and
 the symbol is eligible.
 
+Opening size depends on share price:
+
+- Stocks priced at `$1.00` or higher use dollar-based fractional sizing.
+- Stocks priced below `$1.00` use whole-share quantity sizing. Do not buy
+  fractional shares for sub-dollar penny stocks.
+- For sub-dollar stocks, choose the whole-share quantity that fits within the
+  target lot dollars, with a minimum of 1 whole share.
+
 There is also no wash-sale or tax cooldown for openings or reopenings. Strategy
 decisions use actual fill prices and actual dollars invested, not tax-adjusted
 broker cost basis.
@@ -62,14 +70,19 @@ return_pct = ((bid_price * quantity) - invested_cost) / invested_cost
 Use bid-side pricing for sell decisions when available. Last trade can overstate
 the executable return for thin or volatile names.
 
-## Execution Rule
+## Execution And Sizing Rule
 
-All strategy stock orders are market orders. This applies to openings,
-reopenings, double-downs, target sells, and emergency green sells.
+Strategy orders use immediate market execution when criteria are met. This
+applies to openings, reopenings, double-downs, target sells, and emergency green
+sells.
 
 Do not use GTC limit orders or broker-native persistent target exits as the
 strategy design. The execution system should monitor rules and execute market
 orders when criteria are met. The user does not want manual order monitoring.
+
+Do not interpret market execution to mean every buy is dollar-based fractional.
+Stocks priced at `$1.00` or higher use dollar-based fractional order sizing;
+sub-dollar penny stocks use whole-share quantity order sizing.
 
 If the active broker or agent tool requires review or explicit confirmation for
 real-money order placement, implementation must obey that runtime constraint
@@ -79,10 +92,17 @@ allows it.
 ## Double-Down Rule
 
 Each new lot doubles the prior lot's share count. For a `$1` initial lot at an
-entry price of `P`, the first lot share count is:
+entry price of `P >= $1.00`, the first lot share count is:
 
 ```text
 lot_1_shares = 1.00 / P
+```
+
+For a sub-dollar stock, the first lot is a whole-share quantity that fits within
+the target lot dollars:
+
+```text
+lot_1_shares = floor(1.00 / P), minimum 1 share
 ```
 
 The next lot buys:

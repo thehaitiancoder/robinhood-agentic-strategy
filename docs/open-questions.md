@@ -6,8 +6,8 @@ Resolve these before production automation places many live orders.
 
 Decision: there is no share-price cap for opening positions.
 
-Reason: the strategy uses fractional dollar orders. A high-priced stock can
-still be opened with a `$1` base position. The real cap is available deployable
+Reason: stocks priced at `$1.00` or higher can use fractional dollar sizing, so
+there is no share-price cap for openings. The real cap is available deployable
 cash after preserving the 10% cash buffer and satisfying any higher-priority
 double-down obligations.
 
@@ -47,15 +47,23 @@ drop moves the next trigger price closer to zero. In practice, a stock will
 likely be delisted, hit the 10% profit sell rule, hit the 10% position cap, or
 run into cash constraints long before many 80% drops occur.
 
-## Resolved: Target Sell Execution
+## Resolved: Target Sell Execution And Order Sizing
 
-Decision: all strategy stock orders are market orders. Do not design broker-side
-GTC limit target exits for this strategy.
+Decision: strategy orders use immediate market execution when criteria are met.
+Do not design broker-side GTC limit target exits for this strategy.
 
 Reason: the strategy is built around fractional dollar-based positions, and the
 operating assumption is that fractional buys and sells cannot use limit orders.
 The execution system should monitor criteria and submit market orders when a
 sell, double-down, emergency green sell, open, or reopen rule is met.
+
+Sizing clarification:
+
+- Stocks priced at `$1.00` or higher use dollar-based fractional sizing.
+- Stocks priced below `$1.00` use whole-share quantity sizing.
+- Sub-dollar penny stocks should not be bought fractionally.
+- For sub-dollar stocks, use the whole-share quantity that fits within the
+  target lot dollars, with a minimum of 1 whole share.
 
 Operational implication: the user does not want to manually monitor orders. The
 intended production behavior is automatic market execution once strategy
