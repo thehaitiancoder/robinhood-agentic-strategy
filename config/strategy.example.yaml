@@ -1,5 +1,5 @@
-# Example strategy configuration. Treat this as a draft until the open
-# questions in docs/open-questions.md are resolved.
+# Example strategy configuration. Confirmed strategy decisions are documented in
+# docs/decisions.md.
 
 account:
   nickname: Agentic

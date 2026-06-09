@@ -1,8 +1,9 @@
-# Open Questions And Resolved Decisions
+# Strategy Decisions
 
-Resolve these before production automation places many live orders.
+These decisions are part of the official strategy specification. Do not treat
+them as open questions unless the user explicitly revises them.
 
-## Resolved: Start-Price Cap
+## Start-Price Cap
 
 Decision: there is no share-price cap for opening positions.
 
@@ -15,7 +16,7 @@ Operational implication: if roughly 5,000 Robinhood-tradable stocks are eligible
 the `$1` base round needs about `$5,000` of opening capital before moving to a
 `$2` base round, then `$3`, `$4`, and so on.
 
-## Resolved: Complete Universe Source
+## Complete Universe Source
 
 Decision: build and maintain our own local Robinhood-validated stock universe.
 The canonical file is `data/universe.csv`.
@@ -33,7 +34,7 @@ Operational workflow:
   rather than silently deleted.
 - The trading engine only opens positions from this local validated universe.
 
-## Resolved: Exact Lot Ladder
+## Exact Lot Ladder
 
 Decision: the base buy is lot 1. After that, each new lot doubles the previous
 lot's share count and uses a drop trigger from the previous trigger price.
@@ -51,7 +52,7 @@ drop moves the next trigger price closer to zero. In practice, a stock will
 likely be delisted, hit the 10% profit sell rule, hit the 10% position cap, or
 run into cash constraints long before many 80% drops occur.
 
-## Resolved: Target Sell Execution And Order Sizing
+## Target Sell Execution And Order Sizing
 
 Decision: strategy orders use immediate market execution when criteria are met.
 Do not design broker-side GTC limit target exits for this strategy.
@@ -75,7 +76,7 @@ criteria are satisfied. If the active broker or agent tool still requires order
 review or explicit confirmation at runtime, implementation must obey that as an
 external tool constraint, not as a strategy preference.
 
-## Resolved: Emergency Green Sells
+## Emergency Green Sells
 
 Decision: when cash is needed for double-downs, rank green positions below 10%
 profit by highest positive return first.
@@ -86,7 +87,7 @@ positions first, even if they have not reached the full 10% profit target.
 Rejected ranking factors for this rule: largest market value, distance from 10%,
 and oldest position.
 
-## Resolved: Taxes and Wash Sales
+## Taxes And Wash Sales
 
 Decision: do not apply wash-sale cooldowns, tax-aware reopening blocks, or
 tax-adjusted cost basis to strategy decisions.

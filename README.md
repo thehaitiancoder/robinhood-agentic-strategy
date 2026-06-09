@@ -75,7 +75,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `docs/risk-controls.md`: hard blocks, warnings, and circuit breakers.
 - `docs/robinhood-tooling.md`: current Robinhood tool capabilities and gaps.
 - `docs/implementation-roadmap.md`: phased build plan.
-- `docs/open-questions.md`: decisions that must be confirmed before production.
+- `docs/decisions.md`: confirmed strategy decisions.
 - `config/strategy.example.yaml`: first machine-readable rules draft.
 - `config/strategy.example.json`: config used by the Python monitor.
 - `data/README.md`: where future universe, fills, and ledger data should live.
