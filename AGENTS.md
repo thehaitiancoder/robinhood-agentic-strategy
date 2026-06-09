@@ -33,10 +33,15 @@ See `docs/shortcuts.md` for the committed shortcut reference.
 
 ## Automation Monitor
 
-The recurring Codex automation is `robinhood-strategy-market-monitor`. It runs
-the strategy monitor every 30 minutes on weekdays around market hours, emails
-urgent sell-target and double-down alerts to `rdgustave@gmail.com`, and should
-write repo-local state plus automation-local memory. See
+The recurring Codex automations are:
+
+- `robinhood-strategy-market-monitor`: weekday 30-minute checks from 6:00 AM
+  through 12:30 PM Pacific.
+- `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific close
+  check.
+
+They email urgent sell-target and double-down alerts to `rdgustave@gmail.com`
+and should write repo-local state plus automation-local memory. See
 `docs/automation-monitor.md` before changing automation configuration.
 
 ## Mission

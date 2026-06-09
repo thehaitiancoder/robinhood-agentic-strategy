@@ -1,12 +1,31 @@
 # Codex Automation Monitor
 
-Automation id: `robinhood-strategy-market-monitor`
+Automation ids:
+
+- `robinhood-strategy-market-monitor`
+- `robinhood-strategy-1-pm-close-check`
 
 Purpose: run the strategy priority loop during regular market hours without the
 user needing to manually remember checks.
 
-Schedule: weekdays every 30 minutes from 6:00 AM through 1:30 PM Pacific. The
-6:00 AM run is an early pre-open check; market open is covered at 6:30 AM.
+Schedule:
+
+- `robinhood-strategy-market-monitor`: weekdays every 30 minutes from 6:00 AM
+  through 12:30 PM Pacific.
+- `robinhood-strategy-1-pm-close-check`: weekdays at exactly 1:00 PM Pacific.
+
+The automation scheduler currently stores and honors the RRULE `BYHOUR` values
+as UTC, even though the UI displays local time. Do not configure these as
+Pacific-local `BYHOUR=6,7,8,9,10,11,12,13`; that caused late-night Pacific
+runs around 11:00 PM, 11:30 PM, and midnight. Current intended UTC encodings
+for Pacific daylight time are:
+
+- main monitor: `BYHOUR=13,14,15,16,17,18,19;BYMINUTE=0,30`
+- 1 PM close check: `BYHOUR=20;BYMINUTE=0`
+
+If Pacific standard time is in effect and the scheduler still uses UTC fields,
+adjust these UTC hours by one hour so the displayed next-run times remain
+inside 6:00 AM through 1:00 PM Pacific.
 
 Model settings:
 
@@ -17,6 +36,7 @@ Writable roots configured for the automation:
 
 - `C:\Users\ralph\.codex\worktrees\de6e\robinhood-agentic-strategy`
 - `C:\Users\ralph\.codex\automations\robinhood-strategy-market-monitor`
+- `C:\Users\ralph\.codex\automations\robinhood-strategy-1-pm-close-check`
 
 The repo root covers:
 
@@ -25,10 +45,10 @@ The repo root covers:
 - repo-local skipped-action logging
 - saved broker payload snapshots under `data/private/`
 
-The automation directory covers automation-local memory/state files such as
-`memory.md`. If a run reports that this path is read-only, update the automation
-configuration to include that directory as a writable root or approve a one-time
-escalated write for the memory file.
+The automation directories cover automation-local memory/state files such as
+`memory.md`. If a run reports that one of these paths is read-only, update that
+automation configuration to include its directory as a writable root or approve
+a one-time escalated write for the memory file.
 
 ## Alert Behavior
 
@@ -64,6 +84,6 @@ it must clearly say that the audit trail was not updated.
 Known fix:
 
 - Give the automation write access to the repo root for repo-local state.
-- Give it write access to
-  `C:\Users\ralph\.codex\automations\robinhood-strategy-market-monitor` for
-  automation memory/state.
+- Give it write access to its automation-local directory for memory/state:
+  `C:\Users\ralph\.codex\automations\robinhood-strategy-market-monitor` or
+  `C:\Users\ralph\.codex\automations\robinhood-strategy-1-pm-close-check`.
