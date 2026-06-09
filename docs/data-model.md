@@ -20,6 +20,10 @@ Sub-dollar stocks do not need fractional eligibility for the strategy's opening
 logic because they use whole-share quantity sizing instead of dollar-based
 fractional sizing.
 
+The canonical universe source is local `data/universe.csv`, populated from
+Robinhood validation results. Delisted, inactive, or non-tradable symbols remain
+in the file with `active=false` or `tradable=false` for auditability.
+
 ## Position
 
 | Field | Meaning |

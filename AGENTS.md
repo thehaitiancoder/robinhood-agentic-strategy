@@ -46,9 +46,11 @@ Treat that confirmation workflow as an external tooling constraint. It does not
 change the strategy preference for automatic market execution when compliant
 tooling supports it.
 
-Do not assume the tool can enumerate every Robinhood-tradable symbol. A universe
-source must be supplied or built, then each candidate must be checked for
-tradability and fractional eligibility before trading.
+Do not assume the tool can enumerate every Robinhood-tradable symbol. The
+canonical universe is `data/universe.csv`, built from user-supplied candidate
+symbols after Robinhood validation. Add confirmed active/tradable symbols to the
+list; mark delisted, inactive, or non-tradable symbols inactive instead of
+silently deleting them.
 
 ## Current Implementation
 

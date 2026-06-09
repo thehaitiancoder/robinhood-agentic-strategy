@@ -15,19 +15,23 @@ Operational implication: if roughly 5,000 Robinhood-tradable stocks are eligible
 the `$1` base round needs about `$5,000` of opening capital before moving to a
 `$2` base round, then `$3`, `$4`, and so on.
 
-## Complete Universe Source
+## Resolved: Complete Universe Source
 
-The current tools can search symbols and check tradability, but a complete
-Robinhood-tradable stock universe has not been confirmed.
+Decision: build and maintain our own local Robinhood-validated stock universe.
+The canonical file is `data/universe.csv`.
 
-Decision needed: choose the canonical universe source.
+Reason: the current tools may not provide a complete Robinhood-tradable universe
+endpoint. The user will provide symbols over time, and future agents should
+confirm each symbol on Robinhood before adding it to the canonical list.
 
-Options:
+Operational workflow:
 
-- User-provided export.
-- Robinhood watchlist/list data if complete enough.
-- Third-party market data provider, then validate each symbol with Robinhood.
-- Broker/API endpoint if later available.
+- User supplies candidate symbols from any source.
+- Agent checks Robinhood tradability and eligibility in batches.
+- Confirmed active/tradable symbols are added or refreshed in `data/universe.csv`.
+- Delisted, inactive, or non-tradable symbols are marked inactive/non-tradable
+  rather than silently deleted.
+- The trading engine only opens positions from this local validated universe.
 
 ## Resolved: Exact Lot Ladder
 

@@ -68,6 +68,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `tests/`: unit tests for the hard rules.
 - `examples/`: sample snapshots for local monitor runs.
 - `docs/strategy-rules.md`: strategy rules in plain English.
+- `docs/universe-management.md`: how to build and maintain the RH universe.
 - `docs/monitor-usage.md`: how to run the read-only monitor.
 - `docs/operating-model.md`: daily and intraday operating flow.
 - `docs/data-model.md`: entities, fields, and calculations.

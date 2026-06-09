@@ -63,6 +63,7 @@ execution:
 
 universe:
   source: data/universe.csv
+  source_policy: local_robinhood_validated_incremental
   require_robinhood_tradable: true
   require_fractional_eligible_for_dollar_orders_at_or_above_1_usd: true
   allow_sub_dollar_whole_share_orders_without_fractional_eligibility: true

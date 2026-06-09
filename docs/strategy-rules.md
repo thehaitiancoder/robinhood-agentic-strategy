@@ -9,13 +9,14 @@ system alive.
 
 ## Universe
 
-The desired universe is every eligible stock available on Robinhood. In
-practice, production code must restrict this to symbols that are active,
-tradable in the account, and eligible for the intended order style.
+The desired universe is every eligible stock available on Robinhood. The
+canonical universe is the local `data/universe.csv` file, built incrementally
+from user-supplied candidate symbols after Robinhood tradability validation.
 
-The current agent tools may not provide a complete Robinhood universe endpoint,
-so the project needs a durable universe source. Every symbol from that source
-must still pass Robinhood tradability checks before orders are considered.
+Production code must restrict openings to symbols that are active, tradable in
+the account, and eligible for the intended order style. Delisted, inactive, or
+non-tradable symbols should be marked inactive/non-tradable in the universe
+instead of deleted silently.
 
 ## Position Lifecycle
 
