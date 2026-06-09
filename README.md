@@ -75,6 +75,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `docs/live-state.md`: first-read local live-state handoff workflow.
 - `docs/order-ledger.md`: how to persist local order workflow events.
 - `docs/shortcuts.md`: short commands the user can give future agents.
+- `docs/automation-monitor.md`: Codex automation schedule, alerts, and writable roots.
 - `docs/operating-model.md`: daily and intraday operating flow.
 - `docs/data-model.md`: entities, fields, and calculations.
 - `docs/risk-controls.md`: hard blocks, warnings, and circuit breakers.

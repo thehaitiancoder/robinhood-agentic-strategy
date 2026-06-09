@@ -31,6 +31,14 @@ The user may use short commands. Treat them as exact workflow requests:
 
 See `docs/shortcuts.md` for the committed shortcut reference.
 
+## Automation Monitor
+
+The recurring Codex automation is `robinhood-strategy-market-monitor`. It runs
+the strategy monitor every 30 minutes on weekdays around market hours, emails
+urgent sell-target and double-down alerts to `rdgustave@gmail.com`, and should
+write repo-local state plus automation-local memory. See
+`docs/automation-monitor.md` before changing automation configuration.
+
 ## Mission
 
 Build a disciplined execution system for the user's broad fractional-stock
