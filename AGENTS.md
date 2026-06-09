@@ -51,12 +51,13 @@ blocked. They do not place new-opening buys unless the user explicitly
 authorizes openings in that run.
 
 The active automation names are short (`RH MKT 30m` and `RH 1PM close`) because
-mobile chat lists truncate long titles. Each run should rename its Codex thread
-with a Pacific timestamp-first prefix, for example `MM-DD HH:mm PT - RH MKT`,
-so repeated automation chats are distinguishable. Keep each automation `cwds`
-setting to the repo root only; adding the automation memory directory as a
-second `cwd` launches duplicate threads. See `docs/automation-monitor.md`
-before changing automation configuration.
+the saved automation name is a static scheduler label. The run thread title
+must be dynamic. Each run's first action should call the Codex
+`set_thread_title` tool with a Pacific timestamp-first title, for example
+`06-09 09:00 PT - RH MKT`, so repeated automation chats are distinguishable on
+mobile. Keep each automation `cwds` setting to the repo root only; adding the
+automation memory directory as a second `cwd` launches duplicate threads. See
+`docs/automation-monitor.md` before changing automation configuration.
 
 ## Mission
 

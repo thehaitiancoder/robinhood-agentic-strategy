@@ -10,6 +10,10 @@ Visible automation names:
 - `RH MKT 30m`
 - `RH 1PM close`
 
+These names are static scheduler labels. They cannot include the current run
+time. The visible per-run chat name must be set by renaming the thread at run
+startup.
+
 Purpose: run the strategy priority loop during regular market hours without the
 user needing to manually remember checks, and execute qualifying sell and
 double-down orders quickly when they are due.
@@ -35,14 +39,16 @@ inside 6:00 AM through 1:00 PM Pacific.
 
 Thread titles:
 
-- Each automation prompt starts by instructing the run to rename its Codex
-  thread with the current Pacific date/time followed by a short label.
+- Each automation prompt must start by instructing the run to call the Codex
+  `set_thread_title` tool before reading files or checking Robinhood.
+- The title must use the current Pacific date/time followed by a short label.
 - Expected format: `MM-DD HH:mm PT - RH MKT` or
   `MM-DD HH:mm PT - RH CLOSE`.
 - The timestamp must be at the beginning of the title, not appended to the end,
   because mobile chat lists truncate long titles.
-- Keep this instruction near the beginning of each automation prompt; otherwise
-  the chat list fills with repeated indistinguishable monitor titles.
+- Keep this as the first action in each automation prompt; otherwise the chat
+  list can show the static automation name, such as `RH MKT 30m`, instead of
+  `06-09 09:00 PT - RH MKT`.
 
 Model settings:
 
