@@ -61,7 +61,7 @@ def write_universe_csv(path: str | Path, records: Iterable[UniverseRecord]) -> N
     csv_path = Path(path)
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     with csv_path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=UNIVERSE_FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=UNIVERSE_FIELDS, lineterminator="\n")
         writer.writeheader()
         for record in records:
             writer.writerow(_row_from_record(record))
