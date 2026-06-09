@@ -5,8 +5,14 @@ Automation ids:
 - `robinhood-strategy-market-monitor`
 - `robinhood-strategy-1-pm-close-check`
 
+Visible automation names:
+
+- `RH MKT 30m`
+- `RH 1PM close`
+
 Purpose: run the strategy priority loop during regular market hours without the
-user needing to manually remember checks.
+user needing to manually remember checks, and execute qualifying sell and
+double-down orders quickly when they are due.
 
 Schedule:
 
@@ -30,9 +36,11 @@ inside 6:00 AM through 1:00 PM Pacific.
 Thread titles:
 
 - Each automation prompt starts by instructing the run to rename its Codex
-  thread with the current Pacific timestamp followed by the automation name.
-- Expected format: `YYYY-MM-DD HH:mm PT - Robinhood strategy market monitor`
-  or `YYYY-MM-DD HH:mm PT - Robinhood strategy 1 PM close check`.
+  thread with the current Pacific date/time followed by a short label.
+- Expected format: `MM-DD HH:mm PT - RH MKT` or
+  `MM-DD HH:mm PT - RH CLOSE`.
+- The timestamp must be at the beginning of the title, not appended to the end,
+  because mobile chat lists truncate long titles.
 - Keep this instruction near the beginning of each automation prompt; otherwise
   the chat list fills with repeated indistinguishable monitor titles.
 
@@ -41,25 +49,20 @@ Model settings:
 - Model: `gpt-5.4`
 - Reasoning effort: `xhigh`
 
-Writable roots configured for the automation:
+Workspace configuration:
 
 - `C:\Users\ralph\.codex\worktrees\de6e\robinhood-agentic-strategy`
-- `C:\Users\ralph\.codex\automations\robinhood-strategy-market-monitor`
-- `C:\Users\ralph\.codex\automations\robinhood-strategy-1-pm-close-check`
 
-The repo root covers:
+Keep the `cwds` field to this single repo root only. In the Codex automation
+tool, `cwds` are runnable workspaces, not generic writable roots. Adding
+`C:\Users\ralph\.codex\automations\...` as a second `cwd` causes the same
+automation run to create a duplicate thread in the automation directory.
 
-- `data/private/order-ledger.csv`
-- `data/private/LIVE_STATE.md`
-- repo-local skipped-action logging
-- saved broker payload snapshots under `data/private/`
+Do not add a second writable automation directory as another `cwd`. If an
+automation needs persistent memory outside the repo, configure that as an
+automation setting rather than another runnable workspace.
 
-The automation directories cover automation-local memory/state files such as
-`memory.md`. If a run reports that one of these paths is read-only, update that
-automation configuration to include its directory as a writable root or approve
-a one-time escalated write for the memory file.
-
-## Alert Behavior
+## Execution And Email Behavior
 
 The automation checks in this order:
 
@@ -69,30 +72,54 @@ The automation checks in this order:
 4. deployable idle cash for new openings
 5. routine queued orders, open positions, and stale-data status
 
-It emails `rdgustave@gmail.com` only for:
+The user has standing-authorized the automations to place qualifying strategy
+sell and double-down orders directly, subject to broker tool review and
+placement constraints. Speed is priority number one for executable sell and
+double-down candidates.
 
-- `URGENT SELL TARGET FOUND`
-- `DOUBLE-DOWN DUE`
+Execution rules:
+
+- Process one executable sell or double-down candidate at a time.
+- Refresh the quote immediately before order review.
+- If the broker tool requires review, run the review immediately.
+- If the review has no blocking alerts and the refreshed price still qualifies,
+  place the market order immediately.
+- Do not keep scanning other symbols while an executable candidate is waiting.
+- Do not write local ledger/state before execution.
+
+It emails `rdgustave@gmail.com` only for urgent execution outcomes:
+
+- `URGENT SELL EXECUTED - Robinhood strategy`
+- `URGENT SELL BLOCKED - Robinhood strategy`
+- `DOUBLE-DOWN EXECUTED - Robinhood strategy`
+- `DOUBLE-DOWN BLOCKED - Robinhood strategy`
 
 It does not email routine no-action checks or `OPEN CASH AVAILABLE` by default.
 
+New-opening buys remain report-only in automation runs unless the user
+explicitly authorizes new openings in that run.
+
+## Live Source Of Truth
+
+Robinhood broker data is the live source of truth. The automation must inspect
+the Agentic Robinhood account, positions, quotes, orders, and fills directly.
+Do not use stale `data/private/order-ledger.csv` or
+`data/private/LIVE_STATE.md` data to decide whether to trade.
+
+Do not import broker orders, regenerate `data/private/LIVE_STATE.md`, write the
+local ledger, or save raw broker payloads unless the user explicitly asks for
+local persistence in that exact run. Local audit writes must never delay a
+qualifying sell or double-down order.
+
 ## Trading Boundary
 
-The automation must not place real orders unless the active broker tool workflow
-allows it. With the current Robinhood tool, real order placement requires broker
-review plus explicit user confirmation. The automation may identify candidates,
-prepare summaries, and send alerts; it must not claim an order was placed unless
-the broker placement call actually succeeded.
+The automation must not place real orders unless the active broker tool
+workflow allows it. The recurring automations have standing user authorization
+for qualifying sell and double-down orders, so they should not wait for chat
+confirmation when the broker review is clean. They must still obey broker/tool
+blocks and must not claim an order was placed unless the broker placement call
+actually succeeded.
 
-## If Persistence Fails
-
-If a run can read Robinhood but cannot write local state, the agent must report
-the exact path and error. It should still provide read-only broker findings, but
-it must clearly say that the audit trail was not updated.
-
-Known fix:
-
-- Give the automation write access to the repo root for repo-local state.
-- Give it write access to its automation-local directory for memory/state:
-  `C:\Users\ralph\.codex\automations\robinhood-strategy-market-monitor` or
-  `C:\Users\ralph\.codex\automations\robinhood-strategy-1-pm-close-check`.
+If persistence was explicitly requested and fails, report the exact path and
+error. Continue with live broker reporting, but clearly say the optional local
+audit write was not updated.

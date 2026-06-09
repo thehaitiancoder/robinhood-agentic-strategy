@@ -2,17 +2,21 @@
 
 Read this file before changing strategy logic, docs, data, or automation code.
 
-## First Live-State Check
+## Live Broker Source Of Truth
 
-Before any live broker action, read `data/private/LIVE_STATE.md` if it exists.
-That ignored local document is the fastest handoff surface for queued orders,
-open positions, account size, buying power, and ledger status. If it is missing
-or stale, refresh Robinhood portfolio, positions, and orders, import the order
-history into `data/private/order-ledger.csv`, then regenerate
-`data/private/LIVE_STATE.md` with `agentic_strategy.live_state`.
+For live trading decisions, Robinhood broker data is the source of truth for
+account state, positions, buying power, orders, fills, and queued orders. Local
+files under `data/private/` are optional handoff and audit artifacts only; do
+not rely on stale local ledger or `LIVE_STATE.md` data to decide whether to buy
+or sell.
 
-Every real broker workflow event must be recorded locally: reviews, placed
-orders, fills, cancellations, rejections, and skipped actions.
+Do not import broker orders, regenerate `data/private/LIVE_STATE.md`, write the
+local ledger, or save private broker payloads unless the user explicitly asks
+for persistence in that run. The user may request this with shortcuts such as
+`SYNC STATE` or `FILL CHECK`.
+
+When a qualifying sell or double-down candidate exists, execution speed is the
+priority. Do not delay a market order for local audit writes or broad reporting.
 
 ## User Shortcuts
 
@@ -40,12 +44,19 @@ The recurring Codex automations are:
 - `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific close
   check.
 
-They email urgent sell-target and double-down alerts to `rdgustave@gmail.com`
-and should write repo-local state plus automation-local memory. Each run should
-rename its Codex thread with a Pacific timestamp prefix, for example
-`YYYY-MM-DD HH:mm PT - Robinhood strategy market monitor`, so repeated
-automation chats are distinguishable. See `docs/automation-monitor.md` before
-changing automation configuration.
+They are pre-authorized to place qualifying strategy sell and double-down
+orders directly when the broker tool workflow allows placement. They email
+`rdgustave@gmail.com` after urgent sell or double-down orders are executed or
+blocked. They do not place new-opening buys unless the user explicitly
+authorizes openings in that run.
+
+The active automation names are short (`RH MKT 30m` and `RH 1PM close`) because
+mobile chat lists truncate long titles. Each run should rename its Codex thread
+with a Pacific timestamp-first prefix, for example `MM-DD HH:mm PT - RH MKT`,
+so repeated automation chats are distinguishable. Keep each automation `cwds`
+setting to the repo root only; adding the automation memory directory as a
+second `cwd` launches duplicate threads. See `docs/automation-monitor.md`
+before changing automation configuration.
 
 ## Mission
 
@@ -71,25 +82,29 @@ original rules, and make rule violations visible before money is put at risk.
   fractionally.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
+- For automation sell and double-down checks, process one executable candidate
+  at a time: refresh the quote, review if the broker tool requires it, and
+  place immediately if still qualified and not blocked.
 - Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
   lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
   lot's share count.
 - Do not place real orders unless the active broker tool workflow allows it,
-  including any runtime review or explicit confirmation requirement.
+  including any runtime review requirement. The recurring automations have
+  standing user authorization for qualifying sell and double-down orders, so do
+  not wait for chat confirmation when the broker review is clean.
 - When emergency cash is needed, rank green positions below the 10% target by
   highest positive return first.
-- Record why every skipped action was skipped.
+- When local persistence is explicitly requested, record why every skipped
+  action was skipped. Otherwise, do not delay sell or double-down execution for
+  local writes.
 
 ## Current Broker Tooling Assumptions
 
 The current Robinhood agent tools can inspect accounts, portfolio, positions,
-quotes, tradability, and equity orders. They can review and place equity orders,
-but real order placement requires the review and confirmation workflow described
-by the tool at runtime.
-
-Treat that confirmation workflow as an external tooling constraint. It does not
-change the strategy preference for automatic market execution when compliant
-tooling supports it.
+quotes, tradability, and equity orders. They can review and place equity orders.
+Treat any broker review or placement workflow as an external tooling constraint;
+it does not change the strategy preference for automatic market execution when
+criteria are met and the user has authorized that order class.
 
 Do not assume the tool can enumerate every Robinhood-tradable symbol. The
 canonical universe is `data/universe.csv`, built from user-supplied candidate
@@ -102,7 +117,8 @@ silently deleting them.
 The local Python monitor is read-only. It evaluates snapshots and emits decision
 reports. It does not connect to Robinhood and it does not place orders.
 
-The project also has local ignored live-state tooling:
+The project also has local ignored live-state tooling for explicit sync/audit
+requests:
 
 - `agentic_strategy.ledger`: records broker reviews, placed order snapshots,
   order-history imports, fills, cancellations, rejections, and skipped actions
@@ -113,8 +129,8 @@ The project also has local ignored live-state tooling:
 
 Do not commit private ledger data, live-state snapshots, raw broker payloads, or
 full account numbers. For cross-computer work, clone/pull the committed repo and
-run `SYNC STATE` so the agent refreshes live broker state from Robinhood on that
-machine.
+refresh live broker state from Robinhood on that machine. Only run local
+persistence commands when the user asks for them.
 
 Run it with:
 
@@ -144,10 +160,13 @@ During regular market hours, run the decision loop in this order:
 5. If double-down cash is short, identify green positions to liquidate.
 6. Only if no double-down is due and the cash buffer is safe, open or reopen
    positions from the eligible universe.
-7. Log all candidates, actions, blocks, and stale data.
+7. Report all candidates, actions, blocks, and stale data. Write local audit
+   data only when the user explicitly requested persistence in that run.
 
 ## Implementation Standard
 
-Prefer boring, auditable code. Strategy state should be reconstructable from
-broker data plus the local ledger. If broker data and local data disagree, stop
-new buying and reconcile before continuing.
+Prefer boring, auditable code. Live strategy state should be reconstructable
+from Robinhood broker data. The local ledger is optional audit support, not the
+source of truth. If broker data and local data disagree, use broker data for
+sell and double-down decisions, stop new buying if needed, and reconcile local
+state only when the user asks for persistence.
