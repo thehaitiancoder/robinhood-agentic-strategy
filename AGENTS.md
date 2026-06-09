@@ -19,8 +19,12 @@ original rules, and make rule violations visible before money is put at risk.
 - Do not treat unsettled cash as spendable in a cash account.
 - Do not add wash-sale cooldowns or tax-aware trading blocks; strategy decisions
   use actual fill prices and actual dollars invested.
-- Do not place real orders unless the active broker tool workflow allows it and
-  the user has given any required explicit confirmation.
+- All strategy stock orders are market orders; do not design GTC limit target
+  exits or a mixed market/limit executor.
+- The strategy goal is automatic market execution when criteria are met. Do not
+  require manual monitoring as a strategy rule.
+- Do not place real orders unless the active broker tool workflow allows it,
+  including any runtime review or explicit confirmation requirement.
 - When emergency cash is needed, rank green positions below the 10% target by
   highest positive return first.
 - Record why every skipped action was skipped.
@@ -31,6 +35,10 @@ The current Robinhood agent tools can inspect accounts, portfolio, positions,
 quotes, tradability, and equity orders. They can review and place equity orders,
 but real order placement requires the review and confirmation workflow described
 by the tool at runtime.
+
+Treat that confirmation workflow as an external tooling constraint. It does not
+change the strategy preference for automatic market execution when compliant
+tooling supports it.
 
 Do not assume the tool can enumerate every Robinhood-tradable symbol. A universe
 source must be supplied or built, then each candidate must be checked for

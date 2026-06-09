@@ -35,15 +35,21 @@ The screenshot shows drop zones of 10%, then 20%, then 40%, and a final larger
 drop. Confirm exact lot ranges and whether the final 80% step is still part of
 the production strategy.
 
-## Target Sell Execution
+## Resolved: Target Sell Execution
 
-For tiny fractional positions, broker-native persistent target exits may not be
-available through current tools. Confirm preferred behavior:
+Decision: all strategy stock orders are market orders. Do not design broker-side
+GTC limit target exits for this strategy.
 
-- Active monitor with sell review and confirmation.
-- GTC limit orders when supported.
-- Mixed mode: broker-native exits for whole shares, monitor for fractional
-  positions.
+Reason: the strategy is built around fractional dollar-based positions, and the
+operating assumption is that fractional buys and sells cannot use limit orders.
+The execution system should monitor criteria and submit market orders when a
+sell, double-down, emergency green sell, open, or reopen rule is met.
+
+Operational implication: the user does not want to manually monitor orders. The
+intended production behavior is automatic market execution once strategy
+criteria are satisfied. If the active broker or agent tool still requires order
+review or explicit confirmation at runtime, implementation must obey that as an
+external tool constraint, not as a strategy preference.
 
 ## Resolved: Emergency Green Sells
 

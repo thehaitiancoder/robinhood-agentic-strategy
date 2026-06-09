@@ -54,6 +54,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - Sell the full combined position when it reaches 10% profit.
 - If cash is short and a double-down is due, sell green positions below 10%
   profit before opening anything new.
+- Use market orders for all strategy stock actions when criteria are met.
 - Do not place real orders without following the active broker/tool
   confirmation requirements.
 - Keep a complete audit trail of every candidate, skipped action, review, order,

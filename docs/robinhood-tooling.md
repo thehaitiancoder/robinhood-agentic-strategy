@@ -32,12 +32,15 @@ market-on-open are not currently supported.
 
 For this strategy:
 
-- Whole-share target exits can often be represented by broker-native limit
-  orders.
-- Fractional `$1` positions may require active monitoring plus sell order review
-  rather than relying entirely on broker-side target orders.
+- All strategy stock orders should be market orders.
+- Do not use broker-native GTC limit target exits as the strategy design.
+- The execution system should monitor criteria and submit market orders when a
+  target sell, emergency green sell, double-down, open, or reopen condition is
+  met.
 - Fractional market orders should be treated as regular-hours-only unless live
   tool review says otherwise.
+- If current live tools require order review or explicit confirmation, obey that
+  as a runtime tooling constraint.
 
 ## Useful References
 
@@ -45,4 +48,3 @@ For this strategy:
 - Order types: https://robinhood.com/us/en/support/articles/order-types/
 - Extended-hours trading: https://robinhood.com/us/en/support/articles/extendedhours-trading/
 - Settlement and buying power: https://robinhood.com/us/en/support/articles/360001226946/
-

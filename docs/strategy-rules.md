@@ -62,6 +62,20 @@ return_pct = ((bid_price * quantity) - invested_cost) / invested_cost
 Use bid-side pricing for sell decisions when available. Last trade can overstate
 the executable return for thin or volatile names.
 
+## Execution Rule
+
+All strategy stock orders are market orders. This applies to openings,
+reopenings, double-downs, target sells, and emergency green sells.
+
+Do not use GTC limit orders or broker-native persistent target exits as the
+strategy design. The execution system should monitor rules and execute market
+orders when criteria are met. The user does not want manual order monitoring.
+
+If the active broker or agent tool requires review or explicit confirmation for
+real-money order placement, implementation must obey that runtime constraint
+while preserving the strategy goal of automatic execution when compliant tooling
+allows it.
+
 ## Double-Down Rule
 
 Each new lot doubles the prior lot's share count. For a `$1` initial lot at an

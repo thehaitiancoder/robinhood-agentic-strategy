@@ -38,12 +38,17 @@ lot_ladder:
 
 execution:
   regular_hours_only_for_fractional_market_orders: true
+  automatic_market_execution_when_criteria_met: true
   sell_scan_priority: highest
   buy_scan_priority: after_sells_and_double_downs
-  require_order_review_before_place: true
-  default_buy_order_type: market
-  default_sell_order_type: market
-  prefer_limit_orders_when_whole_share_or_supported: true
+  broker_tool_confirmation_policy: obey_runtime_tool_requirements
+  order_type_for_open: market
+  order_type_for_reopen: market
+  order_type_for_double_down: market
+  order_type_for_target_sell: market
+  order_type_for_emergency_sell: market
+  use_limit_orders: false
+  use_gtc_target_orders: false
 
 universe:
   source: data/universe.csv

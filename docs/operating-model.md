@@ -56,7 +56,10 @@ Stale data should block new buys and warn on sell decisions.
 
 ## Human Review
 
-The current live order tools require explicit confirmation for real order
-placement after review. Future code must keep a review boundary unless the user
-and tool policy explicitly allow a different mode.
+The strategy goal is automatic market execution once criteria are met. The user
+does not want to manually monitor orders.
 
+Current live tools may require explicit confirmation for real order placement
+after review. Future code must obey active tool policy at runtime, but that
+confirmation boundary is an external tooling constraint, not a strategy
+preference.

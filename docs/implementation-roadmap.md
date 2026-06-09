@@ -56,7 +56,8 @@ Success criteria:
 Use the Agentic account with `$1` base positions:
 
 - Start with a small approved symbol subset.
-- Require explicit confirmation for every real order.
+- Use market orders for all strategy actions.
+- Obey any runtime broker/tool confirmation requirements.
 - Compare broker fills against local ledger.
 - Validate fractional order behavior.
 
@@ -73,7 +74,7 @@ Expand symbol coverage in batches:
 - Add more eligible symbols.
 - Monitor quote and order throughput.
 - Tune batching and stale-data thresholds.
-- Keep confirmation and audit logs intact.
+- Keep runtime confirmation, when required by tooling, and audit logs intact.
 
 ## Phase 5: Production Controls
 
