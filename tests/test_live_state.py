@@ -1,0 +1,93 @@
+from __future__ import annotations
+
+import csv
+import tempfile
+import unittest
+from pathlib import Path
+
+from agentic_strategy.live_state import render_live_state
+
+
+class LiveStateTest(unittest.TestCase):
+    def test_renders_queued_orders_positions_and_ledger_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ledger_path = Path(tmpdir) / "order-ledger.csv"
+            with ledger_path.open("w", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle,
+                    fieldnames=["recorded_at", "event_type", "symbol"],
+                )
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "recorded_at": "2026-06-09T05:30:00Z",
+                        "event_type": "order",
+                        "symbol": "CPT",
+                    }
+                )
+                writer.writerow(
+                    {
+                        "recorded_at": "2026-06-09T05:31:00Z",
+                        "event_type": "skip",
+                        "symbol": "AAPL",
+                    }
+                )
+
+            markdown = render_live_state(
+                portfolio_payload={
+                    "data": {
+                        "total_value": "1000",
+                        "cash": "1000",
+                        "buying_power": {"buying_power": "998.0000"},
+                    }
+                },
+                positions_payload={
+                    "data": {
+                        "positions": [
+                            {"symbol": "AAPL", "quantity": "0.000000", "type": "empty"},
+                        ]
+                    }
+                },
+                orders_payload={
+                    "data": {
+                        "orders": [
+                            {
+                                "id": "order-aapl",
+                                "symbol": "AAPL",
+                                "side": "buy",
+                                "type": "market",
+                                "state": "queued",
+                                "quantity": "0.003330",
+                                "cumulative_quantity": "0.000000",
+                                "dollar_based_amount": {"amount": "1.000000"},
+                                "created_at": "2026-06-09T00:33:36Z",
+                            },
+                            {
+                                "id": "order-cpt",
+                                "symbol": "CPT",
+                                "side": "buy",
+                                "type": "market",
+                                "state": "queued",
+                                "quantity": "0.008850",
+                                "cumulative_quantity": "0.000000",
+                                "dollar_based_amount": {"amount": "1.000000"},
+                                "created_at": "2026-06-09T05:30:15Z",
+                            },
+                        ]
+                    }
+                },
+                ledger_path=ledger_path,
+                generated_at="2026-06-09T05:40:00Z",
+            )
+
+            self.assertIn("## Queued Orders (2)", markdown)
+            self.assertIn("| AAPL | buy | market | queued | $1 | 0.00333 | 0 |", markdown)
+            self.assertIn("| CPT | buy | market | queued | $1 | 0.00885 | 0 |", markdown)
+            self.assertIn("No open equity positions.", markdown)
+            self.assertIn("- Total rows: 2", markdown)
+            self.assertIn("- order: 1", markdown)
+            self.assertIn("- skip: 1", markdown)
+
+
+if __name__ == "__main__":
+    unittest.main()

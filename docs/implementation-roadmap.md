@@ -27,7 +27,7 @@ The repo now includes a local read-only monitor that:
 Remaining work:
 
 - Add quote staleness thresholds.
-- Add persistent ledger reconstruction from fills.
+- Add persistent position ledger reconstruction from fills.
 - Add broader tests against spreadsheet-derived examples.
 
 Success criteria:
@@ -60,7 +60,7 @@ Use the Agentic account with `$1` base positions:
 - Validate dollar-based fractional sizing for stocks at or above `$1.00`.
 - Validate whole-share quantity sizing for sub-dollar stocks.
 - Obey any runtime broker/tool confirmation requirements.
-- Compare broker fills against local ledger.
+- Compare broker fills against the local order ledger and later position ledger.
 - Validate fractional order behavior.
 
 Success criteria:

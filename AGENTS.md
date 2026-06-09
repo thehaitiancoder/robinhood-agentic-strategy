@@ -2,6 +2,35 @@
 
 Read this file before changing strategy logic, docs, data, or automation code.
 
+## First Live-State Check
+
+Before any live broker action, read `data/private/LIVE_STATE.md` if it exists.
+That ignored local document is the fastest handoff surface for queued orders,
+open positions, account size, buying power, and ledger status. If it is missing
+or stale, refresh Robinhood portfolio, positions, and orders, import the order
+history into `data/private/order-ledger.csv`, then regenerate
+`data/private/LIVE_STATE.md` with `agentic_strategy.live_state`.
+
+Every real broker workflow event must be recorded locally: reviews, placed
+orders, fills, cancellations, rejections, and skipped actions.
+
+## User Shortcuts
+
+The user may use short commands. Treat them as exact workflow requests:
+
+- `STRAT CHECK`: run the full priority loop.
+- `SELL CHECK`: find 10% sell targets first.
+- `DD CHECK`: find due double-downs.
+- `CASH CHECK`: check deployable cash after all higher-priority obligations.
+- `SYNC STATE`: refresh Robinhood, import order history, and regenerate live state.
+- `ORDER CHECK`: check queued/open/recent equity orders.
+- `FILL CHECK`: import order history and fills.
+- `OPEN CASH`: find eligible new openings after higher-priority checks pass.
+- `SELL REVIEW`: review sell-ready full-position market sells.
+- `DD REVIEW`: review due double-down market buys.
+
+See `docs/shortcuts.md` for the committed shortcut reference.
+
 ## Mission
 
 Build a disciplined execution system for the user's broad fractional-stock
@@ -56,6 +85,20 @@ silently deleting them.
 
 The local Python monitor is read-only. It evaluates snapshots and emits decision
 reports. It does not connect to Robinhood and it does not place orders.
+
+The project also has local ignored live-state tooling:
+
+- `agentic_strategy.ledger`: records broker reviews, placed order snapshots,
+  order-history imports, fills, cancellations, rejections, and skipped actions
+  under `data/private/order-ledger.csv`.
+- `agentic_strategy.live_state`: writes `data/private/LIVE_STATE.md`, the
+  central local handoff document for queued orders, positions, account size, and
+  ledger status.
+
+Do not commit private ledger data, live-state snapshots, raw broker payloads, or
+full account numbers. For cross-computer work, clone/pull the committed repo and
+run `SYNC STATE` so the agent refreshes live broker state from Robinhood on that
+machine.
 
 Run it with:
 
