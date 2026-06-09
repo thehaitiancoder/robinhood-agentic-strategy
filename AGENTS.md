@@ -41,8 +41,11 @@ The recurring Codex automations are:
   check.
 
 They email urgent sell-target and double-down alerts to `rdgustave@gmail.com`
-and should write repo-local state plus automation-local memory. See
-`docs/automation-monitor.md` before changing automation configuration.
+and should write repo-local state plus automation-local memory. Each run should
+rename its Codex thread with a Pacific timestamp prefix, for example
+`YYYY-MM-DD HH:mm PT - Robinhood strategy market monitor`, so repeated
+automation chats are distinguishable. See `docs/automation-monitor.md` before
+changing automation configuration.
 
 ## Mission
 

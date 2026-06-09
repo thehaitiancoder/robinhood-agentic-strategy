@@ -27,6 +27,15 @@ If Pacific standard time is in effect and the scheduler still uses UTC fields,
 adjust these UTC hours by one hour so the displayed next-run times remain
 inside 6:00 AM through 1:00 PM Pacific.
 
+Thread titles:
+
+- Each automation prompt starts by instructing the run to rename its Codex
+  thread with the current Pacific timestamp followed by the automation name.
+- Expected format: `YYYY-MM-DD HH:mm PT - Robinhood strategy market monitor`
+  or `YYYY-MM-DD HH:mm PT - Robinhood strategy 1 PM close check`.
+- Keep this instruction near the beginning of each automation prompt; otherwise
+  the chat list fills with repeated indistinguishable monitor titles.
+
 Model settings:
 
 - Model: `gpt-5.4`
