@@ -92,7 +92,7 @@ class StrategyEngineTest(unittest.TestCase):
         actions = [decision.action for decision in report.decisions]
         self.assertIn("block_double_down", actions)
 
-    def test_new_open_respects_start_price_cap(self) -> None:
+    def test_new_open_allows_high_share_price_when_cash_rules_pass(self) -> None:
         report = evaluate_strategy(
             portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
             positions=[],
@@ -101,11 +101,11 @@ class StrategyEngineTest(unittest.TestCase):
                 QuoteSnapshot(symbol="HIGH", bid_price=Decimal("50"), ask_price=Decimal("50.10")),
             ],
             universe=[UniverseEntry(symbol="CHEAP"), UniverseEntry(symbol="HIGH")],
-            config=StrategyConfig(max_start_share_price_usd=Decimal("20")),
+            config=StrategyConfig(),
         )
 
         candidates = [decision.symbol for decision in report.decisions if decision.action == "new_open_candidate"]
-        self.assertEqual(candidates, ["CHEAP"])
+        self.assertEqual(candidates, ["CHEAP", "HIGH"])
 
 
 if __name__ == "__main__":

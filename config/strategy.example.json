@@ -4,7 +4,5 @@
   "profit_take_pct": "0.10",
   "emergency_sell_min_return_pct": "0.00",
   "open_base_usd": "1.00",
-  "max_start_share_price_usd": "20.00",
   "max_new_open_candidates": 25
 }
-

@@ -30,14 +30,11 @@ def load_config_json(path: str | Path | None) -> StrategyConfig:
         "profit_take_pct",
         "emergency_sell_min_return_pct",
         "open_base_usd",
-        "max_start_share_price_usd",
     ):
         if key in data and data[key] is not None:
             kwargs[key] = Decimal(str(data[key]))
     if "max_new_open_candidates" in data:
         kwargs["max_new_open_candidates"] = int(data["max_new_open_candidates"])
-    if data.get("max_start_share_price_usd") is None and "max_start_share_price_usd" in data:
-        kwargs["max_start_share_price_usd"] = None
     return StrategyConfig(**kwargs)
 
 
@@ -140,4 +137,3 @@ def _jsonable(value: Any) -> Any:
     if isinstance(value, dict):
         return {key: _jsonable(item) for key, item in value.items()}
     return value
-

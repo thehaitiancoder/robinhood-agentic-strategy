@@ -16,9 +16,8 @@ position_opening:
   initial_base_usd: 1.00
   base_increment_usd: 1.00
   increment_base_after_full_universe_coverage: true
-  # Historical rule mentioned by user. Confirm whether it still applies when
-  # the universe is described as "every single stock available on Robinhood."
-  max_start_share_price_usd: 20.00
+  # There is no share-price cap for new openings. High-priced stocks can still
+  # be opened with fractional dollar orders when the cash rules allow it.
   require_no_due_double_downs: true
   require_cash_buffer_after_order: true
 
@@ -50,4 +49,3 @@ universe:
   require_robinhood_tradable: true
   require_fractional_eligible_for_dollar_orders: true
   exclude_halted_or_delisted: true
-

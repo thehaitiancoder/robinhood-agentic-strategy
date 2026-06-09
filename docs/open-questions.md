@@ -1,18 +1,19 @@
-# Open Questions
+# Open Questions And Resolved Decisions
 
 Resolve these before production automation places many live orders.
 
-## Start-Price Cap
+## Resolved: Start-Price Cap
 
-The user described a previous hard `$20` start-price rule and said violating it
-with a `$73` opening position was a fatal mistake. The new strategy statement
-also says "buy every single stock available on Robinhood."
+Decision: there is no share-price cap for opening positions.
 
-Decision needed: should the restored strategy enforce a max share price for new
-positions, such as `$20`, or should fractional `$1` openings apply to higher
-priced stocks too?
+Reason: the strategy uses fractional dollar orders. A high-priced stock can
+still be opened with a `$1` base position. The real cap is available deployable
+cash after preserving the 10% cash buffer and satisfying any higher-priority
+double-down obligations.
 
-Conservative default until confirmed: enforce the `$20` cap for new positions.
+Operational implication: if roughly 5,000 Robinhood-tradable stocks are eligible,
+the `$1` base round needs about `$5,000` of opening capital before moving to a
+`$2` base round, then `$3`, `$4`, and so on.
 
 ## Complete Universe Source
 
@@ -61,4 +62,3 @@ Candidate ranking:
 The strategy may create many short-term trades and possible wash-sale effects.
 This project should track tax lots and realized gains/losses for reporting, but
 it is not a tax advisor.
-

@@ -20,7 +20,7 @@ The repo now includes a local read-only monitor that:
 - Calculates due double-downs.
 - Blocks new openings when any double-down is due.
 - Surfaces green emergency-sell candidates.
-- Applies the cash buffer, concentration cap, and start-price cap.
+- Applies the cash buffer and concentration cap.
 - Produces a JSON report without placing orders.
 
 Remaining work:
@@ -84,4 +84,3 @@ Before larger base sizes:
 - Add circuit breakers.
 - Add test coverage for every hard rule.
 - Add replay tests from historical quote/fill snapshots.
-

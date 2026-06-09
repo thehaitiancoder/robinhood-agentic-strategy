@@ -237,9 +237,6 @@ def _new_open_candidates(
             continue
 
         buy_price = quote.buy_price
-        if config.max_start_share_price_usd is not None and buy_price > config.max_start_share_price_usd:
-            continue
-
         estimated_cost = config.open_base_usd
         if spend_after_candidates + estimated_cost > disposable_cash:
             decisions.append(
@@ -372,4 +369,3 @@ def _str_pct(value: Decimal) -> str:
 
 def config_value(value: Decimal) -> Decimal:
     return value
-

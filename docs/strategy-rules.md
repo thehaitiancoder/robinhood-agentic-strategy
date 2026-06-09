@@ -40,7 +40,10 @@ Open or reopen only when:
 - The 10% cash buffer remains intact after the order.
 - The position would remain below 10% of portfolio value.
 - The symbol is active, tradable, and eligible for the intended order.
-- The start-price cap is satisfied once that rule is confirmed.
+
+There is no share-price cap for opening positions. A high-priced stock can still
+be opened with a `$1` fractional order if the account has deployable cash and
+the symbol is eligible.
 
 ## Profit Sell Rule
 
@@ -115,4 +118,3 @@ post_trade_position_value <= post_trade_portfolio_value * 0.10
 
 If this rule blocks a double-down, the system must log the block and ask for
 human review. It must not override the cap silently.
-

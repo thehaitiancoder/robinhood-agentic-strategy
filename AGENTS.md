@@ -14,7 +14,8 @@ original rules, and make rule violations visible before money is put at risk.
 - Double-down obligations have priority over opening or reopening positions.
 - Maintain a 10% cash buffer.
 - Keep each single position under 10% of total portfolio value.
-- Never silently override the start-price cap once it is confirmed.
+- Do not apply a share-price cap to new openings; available deployable cash is
+  the opening constraint.
 - Do not treat unsettled cash as spendable in a cash account.
 - Do not place real orders unless the active broker tool workflow allows it and
   the user has given any required explicit confirmation.

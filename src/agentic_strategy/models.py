@@ -15,7 +15,6 @@ class StrategyConfig:
     profit_take_pct: Decimal = Decimal("0.10")
     emergency_sell_min_return_pct: Decimal = Decimal("0.00")
     open_base_usd: Decimal = Decimal("1.00")
-    max_start_share_price_usd: Decimal | None = Decimal("20.00")
     max_new_open_candidates: int = 25
 
 
@@ -86,4 +85,3 @@ class Decision:
 class StrategyReport:
     summary: dict[str, Any]
     decisions: list[Decision]
-
