@@ -72,8 +72,10 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `docs/live-snapshot-workflow.md`: how to convert live Robinhood tool outputs
   into monitor snapshots without committing private account data.
 - `docs/monitor-usage.md`: how to run the read-only monitor.
-- `docs/live-state.md`: first-read local live-state handoff workflow.
-- `docs/order-ledger.md`: how to persist local order workflow events.
+- `docs/current-symbols.md`: post-market current-symbol cache and opening
+  candidate selector.
+- `docs/live-state.md`: deprecated legacy live-state handoff workflow.
+- `docs/order-ledger.md`: how to persist local audit ledger events.
 - `docs/shortcuts.md`: short commands the user can give future agents.
 - `docs/automation-monitor.md`: Codex automation schedule, alerts, and writable roots.
 - `docs/operating-model.md`: daily and intraday operating flow.
@@ -84,7 +86,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `docs/decisions.md`: confirmed strategy decisions.
 - `config/strategy.example.yaml`: first machine-readable rules draft.
 - `config/strategy.example.json`: config used by the Python monitor.
-- `data/README.md`: where universe, private live-state, ledger, fills, and runtime data live.
+- `data/README.md`: where universe, private caches, audit ledger, fills, and runtime data live.
 
 ## Source References
 

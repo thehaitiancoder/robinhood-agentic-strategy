@@ -66,10 +66,12 @@ def render_live_state(
     lines = [
         "# Live Strategy State",
         "",
+        "Deprecated legacy snapshot. Do not use this file as the source of truth for trading decisions.",
+        "",
         f"Last refreshed: {generated}",
         f"Account: {account_key}",
         "",
-        "Read this file first in a new agent thread. It is a local-only snapshot; refresh Robinhood before placing or cancelling real orders.",
+        "Refresh Robinhood before placing, reviewing, or cancelling real orders. Use `agentic_strategy.current_symbols` for the current post-market cache workflow.",
         "",
         "## Portfolio",
         "",
@@ -109,13 +111,12 @@ def render_live_state(
     lines.extend(
         [
             "",
-            "## Required Flow",
+            "## Deprecated Flow",
             "",
-            "1. Read this file.",
-            "2. Refresh Robinhood portfolio, positions, and orders.",
-            "3. Import current order history into `data/private/order-ledger.csv`.",
-            "4. Regenerate this file.",
-            "5. Only then evaluate sells, double-downs, emergency sells, or new opens.",
+            "1. Do not use this file to decide whether to trade.",
+            "2. Refresh Robinhood portfolio, positions, orders, and fills.",
+            "3. During market hours, evaluate directly from live broker data.",
+            "4. After close, generate `data/private/current-symbols.json` and `data/private/close-summary.md`.",
             "",
         ]
     )

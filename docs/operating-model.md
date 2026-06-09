@@ -14,13 +14,16 @@ Priority order:
 4. Review due double-downs.
 5. Enter emergency cash mode if double-down cash is short.
 6. Open or reopen new positions only if there are no due double-downs.
-7. Persist a decision log.
+7. Report decisions. Do not write local audit/cache files during market-hours
+   execution unless the user explicitly asks.
 
 ## Pre-Market
 
 - Pull account and portfolio state.
 - Pull open orders and recent fills.
-- Rebuild the strategy ledger from broker state plus local history.
+- Read Robinhood broker state directly for the plan.
+- Do not rebuild or consult the local audit ledger before market-hours
+  execution.
 - Refresh the tradable universe if a source is available.
 - Mark symbols that are halted, delisted, non-tradable, or not fractional
   eligible.
@@ -42,8 +45,10 @@ Stale data should block new buys and warn on sell decisions.
 ## After Close
 
 - Reconcile fills and cancellations.
-- Update lot counts and next trigger prices.
-- Update closed position records.
+- Import broker order history into the audit ledger.
+- Generate `data/private/current-symbols.json`.
+- Generate `data/private/close-summary.md`.
+- Treat `data/private/LIVE_STATE.md` as deprecated.
 - Recompute global base coverage.
 - Produce a daily report:
   - sold at target

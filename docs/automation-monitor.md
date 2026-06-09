@@ -94,6 +94,9 @@ Execution rules:
   place the market order immediately.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
+- For new openings, compare `data/universe.csv` against live Robinhood
+  positions and active orders. Do not use the local ledger as the owned-symbol
+  source during market hours.
 
 It emails `rdgustave@gmail.com` only for urgent execution outcomes:
 
@@ -121,8 +124,12 @@ should:
 - fetch portfolio, positions, open/recent orders, queued orders, filled orders,
   cancellations, rejections, buying power, and cash
 - import broker order history, fills, cancellations, rejections, and known
-  skipped-action reasons into `data/private/order-ledger.csv`
-- regenerate `data/private/LIVE_STATE.md`
+  skipped-action reasons into `data/private/order-ledger.csv`; this is audit
+  history only
+- generate `data/private/current-symbols.json`
+- generate `data/private/close-summary.md`
+- include up to 50 eligible open candidates by comparing `data/universe.csv`
+  against the broker-derived owned and active-order symbols
 - reconcile queued orders, fills, current positions, position sizes, buying
   power, and cash buffer status
 - produce a concise close summary in Codex
@@ -133,7 +140,7 @@ the close automation.
 
 The close automation does not email routine no-action summaries by default. It
 emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
-fails, local ledger/live-state update fails, or a high-priority next-session
+fails, local ledger/cache update fails, or a high-priority next-session
 candidate is detected after the market has closed.
 
 ## Live Source Of Truth
@@ -141,14 +148,15 @@ candidate is detected after the market has closed.
 Robinhood broker data is the live source of truth. The automation must inspect
 the Agentic Robinhood account, positions, quotes, orders, and fills directly.
 Do not use stale `data/private/order-ledger.csv` or
-`data/private/LIVE_STATE.md` data to decide whether to trade.
+`data/private/current-symbols.json` data to decide whether to trade.
 
-Do not import broker orders, regenerate `data/private/LIVE_STATE.md`, write the
-local ledger, or save raw broker payloads during market-hours execution unless
-the user explicitly asks for local persistence in that exact run. The 1 PM close
-automation is the standing exception and should update the local ledger and
-`LIVE_STATE.md`. Local audit writes must never delay a qualifying market-hours
-sell or double-down order.
+Do not import broker orders, write the local ledger, regenerate deprecated
+`data/private/LIVE_STATE.md`, or save raw broker payloads during market-hours
+execution unless the user explicitly asks for local persistence in that exact
+run. The 1 PM close automation is the standing exception and should update the
+audit ledger, `data/private/current-symbols.json`, and
+`data/private/close-summary.md`. Local audit/cache writes must never delay a
+qualifying market-hours sell or double-down order.
 
 ## Trading Boundary
 

@@ -38,12 +38,33 @@ The converter writes:
 - `data/runtime/latest/quotes.csv`
 - `data/runtime/latest/universe.validations.csv`
 
-`--position-state` is optional but needed for reliable double-down evaluation
-until a persistent ledger exists. Its columns are:
+`--position-state` is optional but needed for reliable offline double-down
+evaluation until broker-fill lot reconstruction is implemented. Its columns
+are:
 
 ```csv
 symbol,invested_cost,current_lot_index,next_trigger_price,next_lot_shares
 ```
+
+## Generate Post-Market Current Symbols
+
+After the close, generate a compact current-symbol cache for planning and fast
+universe exclusion:
+
+```bash
+PYTHONPATH=src python -m agentic_strategy.current_symbols \
+  --account-key Agentic \
+  --portfolio-json data/private/latest/portfolio.json \
+  --positions-json data/private/latest/positions.json \
+  --orders-json data/private/latest/orders.json \
+  --output-json data/private/current-symbols.json \
+  --summary-md data/private/close-summary.md \
+  --universe data/universe.csv \
+  --open-limit 50
+```
+
+Do not use this cache as market-hours trading truth. Refresh Robinhood before
+placing, reviewing, or cancelling orders.
 
 ## Refresh The Universe
 

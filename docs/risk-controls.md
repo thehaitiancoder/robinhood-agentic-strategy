@@ -28,17 +28,18 @@ These should warn but not necessarily block:
 - Position is near the 10% concentration cap.
 - The symbol had recent corporate action, reverse split, or delisting risk.
 - The symbol is thinly traded.
-- The strategy ledger differs from broker-reported quantity.
+- The post-market cache differs from broker-reported quantity.
 
 ## Circuit Breakers
 
 Pause new buying if:
 
 - More than a configured number of orders fail in a short period.
-- Broker account state cannot be reconciled.
+- Broker account state cannot be reconciled from Robinhood.
 - Buying power drops unexpectedly.
 - Quote data becomes unavailable for owned positions.
-- The ledger has missing lot history for an open position.
+- Broker fill history is insufficient to reconstruct lot state for an open
+  position.
 
 Pause all automation and ask for review if:
 
@@ -50,7 +51,7 @@ Pause all automation and ask for review if:
 
 ## Audit Requirements
 
-For every proposed order, store:
+During explicit audit/persistence windows, record:
 
 - Rule inputs.
 - Quote snapshot.

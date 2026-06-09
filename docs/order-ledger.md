@@ -1,7 +1,8 @@
 # Local Order Ledger
 
 The order ledger is an ignored, local-only CSV used to keep broker workflow
-events reconstructable while the strategy engine remains read-only.
+events reconstructable while the strategy engine remains read-only. It is an
+audit log, not the source of current ownership during market hours.
 
 Default path:
 
@@ -13,9 +14,10 @@ Do not commit this file. It may contain order ids, quantities, account labels,
 quote disclosures, and broker timestamps. Use a non-sensitive `--account-key`
 such as `Agentic` or a masked last-four label, not a full account number.
 
-## What To Record
+## What To Record After Close
 
-Record every broker workflow event:
+Record broker workflow events during explicit audit/persistence runs, especially
+the 1 PM close reconciliation:
 
 - review previews from `review_equity_order`
 - placed order snapshots from `place_equity_order`
@@ -30,9 +32,10 @@ duplicate order-state rows when an order was first recorded manually and later
 appears in broker order history with the same order id, state, timestamp, fill
 quantity, and average price.
 
-After importing current order history, regenerate `data/private/LIVE_STATE.md`
-with `agentic_strategy.live_state` so a new agent can see queued orders, active
-confirmed/unfilled orders, and positions immediately.
+After importing current order history during the close workflow, generate
+`data/private/current-symbols.json` and `data/private/close-summary.md` with
+`agentic_strategy.current_symbols` so a new agent can see the last post-market
+broker-backed cache quickly.
 
 The ledger writer uses a local lock file to serialize appends. Even so, agents
 should prefer one ledger import or record command per workflow step rather than
@@ -85,6 +88,20 @@ PYTHONPATH=src python3 -m agentic_strategy.ledger \
   --orders-json data/private/2026-06-09T093000Z/orders.json
 ```
 
+Generate the post-market current-symbol cache after broker payloads are saved:
+
+```bash
+PYTHONPATH=src python -m agentic_strategy.current_symbols \
+  --account-key Agentic \
+  --portfolio-json data/private/latest/portfolio.json \
+  --positions-json data/private/latest/positions.json \
+  --orders-json data/private/latest/orders.json \
+  --output-json data/private/current-symbols.json \
+  --summary-md data/private/close-summary.md \
+  --universe data/universe.csv \
+  --open-limit 50
+```
+
 Record a skipped action:
 
 ```bash
@@ -102,6 +119,7 @@ symbol, order details, broker status, broker timestamps, reason, alerts, quote
 disclosure, source, and source payload reference. Empty fields are expected
 when a value does not apply to the event.
 
-This is not yet a durable position ledger. Until a SQLite ledger exists, use
-the CSV together with Robinhood order history and the local fill/position-state
-snapshots described in `docs/live-snapshot-workflow.md`.
+This is not a durable position ledger and must not be used as the market-hours
+owned-symbol list. During market hours, use live Robinhood positions and active
+orders. For post-market planning, use the broker-derived cache described in
+`docs/current-symbols.md`.

@@ -6,15 +6,16 @@ Read this file before changing strategy logic, docs, data, or automation code.
 
 For live trading decisions, Robinhood broker data is the source of truth for
 account state, positions, buying power, orders, fills, and queued orders. Local
-files under `data/private/` are optional handoff and audit artifacts only; do
-not rely on stale local ledger or `LIVE_STATE.md` data to decide whether to buy
-or sell.
+files under `data/private/` are optional post-market cache and audit artifacts
+only; do not rely on stale local ledger, `current-symbols.json`, close summary,
+or `LIVE_STATE.md` data to decide whether to buy or sell.
 
-Do not import broker orders, regenerate `data/private/LIVE_STATE.md`, write the
-local ledger, or save private broker payloads unless the user explicitly asks
-for persistence in that run. The user may request this with shortcuts such as
-`SYNC STATE` or `FILL CHECK`. The 1:00 PM Pacific close automation is a
-standing exception for end-of-day persistence.
+Do not import broker orders, write the local ledger, regenerate deprecated
+`data/private/LIVE_STATE.md`, or save private broker payloads during market
+hours unless the user explicitly asks for persistence in that run. The user may
+request persistence with shortcuts such as `SYNC STATE` or `FILL CHECK`. The
+1:00 PM Pacific close automation is the standing exception for end-of-day
+persistence.
 
 When a qualifying sell or double-down candidate exists, execution speed is the
 priority. Do not delay a market order for local audit writes or broad reporting.
@@ -27,7 +28,7 @@ The user may use short commands. Treat them as exact workflow requests:
 - `SELL CHECK`: find 10% sell targets first.
 - `DD CHECK`: find due double-downs.
 - `CASH CHECK`: check deployable cash after all higher-priority obligations.
-- `SYNC STATE`: refresh Robinhood, import order history, and regenerate live state.
+- `SYNC STATE`: refresh Robinhood and update post-market cache/audit files.
 - `ORDER CHECK`: check queued/open/recent equity orders.
 - `FILL CHECK`: import order history and fills.
 - `OPEN CASH`: find eligible new openings after higher-priority checks pass.
@@ -54,9 +55,9 @@ unless the user explicitly authorizes openings in that run.
 `robinhood-strategy-1-pm-close-check` must not place buy or sell orders because
 the regular market is closed at 1:00 PM Pacific. Its job is to refresh
 Robinhood broker truth, import broker order history/fills/cancellations into
-the local ledger, regenerate `data/private/LIVE_STATE.md`, and produce a close
-summary. This 1 PM run is explicitly authorized to update repo-local private
-state.
+the audit ledger, update `data/private/current-symbols.json`, write
+`data/private/close-summary.md`, and produce a close summary. This 1 PM run is
+explicitly authorized to update repo-local private state.
 
 The active automation names are short (`RH MKT 30m` and `RH 1PM close`) because
 the saved automation name is a static scheduler label. The run thread title
@@ -130,20 +131,25 @@ silently deleting them.
 The local Python monitor is read-only. It evaluates snapshots and emits decision
 reports. It does not connect to Robinhood and it does not place orders.
 
-The project also has local ignored live-state tooling for explicit sync/audit
-requests:
+The project also has local ignored cache/audit tooling for explicit sync/audit
+requests and the 1 PM close automation:
 
 - `agentic_strategy.ledger`: records broker reviews, placed order snapshots,
   order-history imports, fills, cancellations, rejections, and skipped actions
-  under `data/private/order-ledger.csv`.
-- `agentic_strategy.live_state`: writes `data/private/LIVE_STATE.md`, the
-  central local handoff document for queued orders, positions, account size, and
-  ledger status.
+  under `data/private/order-ledger.csv`. This is audit history only, not the
+  market-hours ownership source.
+- `agentic_strategy.current_symbols`: writes
+  `data/private/current-symbols.json` and `data/private/close-summary.md` from
+  fresh broker payloads. This gives agents a compact post-market cache and a
+  fast universe exclusion set for planning; refresh Robinhood before trading.
+- `agentic_strategy.live_state`: deprecated legacy Markdown snapshot writer.
+  Do not use `data/private/LIVE_STATE.md` as the trading handoff surface.
 
-Do not commit private ledger data, live-state snapshots, raw broker payloads, or
-full account numbers. For cross-computer work, clone/pull the committed repo and
-refresh live broker state from Robinhood on that machine. Only run local
-persistence commands when the user asks for them.
+Do not commit private ledger data, current-symbol cache files, close summaries,
+legacy live-state snapshots, raw broker payloads, or full account numbers. For
+cross-computer work, clone/pull the committed repo and refresh live broker
+state from Robinhood on that machine. Only run local persistence commands when
+the user asks for them or during the 1 PM close automation.
 
 Run it with:
 
@@ -166,20 +172,21 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 
 During regular market hours, run the decision loop in this order:
 
-1. Reconcile account, positions, orders, and fills.
+1. Reconcile account, positions, orders, and fills from Robinhood.
 2. Quote owned positions.
 3. Identify full-position sells at or above 10% combined return.
 4. Identify due double-downs.
 5. If double-down cash is short, identify green positions to liquidate.
 6. Only if no double-down is due and the cash buffer is safe, open or reopen
    positions from the eligible universe.
-7. Report all candidates, actions, blocks, and stale data. Write local audit
-   data only when the user explicitly requested persistence in that run.
+7. Report all candidates, actions, blocks, and stale data. Write local audit or
+   cache data only when the user explicitly requested persistence in that run.
 
 ## Implementation Standard
 
 Prefer boring, auditable code. Live strategy state should be reconstructable
 from Robinhood broker data. The local ledger is optional audit support, not the
-source of truth. If broker data and local data disagree, use broker data for
-sell and double-down decisions, stop new buying if needed, and reconcile local
-state only when the user asks for persistence.
+source of truth. `current-symbols.json` is a post-market cache, not a trading
+authority. If broker data and local data disagree, use broker data for market
+decisions, stop new buying if needed, and reconcile local state only when the
+user asks for persistence or during the 1 PM close automation.
