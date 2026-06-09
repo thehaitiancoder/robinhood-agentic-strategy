@@ -1,0 +1,53 @@
+# Example strategy configuration. Treat this as a draft until the open
+# questions in docs/open-questions.md are resolved.
+
+account:
+  nickname: Agentic
+  account_number_mask: "****7701"
+  account_type_expected: cash
+
+portfolio_rules:
+  cash_buffer_pct: 0.10
+  max_single_position_pct: 0.10
+  profit_take_pct: 0.10
+  emergency_sell_min_return_pct: 0.00
+
+position_opening:
+  initial_base_usd: 1.00
+  base_increment_usd: 1.00
+  increment_base_after_full_universe_coverage: true
+  # Historical rule mentioned by user. Confirm whether it still applies when
+  # the universe is described as "every single stock available on Robinhood."
+  max_start_share_price_usd: 20.00
+  require_no_due_double_downs: true
+  require_cash_buffer_after_order: true
+
+lot_ladder:
+  lot_share_multiplier: 2.0
+  trigger_zones:
+    # Lot 1 is the initial open. These ranges describe the drop required from
+    # the previous trigger price before adding the next lot.
+    - next_lot_range: [2, 5]
+      drop_from_previous_trigger_pct: 0.10
+    - next_lot_range: [6, 10]
+      drop_from_previous_trigger_pct: 0.20
+    - next_lot_range: [11, 15]
+      drop_from_previous_trigger_pct: 0.40
+    - next_lot_range: [16, 16]
+      drop_from_previous_trigger_pct: 0.80
+
+execution:
+  regular_hours_only_for_fractional_market_orders: true
+  sell_scan_priority: highest
+  buy_scan_priority: after_sells_and_double_downs
+  require_order_review_before_place: true
+  default_buy_order_type: market
+  default_sell_order_type: market
+  prefer_limit_orders_when_whole_share_or_supported: true
+
+universe:
+  source: data/universe.csv
+  require_robinhood_tradable: true
+  require_fractional_eligible_for_dollar_orders: true
+  exclude_halted_or_delisted: true
+

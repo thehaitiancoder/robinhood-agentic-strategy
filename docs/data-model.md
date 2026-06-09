@@ -1,0 +1,88 @@
+# Data Model
+
+This model should be implemented in a durable store before scaling past small
+live tests. SQLite is enough for the first implementation.
+
+## Symbol
+
+| Field | Meaning |
+| --- | --- |
+| `symbol` | Ticker |
+| `name` | Company or fund name |
+| `asset_type` | Stock, ETF, etc. |
+| `tradable` | Broker says account can trade it |
+| `fractional_eligible` | Eligible for dollar-based fractional orders |
+| `active` | Not halted, delisted, or otherwise inactive |
+| `source` | Universe provider |
+| `updated_at` | Last validation time |
+
+## Position
+
+| Field | Meaning |
+| --- | --- |
+| `symbol` | Ticker |
+| `quantity` | Current shares |
+| `invested_cost` | Total cost basis tracked by strategy |
+| `average_cost` | Strategy average cost |
+| `market_value` | Current estimated value |
+| `return_pct` | Combined return |
+| `state` | Position lifecycle state |
+| `current_lot_index` | Highest lot reached |
+| `next_lot_shares` | Shares required for next double-down |
+| `next_trigger_price` | Price that triggers next double-down |
+| `target_sell_price` | Combined price needed for 10% return |
+
+## Lot
+
+| Field | Meaning |
+| --- | --- |
+| `symbol` | Ticker |
+| `lot_index` | 1 for initial lot, increasing after each add |
+| `shares` | Shares bought in this lot |
+| `trigger_price` | Price that caused this lot |
+| `fill_price` | Actual average fill price |
+| `cost` | Filled dollars |
+| `order_id` | Broker order id |
+| `filled_at` | Fill timestamp |
+
+## Decision Log
+
+Every loop should write a decision record whether or not an order is placed.
+
+| Field | Meaning |
+| --- | --- |
+| `timestamp` | Decision time |
+| `symbol` | Ticker, if applicable |
+| `decision_type` | sell, double_down, open, reopen, emergency_sell, block |
+| `inputs` | Quote, cash, position, and rule inputs |
+| `decision` | Proposed action or block |
+| `reason` | Human-readable reason |
+| `order_id` | Broker order id, if placed |
+| `agent_run_id` | Agent or job identifier |
+
+## Calculations
+
+Sell return:
+
+```text
+return_pct = ((bid_price * quantity) - invested_cost) / invested_cost
+```
+
+Target sell price:
+
+```text
+target_sell_price = (invested_cost * 1.10) / quantity
+```
+
+Cash floor:
+
+```text
+cash_floor = portfolio_value * 0.10
+```
+
+Position concentration:
+
+```text
+position_pct = position_market_value / portfolio_value
+```
+

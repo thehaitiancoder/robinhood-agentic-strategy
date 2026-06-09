@@ -1,0 +1,21 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Local runtime state
+data/raw/
+data/private/
+data/runtime/
+logs/
+
+# Dependencies and build outputs
+node_modules/
+.venv/
+dist/
+build/
+coverage/
+
+# Agent scratch files
+.codex/
+.agents/tmp/

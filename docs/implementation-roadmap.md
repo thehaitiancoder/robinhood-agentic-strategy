@@ -1,0 +1,74 @@
+# Implementation Roadmap
+
+## Phase 0: Documentation and Repo Setup
+
+- Capture the strategy rules.
+- Capture risk controls and operational priorities.
+- Create a first config draft.
+- Identify unresolved decisions.
+
+## Phase 1: Read-Only Monitor
+
+Build a read-only monitor that:
+
+- Pulls account, portfolio, positions, orders, and quotes.
+- Calculates sell-ready positions.
+- Calculates due double-downs.
+- Calculates eligible new opens.
+- Produces a report without placing orders.
+
+Success criteria:
+
+- Calculations match hand checks.
+- The ledger can be rebuilt from broker state and local fills.
+- The system can explain every candidate and every skipped action.
+
+## Phase 2: Paper or Simulated Execution
+
+Run the full decision loop without live orders:
+
+- Simulate fills from quote data.
+- Track cash buffer and settlement.
+- Stress test broad-universe scanning.
+- Confirm that sell monitoring gets priority over buy scanning.
+
+Success criteria:
+
+- No rule violations in simulation.
+- Emergency cash mode behaves predictably.
+- Missing/stale quote data blocks new risk.
+
+## Phase 3: Tiny Live Pilot
+
+Use the Agentic account with `$1` base positions:
+
+- Start with a small approved symbol subset.
+- Require explicit confirmation for every real order.
+- Compare broker fills against local ledger.
+- Validate fractional order behavior.
+
+Success criteria:
+
+- Orders reconcile cleanly.
+- Sell-ready detection is fast enough.
+- Double-down triggers match the spreadsheet rules.
+
+## Phase 4: Universe Expansion
+
+Expand symbol coverage in batches:
+
+- Add more eligible symbols.
+- Monitor quote and order throughput.
+- Tune batching and stale-data thresholds.
+- Keep confirmation and audit logs intact.
+
+## Phase 5: Production Controls
+
+Before larger base sizes:
+
+- Add persistent SQLite ledger.
+- Add automatic daily reports.
+- Add circuit breakers.
+- Add test coverage for every hard rule.
+- Add replay tests from historical quote/fill snapshots.
+
