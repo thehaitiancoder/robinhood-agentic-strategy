@@ -15,8 +15,9 @@ time. The visible per-run chat name must be set by renaming the thread at run
 startup.
 
 Purpose: run the strategy priority loop during regular market hours without the
-user needing to manually remember checks, and execute qualifying sell and
-double-down orders quickly when they are due.
+user needing to manually remember checks, execute qualifying sell and
+double-down orders quickly before the market closes, then run a 1:00 PM Pacific
+post-market reconciliation that updates local state.
 
 Schedule:
 
@@ -68,9 +69,10 @@ Do not add a second writable automation directory as another `cwd`. If an
 automation needs persistent memory outside the repo, configure that as an
 automation setting rather than another runnable workspace.
 
-## Execution And Email Behavior
+## Market Monitor Execution
 
-The automation checks in this order:
+`robinhood-strategy-market-monitor` runs during regular market hours and checks
+in this order:
 
 1. sell targets at or above 10% return
 2. due double-downs
@@ -78,7 +80,7 @@ The automation checks in this order:
 4. deployable idle cash for new openings
 5. routine queued orders, open positions, and stale-data status
 
-The user has standing-authorized the automations to place qualifying strategy
+The user has standing-authorized the market monitor to place qualifying strategy
 sell and double-down orders directly, subject to broker tool review and
 placement constraints. Speed is priority number one for executable sell and
 double-down candidates.
@@ -105,6 +107,35 @@ It does not email routine no-action checks or `OPEN CASH AVAILABLE` by default.
 New-opening buys remain report-only in automation runs unless the user
 explicitly authorizes new openings in that run.
 
+## 1 PM Close Reconciliation
+
+`robinhood-strategy-1-pm-close-check` runs at exactly 1:00 PM Pacific. At that
+time regular market hours are closed, so this automation must not place buy
+orders, sell orders, double-down orders, emergency-cash sells, or new-opening
+orders.
+
+The 1 PM close automation is the standing daily local persistence window. It
+should:
+
+- refresh Robinhood broker truth for the Agentic account
+- fetch portfolio, positions, open/recent orders, queued orders, filled orders,
+  cancellations, rejections, buying power, and cash
+- import broker order history, fills, cancellations, rejections, and known
+  skipped-action reasons into `data/private/order-ledger.csv`
+- regenerate `data/private/LIVE_STATE.md`
+- reconcile queued orders, fills, current positions, position sizes, buying
+  power, and cash buffer status
+- produce a concise close summary in Codex
+
+If a sell or double-down candidate is found at or after 1:00 PM Pacific, report
+it as a next-market-session candidate only. Do not review or place an order from
+the close automation.
+
+The close automation does not email routine no-action summaries by default. It
+emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
+fails, local ledger/live-state update fails, or a high-priority next-session
+candidate is detected after the market has closed.
+
 ## Live Source Of Truth
 
 Robinhood broker data is the live source of truth. The automation must inspect
@@ -113,18 +144,23 @@ Do not use stale `data/private/order-ledger.csv` or
 `data/private/LIVE_STATE.md` data to decide whether to trade.
 
 Do not import broker orders, regenerate `data/private/LIVE_STATE.md`, write the
-local ledger, or save raw broker payloads unless the user explicitly asks for
-local persistence in that exact run. Local audit writes must never delay a
-qualifying sell or double-down order.
+local ledger, or save raw broker payloads during market-hours execution unless
+the user explicitly asks for local persistence in that exact run. The 1 PM close
+automation is the standing exception and should update the local ledger and
+`LIVE_STATE.md`. Local audit writes must never delay a qualifying market-hours
+sell or double-down order.
 
 ## Trading Boundary
 
-The automation must not place real orders unless the active broker tool
-workflow allows it. The recurring automations have standing user authorization
-for qualifying sell and double-down orders, so they should not wait for chat
-confirmation when the broker review is clean. They must still obey broker/tool
+The market-hours automation must not place real orders unless the active broker
+tool workflow allows it. The market monitor has standing user authorization for
+qualifying sell and double-down orders, so it should not wait for chat
+confirmation when the broker review is clean. It must still obey broker/tool
 blocks and must not claim an order was placed unless the broker placement call
 actually succeeded.
+
+The 1 PM close automation must never place real orders. It is for summary and
+local persistence only.
 
 If persistence was explicitly requested and fails, report the exact path and
 error. Continue with live broker reporting, but clearly say the optional local

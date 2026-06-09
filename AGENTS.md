@@ -13,7 +13,8 @@ or sell.
 Do not import broker orders, regenerate `data/private/LIVE_STATE.md`, write the
 local ledger, or save private broker payloads unless the user explicitly asks
 for persistence in that run. The user may request this with shortcuts such as
-`SYNC STATE` or `FILL CHECK`.
+`SYNC STATE` or `FILL CHECK`. The 1:00 PM Pacific close automation is a
+standing exception for end-of-day persistence.
 
 When a qualifying sell or double-down candidate exists, execution speed is the
 priority. Do not delay a market order for local audit writes or broad reporting.
@@ -41,14 +42,21 @@ The recurring Codex automations are:
 
 - `robinhood-strategy-market-monitor`: weekday 30-minute checks from 6:00 AM
   through 12:30 PM Pacific.
-- `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific close
-  check.
+- `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific
+  post-market reconciliation and summary.
 
-They are pre-authorized to place qualifying strategy sell and double-down
-orders directly when the broker tool workflow allows placement. They email
-`rdgustave@gmail.com` after urgent sell or double-down orders are executed or
-blocked. They do not place new-opening buys unless the user explicitly
-authorizes openings in that run.
+`robinhood-strategy-market-monitor` is pre-authorized to place qualifying
+strategy sell and double-down orders directly when the broker tool workflow
+allows placement. It emails `rdgustave@gmail.com` after urgent sell or
+double-down orders are executed or blocked. It does not place new-opening buys
+unless the user explicitly authorizes openings in that run.
+
+`robinhood-strategy-1-pm-close-check` must not place buy or sell orders because
+the regular market is closed at 1:00 PM Pacific. Its job is to refresh
+Robinhood broker truth, import broker order history/fills/cancellations into
+the local ledger, regenerate `data/private/LIVE_STATE.md`, and produce a close
+summary. This 1 PM run is explicitly authorized to update repo-local private
+state.
 
 The active automation names are short (`RH MKT 30m` and `RH 1PM close`) because
 the saved automation name is a static scheduler label. The run thread title
@@ -83,21 +91,25 @@ original rules, and make rule violations visible before money is put at risk.
   fractionally.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
-- For automation sell and double-down checks, process one executable candidate
-  at a time: refresh the quote, review if the broker tool requires it, and
-  place immediately if still qualified and not blocked.
+- For market-hours automation sell and double-down checks, process one
+  executable candidate at a time: refresh the quote, review if the broker tool
+  requires it, and place immediately if still qualified and not blocked. The
+  1:00 PM Pacific close automation is post-market only and must not place
+  orders.
 - Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
   lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
   lot's share count.
 - Do not place real orders unless the active broker tool workflow allows it,
-  including any runtime review requirement. The recurring automations have
-  standing user authorization for qualifying sell and double-down orders, so do
-  not wait for chat confirmation when the broker review is clean.
+  including any runtime review requirement. The market-hours monitor has
+  standing user authorization for qualifying sell and double-down orders, so it
+  should not wait for chat confirmation when the broker review is clean. The
+  1:00 PM Pacific close automation must not place orders.
 - When emergency cash is needed, rank green positions below the 10% target by
   highest positive return first.
 - When local persistence is explicitly requested, record why every skipped
-  action was skipped. Otherwise, do not delay sell or double-down execution for
-  local writes.
+  action was skipped. The 1:00 PM Pacific close automation is the standing
+  daily persistence window. Otherwise, do not delay market-hours sell or
+  double-down execution for local writes.
 
 ## Current Broker Tooling Assumptions
 
