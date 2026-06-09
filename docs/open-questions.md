@@ -56,8 +56,17 @@ positions first, even if they have not reached the full 10% profit target.
 Rejected ranking factors for this rule: largest market value, distance from 10%,
 and oldest position.
 
-## Taxes and Wash Sales
+## Resolved: Taxes and Wash Sales
 
-The strategy may create many short-term trades and possible wash-sale effects.
-This project should track tax lots and realized gains/losses for reporting, but
-it is not a tax advisor.
+Decision: do not apply wash-sale cooldowns, tax-aware reopening blocks, or
+tax-adjusted cost basis to strategy decisions.
+
+Reason: the strategy needs the real trade fill price and actual dollars invested
+to remain visible. A broker-side wash-sale cost-basis adjustment can hide the
+real buy price and distort the ladder. The operating assumption is that
+Robinhood tax reporting is handled separately from this strategy ledger, so this
+system should not change trading behavior for tax reasons.
+
+Operational implication: the strategy ledger may keep fills and realized
+gain/loss records for audit and reporting, but tax lots and wash-sale rules must
+not block openings, reopenings, double-downs, or target sells.

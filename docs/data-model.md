@@ -22,7 +22,7 @@ live tests. SQLite is enough for the first implementation.
 | --- | --- |
 | `symbol` | Ticker |
 | `quantity` | Current shares |
-| `invested_cost` | Total cost basis tracked by strategy |
+| `invested_cost` | Actual dollars invested from fills, not tax-adjusted wash-sale basis |
 | `average_cost` | Strategy average cost |
 | `market_value` | Current estimated value |
 | `return_pct` | Combined return |
@@ -44,6 +44,13 @@ live tests. SQLite is enough for the first implementation.
 | `cost` | Filled dollars |
 | `order_id` | Broker order id |
 | `filled_at` | Fill timestamp |
+
+## Tax Handling
+
+The strategy does not use wash-sale rules or tax-adjusted cost basis for trade
+decisions. Store actual fills and realized gain/loss for audit purposes, but do
+not apply a 31-day wash-sale cooldown and do not block openings, reopenings,
+double-downs, or target sells for tax reasons.
 
 ## Decision Log
 
@@ -85,4 +92,3 @@ Position concentration:
 ```text
 position_pct = position_market_value / portfolio_value
 ```
-

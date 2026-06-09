@@ -17,6 +17,8 @@ original rules, and make rule violations visible before money is put at risk.
 - Do not apply a share-price cap to new openings; available deployable cash is
   the opening constraint.
 - Do not treat unsettled cash as spendable in a cash account.
+- Do not add wash-sale cooldowns or tax-aware trading blocks; strategy decisions
+  use actual fill prices and actual dollars invested.
 - Do not place real orders unless the active broker tool workflow allows it and
   the user has given any required explicit confirmation.
 - When emergency cash is needed, rank green positions below the 10% target by

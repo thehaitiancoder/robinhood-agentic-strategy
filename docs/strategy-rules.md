@@ -45,6 +45,10 @@ There is no share-price cap for opening positions. A high-priced stock can still
 be opened with a `$1` fractional order if the account has deployable cash and
 the symbol is eligible.
 
+There is also no wash-sale or tax cooldown for openings or reopenings. Strategy
+decisions use actual fill prices and actual dollars invested, not tax-adjusted
+broker cost basis.
+
 ## Profit Sell Rule
 
 Sell the full combined position whenever the position reaches 10% profit.
