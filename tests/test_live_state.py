@@ -15,7 +15,16 @@ class LiveStateTest(unittest.TestCase):
             with ledger_path.open("w", newline="") as handle:
                 writer = csv.DictWriter(
                     handle,
-                    fieldnames=["recorded_at", "event_type", "symbol"],
+                    fieldnames=[
+                        "recorded_at",
+                        "event_type",
+                        "symbol",
+                        "side",
+                        "order_type",
+                        "dollar_amount",
+                        "reason",
+                        "payload_ref",
+                    ],
                 )
                 writer.writeheader()
                 writer.writerow(
@@ -30,6 +39,38 @@ class LiveStateTest(unittest.TestCase):
                         "recorded_at": "2026-06-09T05:31:00Z",
                         "event_type": "skip",
                         "symbol": "AAPL",
+                    }
+                )
+                writer.writerow(
+                    {
+                        "recorded_at": "2026-06-09T05:32:00Z",
+                        "event_type": "review",
+                        "symbol": "GM",
+                        "side": "buy",
+                        "order_type": "market",
+                        "dollar_amount": "1",
+                    }
+                )
+                writer.writerow(
+                    {
+                        "recorded_at": "2026-06-09T05:33:00Z",
+                        "event_type": "order",
+                        "symbol": "GM",
+                        "side": "buy",
+                        "order_type": "market",
+                        "dollar_amount": "1",
+                    }
+                )
+                writer.writerow(
+                    {
+                        "recorded_at": "2026-06-09T05:34:00Z",
+                        "event_type": "review",
+                        "symbol": "CL",
+                        "side": "buy",
+                        "order_type": "market",
+                        "dollar_amount": "1",
+                        "reason": "broker review for next-90-open batch",
+                        "payload_ref": "data/private/latest/next-90-open-review.md",
                     }
                 )
 
@@ -83,9 +124,13 @@ class LiveStateTest(unittest.TestCase):
             self.assertIn("## Queued Orders (2)", markdown)
             self.assertIn("| AAPL | buy | market | queued | $1 | 0.00333 | 0 |", markdown)
             self.assertIn("| CPT | buy | market | queued | $1 | 0.00885 | 0 |", markdown)
+            self.assertIn("## Reviewed Opens Pending Confirmation (1)", markdown)
+            self.assertIn("| CL | buy | market | $1 | 2026-06-09T05:34:00Z |", markdown)
+            self.assertNotIn("| GM | buy | market | $1 | 2026-06-09T05:32:00Z |", markdown)
             self.assertIn("No open equity positions.", markdown)
-            self.assertIn("- Total rows: 2", markdown)
-            self.assertIn("- order: 1", markdown)
+            self.assertIn("- Total rows: 5", markdown)
+            self.assertIn("- order: 2", markdown)
+            self.assertIn("- review: 2", markdown)
             self.assertIn("- skip: 1", markdown)
 
 

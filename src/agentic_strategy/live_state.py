@@ -52,6 +52,7 @@ def render_live_state(
     queued_orders = [order for order in orders if _text(order.get("state")).lower() == "queued"]
     positions = _open_positions(positions_payload)
     ledger_rows = _ledger_rows(ledger_path)
+    pending_reviewed_opens = _pending_reviewed_opens(ledger_rows, queued_orders)
 
     lines = [
         "# Live Strategy State",
@@ -71,6 +72,14 @@ def render_live_state(
         "",
     ]
     lines.extend(_orders_table(queued_orders))
+    lines.extend(
+        [
+            "",
+            f"## Reviewed Opens Pending Confirmation ({len(pending_reviewed_opens)})",
+            "",
+        ]
+    )
+    lines.extend(_pending_reviews_table(pending_reviewed_opens))
     lines.extend(["", f"## Open Equity Positions ({len(positions)})", ""])
     lines.extend(_positions_table(positions))
     lines.extend(["", "## Ledger", ""])
@@ -169,6 +178,33 @@ def _positions_table(positions: list[dict[str, Any]]) -> list[str]:
     return rows
 
 
+def _pending_reviews_table(rows: list[dict[str, str]]) -> list[str]:
+    if not rows:
+        return ["No reviewed openings are waiting for user confirmation."]
+    table = [
+        "| Symbol | Side | Type | Amount | Reviewed | Reason | Payload Ref |",
+        "| --- | --- | --- | ---: | --- | --- | --- |",
+    ]
+    for row in rows:
+        amount = row.get("dollar_amount")
+        table.append(
+            "| "
+            + " | ".join(
+                [
+                    row.get("symbol", ""),
+                    row.get("side", ""),
+                    row.get("order_type", ""),
+                    f"${_money(amount)}" if _text(amount) else "",
+                    row.get("recorded_at", ""),
+                    row.get("reason", ""),
+                    row.get("payload_ref", ""),
+                ]
+            )
+            + " |"
+        )
+    return table
+
+
 def _ledger_summary(rows: list[dict[str, str]]) -> list[str]:
     if not rows:
         return ["No local ledger rows recorded yet."]
@@ -185,6 +221,65 @@ def _ledger_summary(rows: list[dict[str, str]]) -> list[str]:
     for event_type in sorted(counts):
         summary.append(f"- {event_type}: {counts[event_type]}")
     return summary
+
+
+def _pending_reviewed_opens(
+    ledger_rows: list[dict[str, str]],
+    queued_orders: list[dict[str, Any]],
+) -> list[dict[str, str]]:
+    queued_keys = {_order_match_key(order) for order in queued_orders}
+    order_rows = [row for row in ledger_rows if row.get("event_type") == "order"]
+    pending_by_key: dict[tuple[str, str, str, str], dict[str, str]] = {}
+
+    for row in ledger_rows:
+        if not _is_opening_review(row):
+            continue
+        key = _ledger_match_key(row)
+        if key in queued_keys:
+            continue
+        reviewed_at = row.get("recorded_at", "")
+        if any(
+            _ledger_match_key(order_row) == key
+            and order_row.get("recorded_at", "") >= reviewed_at
+            for order_row in order_rows
+        ):
+            continue
+        existing = pending_by_key.get(key)
+        if existing is None or row.get("recorded_at", "") >= existing.get("recorded_at", ""):
+            pending_by_key[key] = row
+
+    return sorted(
+        pending_by_key.values(),
+        key=lambda row: (row.get("recorded_at", ""), row.get("symbol", "")),
+    )
+
+
+def _is_opening_review(row: dict[str, str]) -> bool:
+    return (
+        row.get("event_type") == "review"
+        and row.get("side") == "buy"
+        and row.get("order_type") == "market"
+        and _text(row.get("symbol")) != ""
+        and _text(row.get("dollar_amount")) != ""
+    )
+
+
+def _ledger_match_key(row: dict[str, str]) -> tuple[str, str, str, str]:
+    return (
+        _text(row.get("symbol")).upper(),
+        _text(row.get("side")).lower(),
+        _text(row.get("order_type")).lower(),
+        _amount(row.get("dollar_amount")),
+    )
+
+
+def _order_match_key(order: dict[str, Any]) -> tuple[str, str, str, str]:
+    return (
+        _text(order.get("symbol")).upper(),
+        _text(order.get("side")).lower(),
+        _text(order.get("type")).lower(),
+        _amount((order.get("dollar_based_amount") or {}).get("amount")),
+    )
 
 
 def _open_positions(payload: dict[str, Any]) -> list[dict[str, Any]]:
