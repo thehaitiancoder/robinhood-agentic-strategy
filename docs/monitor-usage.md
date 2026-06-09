@@ -23,6 +23,10 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 
 ## Inputs
 
+For live account checks, use
+[`docs/live-snapshot-workflow.md`](live-snapshot-workflow.md) to convert saved
+Robinhood tool payloads into these files under ignored `data/runtime/`.
+
 `portfolio.json`:
 
 ```json

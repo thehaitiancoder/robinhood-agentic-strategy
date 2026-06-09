@@ -1,1 +1,2 @@
 symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
+AAPL,Apple Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-09

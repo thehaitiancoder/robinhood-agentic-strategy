@@ -16,6 +16,7 @@ Status: started.
 The repo now includes a local read-only monitor that:
 
 - Pulls portfolio, position, quote, and universe data from snapshot files.
+- Converts saved Robinhood tool payloads into monitor-ready snapshots.
 - Calculates sell-ready positions.
 - Calculates due double-downs.
 - Blocks new openings when any double-down is due.
@@ -25,7 +26,6 @@ The repo now includes a local read-only monitor that:
 
 Remaining work:
 
-- Add a Robinhood snapshot exporter through the active agent tools.
 - Add quote staleness thresholds.
 - Add persistent ledger reconstruction from fills.
 - Add broader tests against spreadsheet-derived examples.
