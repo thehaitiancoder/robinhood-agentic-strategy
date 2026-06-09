@@ -91,17 +91,19 @@ The next lot buys:
 lot_n_shares = lot_(n-1)_shares * 2
 ```
 
-The trigger price uses the spreadsheet-style drop zones:
+The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
 
-| Next lot range | Drop from previous trigger |
-| --- | ---: |
-| 2-5 | 10% |
-| 6-10 | 20% |
-| 11-15 | 40% |
-| 16 | 80% |
+| Lot range | Drop from previous trigger | Number of buys |
+| --- | ---: | ---: |
+| 1 | 0% | base open |
+| 2-5 | 10% | 4 |
+| 6-10 | 20% | 5 |
+| 11-15 | 40% | 5 |
+| 16+ | 80% | 5-buy zones, repeated |
 
-The exact ranges should be validated against the original spreadsheet before
-production code hard-codes them.
+The 80% zone can continue indefinitely in theory. In practice, the sequence
+should stop when the stock is sold, delisted, blocked by the 10% position cap,
+or cash rules prevent another double-down.
 
 ## Cash Priority
 

@@ -24,17 +24,23 @@ position_opening:
 
 lot_ladder:
   lot_share_multiplier: 2.0
+  repeat_final_drop_zone_indefinitely: true
   trigger_zones:
     # Lot 1 is the initial open. These ranges describe the drop required from
     # the previous trigger price before adding the next lot.
     - next_lot_range: [2, 5]
       drop_from_previous_trigger_pct: 0.10
+      buys_in_zone: 4
     - next_lot_range: [6, 10]
       drop_from_previous_trigger_pct: 0.20
+      buys_in_zone: 5
     - next_lot_range: [11, 15]
       drop_from_previous_trigger_pct: 0.40
-    - next_lot_range: [16, 16]
+      buys_in_zone: 5
+    - next_lot_range: [16, null]
       drop_from_previous_trigger_pct: 0.80
+      buys_in_zone: 5
+      repeat_indefinitely: true
 
 execution:
   regular_hours_only_for_fractional_market_orders: true

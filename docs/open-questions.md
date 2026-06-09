@@ -29,11 +29,23 @@ Options:
 - Third-party market data provider, then validate each symbol with Robinhood.
 - Broker/API endpoint if later available.
 
-## Exact Lot Ladder
+## Resolved: Exact Lot Ladder
 
-The screenshot shows drop zones of 10%, then 20%, then 40%, and a final larger
-drop. Confirm exact lot ranges and whether the final 80% step is still part of
-the production strategy.
+Decision: the base buy is lot 1. After that, each new lot doubles the previous
+lot's share count and uses a drop trigger from the previous trigger price.
+
+Lot trigger zones:
+
+- Lots 2-5: 10% drop, 4 buys total after the base.
+- Lots 6-10: 20% drop, 5 buys total.
+- Lots 11-15: 40% drop, 5 buys total.
+- Lots 16 and beyond: 80% drop, continuing in 5-buy 80% zones as long as the
+  stock remains tradable and cash/risk rules allow it.
+
+Reason: the ladder can theoretically continue indefinitely because each 80%
+drop moves the next trigger price closer to zero. In practice, a stock will
+likely be delisted, hit the 10% profit sell rule, hit the 10% position cap, or
+run into cash constraints long before many 80% drops occur.
 
 ## Resolved: Target Sell Execution
 

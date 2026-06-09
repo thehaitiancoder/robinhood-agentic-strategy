@@ -29,7 +29,7 @@ live tests. SQLite is enough for the first implementation.
 | `state` | Position lifecycle state |
 | `current_lot_index` | Highest lot reached |
 | `next_lot_shares` | Shares required for next double-down |
-| `next_trigger_price` | Price that triggers next double-down |
+| `next_trigger_price` | Price that triggers next double-down from the ladder |
 | `target_sell_price` | Combined price needed for 10% return |
 
 ## Lot
@@ -39,7 +39,7 @@ live tests. SQLite is enough for the first implementation.
 | `symbol` | Ticker |
 | `lot_index` | 1 for initial lot, increasing after each add |
 | `shares` | Shares bought in this lot |
-| `trigger_price` | Price that caused this lot |
+| `trigger_price` | Ladder trigger price for this lot |
 | `fill_price` | Actual average fill price |
 | `cost` | Filled dollars |
 | `order_id` | Broker order id |

@@ -23,6 +23,9 @@ original rules, and make rule violations visible before money is put at risk.
   exits or a mixed market/limit executor.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
+- Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
+  lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
+  lot's share count.
 - Do not place real orders unless the active broker tool workflow allows it,
   including any runtime review or explicit confirmation requirement.
 - When emergency cash is needed, rank green positions below the 10% target by
