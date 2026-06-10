@@ -20,6 +20,21 @@ persistence.
 When a qualifying sell or double-down candidate exists, execution speed is the
 priority. Do not delay a market order for local audit writes or broad reporting.
 
+If Robinhood or the exchange shows a symbol is halted, paused, frozen, or not
+currently accepting orders, treat that symbol as temporarily broker-blocked.
+Do not place market buy, sell, reopen, or double-down orders while it is
+halted. Do not use the frozen displayed price as normal quote authority. If
+the halted symbol would otherwise be a qualifying sell or double-down, report
+the action as blocked by the halt and email the user with the appropriate
+blocked sell/DD subject. If it is not an executable candidate, skip it with the
+halt reason and re-check after trading resumes.
+
+When the user says they canceled a pending order, do not rely on chat or local
+state alone. Refresh Robinhood orders first. If the broker shows the order is
+canceled, rejected, or otherwise no longer active, remove it from active-order
+blocking logic for DD/opening decisions. The 1 PM close automation should
+import the cancellation into the audit ledger.
+
 If a market-hours run cannot exhaustively scan the full live position basket,
 it must still validate top downside holdings directly before reporting that no
 double-down is due. Any owned symbol exposed by the top downside shortlist, a
@@ -196,6 +211,8 @@ original rules, and make rule violations visible before money is put at risk.
   standing user authorization for qualifying sell and double-down orders, so it
   should not wait for chat confirmation when the broker review is clean. The
   1:00 PM Pacific close automation must not place orders.
+- Do not place orders for halted/paused/frozen symbols. A halt is a temporary
+  broker/market block; re-quote and re-evaluate only after trading resumes.
 - When emergency cash is needed, rank green positions below the 10% target by
   highest positive return first.
 - When local persistence is explicitly requested, record why every skipped

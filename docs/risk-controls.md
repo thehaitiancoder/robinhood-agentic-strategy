@@ -12,8 +12,10 @@ These conditions must block the proposed action:
 - Single position would exceed 10% of portfolio value.
 - Any owned symbol is due for double-down and the proposed action is a new open
   or reopen.
-- Symbol is halted, delisted, inactive, not tradable, or not eligible for the
-  intended order.
+- Symbol is halted, paused for volatility, frozen, delisted, inactive, not
+  tradable, or not eligible for the intended order. For temporary halts, do not
+  use the frozen displayed price as quote authority; re-quote and re-evaluate
+  after trading resumes.
 - Quote is stale or missing for a trade decision.
 - Cash account sale proceeds are unsettled and therefore not spendable.
 - Broker review returns an alert that invalidates the trade.
@@ -46,6 +48,9 @@ Pause all automation and ask for review if:
 - A real order appears in broker history that the strategy did not create or
   import.
 - A sell-ready position cannot be sold due to broker restrictions.
+- A sell-ready or DD-ready position is halted. Report the blocked action and
+  re-check after trading resumes; do not substitute a different action just
+  because the halted symbol cannot trade.
 - A required double-down is blocked by the 10% concentration cap.
 - The account type changes from cash to margin or vice versa.
 

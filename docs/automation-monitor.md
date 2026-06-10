@@ -179,6 +179,19 @@ Execution rules:
 - If the broker tool requires review, run the review immediately.
 - If the review has no blocking alerts and the refreshed price still qualifies,
   place the market order immediately.
+- If Robinhood or the exchange shows a symbol is halted, paused, frozen, in a
+  volatility pause, or otherwise not currently accepting orders, do not place a
+  market order for that symbol. Treat the frozen displayed quote as stale for
+  execution. If the symbol would otherwise qualify for a sell or DD, report the
+  trade as broker-blocked by the halt, email the matching blocked sell/DD
+  subject, and re-check after trading resumes. If it is not an executable
+  candidate, skip it with the halt reason and continue the priority loop.
+- If the user says they canceled a pending order, refresh live Robinhood order
+  state before using that symbol in active-order blocking logic. A broker
+  state of canceled, rejected, failed, expired, or any other non-active terminal
+  state no longer blocks DD/opening decisions. A still-confirmed, queued, new,
+  unconfirmed, or partially-filled order remains active and blocks another buy
+  for the same symbol.
 - For double-downs, review and place the order with the broker `quantity` set
   to the exact `next_lot_shares` value from the ladder. Do not place DDs with a
   rounded `dollar_amount`; dollar values are estimates for cash and risk checks
@@ -266,6 +279,8 @@ should:
   against the broker-derived owned and active-order symbols
 - reconcile queued orders, fills, current positions, position sizes, buying
   power, and cash buffer status
+- import user- or broker-canceled pending orders as cancellations rather than
+  leaving them as active blockers
 - if full position coverage is incomplete, still validate the top downside
   holdings as next-session DD watch candidates by reconstructing lot state and
   comparing current ask to `next_trigger_price`; report only, do not place

@@ -41,6 +41,8 @@ Open or reopen only when:
 - The 10% cash buffer remains intact after the order.
 - The position would remain below 10% of portfolio value.
 - The symbol is active, tradable, and eligible for the intended order.
+- The symbol is not halted, paused, frozen, or otherwise blocked from current
+  order execution.
 
 There is no share-price cap for opening positions. A high-priced stock can still
 be opened with a `$1` fractional order if the account has deployable cash and
@@ -100,6 +102,11 @@ the executable return for thin or volatile names.
 Strategy orders use immediate market execution when criteria are met. This
 applies to openings, reopenings, double-downs, target sells, and emergency green
 sells.
+
+Do not place market orders while a symbol is halted, paused for volatility,
+frozen, or not accepting orders. Treat the displayed halt price as stale. After
+trading resumes, refresh Robinhood quote/order state and re-run the normal
+sell/DD/opening checks from live broker data.
 
 Do not use GTC limit orders or broker-native persistent target exits as the
 strategy design. The execution system should monitor rules and execute market
