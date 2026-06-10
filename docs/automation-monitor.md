@@ -72,6 +72,15 @@ Codex manual documents custom cron cadence but does not document a minimum
 interval. Until retested, use the half-hour entry plus in-thread +15 recheck
 design for practical 15-minute market coverage.
 
+Observed late-start behavior: on 2026-06-10, after the market-slot prompts had
+been edited after their scheduled times, `06-00-pt-rh-mkt` launched again at
+about 13:00 PT beside the close automation. The run obeyed the cutoff and
+placed no orders, but it created a confusing extra thread. To contain this,
+every market-hours prompt must begin with a hard local-Pacific time gate before
+reading docs or calling Robinhood. The valid window is the entry slot through
+25 minutes after the slot, never at or after 13:00 PT. Outside that window,
+write only a concise late-start skip to automation memory if possible and stop.
+
 The automation scheduler currently stores and honors the RRULE `BYHOUR` values
 as UTC, even though the UI displays local time. Do not configure these as
 Pacific-local `BYHOUR=6,7,8,9,10,11,12,13`; that caused late-night Pacific
@@ -166,6 +175,12 @@ double-down candidates.
 
 Execution rules:
 
+- First action: check current Pacific time before reading docs, querying
+  Robinhood, or writing repo state. If the run started outside its slot-valid
+  window or at/after 13:00 PT, stop immediately with a late-start skip. Do not
+  perform broker scans, order reviews, order placement, sold-today updates,
+  shortlist updates, or other market-hour persistence from a late-started
+  market slot.
 - On the first market-hours run of the Pacific trading day, reset
   `data/private/sold-today.md`. If the helper sees a stale date, it resets the
   file automatically.

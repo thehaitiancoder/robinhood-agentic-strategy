@@ -138,6 +138,13 @@ double-down orders are executed or blocked, including blocked DD scans. They do
 not place new-opening buys unless the user explicitly authorizes openings in
 that run.
 
+Every market-hours automation prompt must start with a hard time gate before
+reading docs or calling Robinhood. If a fixed-slot run starts outside its
+slot-valid window, or at/after 13:00 Pacific, it must write only a concise
+late-start skip if possible and stop without broker queries, order reviews, or
+local trading-state writes. This prevents Codex missed-run catch-up from
+launching an old morning market check beside the 13:00 close automation.
+
 `robinhood-strategy-1-pm-close-check` must not place buy or sell orders because
 the regular market is closed at 1:00 PM Pacific. Its job is to refresh
 Robinhood broker truth, import broker order history/fills/cancellations into
