@@ -2,50 +2,52 @@
 
 Automation ids:
 
-- Market-hours slots:
+- Market-hours half-hour entry slots:
   - `06-00-pt-rh-mkt`
-  - `06-15-pt-rh-mkt`
   - `06-30-pt-rh-mkt`
-  - `06-45-pt-rh-mkt`
   - `07-00-pt-rh-mkt`
-  - `07-15-pt-rh-mkt`
   - `07-30-pt-rh-mkt`
-  - `07-45-pt-rh-mkt`
   - `08-00-pt-rh-mkt`
-  - `08-15-pt-rh-mkt`
   - `08-30-pt-rh-mkt`
-  - `08-45-pt-rh-mkt`
   - `09-00-pt-rh-mkt`
-  - `09-15-pt-rh-mkt`
   - `09-30-pt-rh-mkt`
-  - `09-45-pt-rh-mkt`
   - `10-00-pt-rh-mkt`
-  - `10-15-pt-rh-mkt`
   - `10-30-pt-rh-mkt`
-  - `10-45-pt-rh-mkt`
   - `11-00-pt-rh-mkt`
-  - `11-15-pt-rh-mkt`
   - `11-30-pt-rh-mkt`
-  - `11-45-pt-rh-mkt`
   - `12-00-pt-rh-mkt`
-  - `12-15-pt-rh-mkt`
   - `12-30-pt-rh-mkt`
+- Paused standalone quarter-hour slots:
+  - `06-15-pt-rh-mkt`
+  - `06-45-pt-rh-mkt`
+  - `07-15-pt-rh-mkt`
+  - `07-45-pt-rh-mkt`
+  - `08-15-pt-rh-mkt`
+  - `08-45-pt-rh-mkt`
+  - `09-15-pt-rh-mkt`
+  - `09-45-pt-rh-mkt`
+  - `10-15-pt-rh-mkt`
+  - `10-45-pt-rh-mkt`
+  - `11-15-pt-rh-mkt`
+  - `11-45-pt-rh-mkt`
+  - `12-15-pt-rh-mkt`
   - `12-45-pt-rh-mkt`
 - `robinhood-strategy-1-pm-close-check`
 - `robinhood-strategy-market-monitor` is a paused legacy combined monitor.
 
 Visible automation names:
 
-- Market-hours slots use `HH:mm PT - RH MKT`, for example
+- Market-hours entry slots use `HH:mm PT - RH MKT`, for example
   `09:00 PT - RH MKT`.
 - `13:00 PT - RH CLOSE`
 - The paused legacy combined monitor is named `RH MKT 30m PAUSED`.
 
 These names are static scheduler labels. They cannot include the current run
 date, and dynamic thread-title tools have not been reliably available inside
-automation runs. The market monitor is therefore split into fixed time-slot
-automations so the visible mobile chat-list title starts with the slot time
-even when runtime thread renaming is unavailable.
+automation runs. The market monitor uses fixed half-hour entry slots so the
+visible mobile chat-list title starts with the entry time even when runtime
+thread renaming is unavailable. The +15 minute recheck happens inside the
+preceding half-hour thread.
 
 Purpose: run the strategy priority loop during regular market hours without the
 user needing to manually remember checks, execute qualifying sell and
@@ -54,9 +56,21 @@ post-market reconciliation that updates local state.
 
 Schedule:
 
-- Market-hours slot automations: weekdays every 15 minutes from 6:00 AM
-  through 12:45 PM Pacific.
+- Market-hours entry automations: weekdays every 30 minutes from 6:00 AM
+  through 12:30 PM Pacific.
+- Each entry automation performs its normal priority loop first. If no
+  executable sell/DD remains and the +15 minute mark for that slot is still in
+  the future, it waits in the same thread and runs a fast +15 minute sell/DD
+  recheck. Example: `10:30 PT - RH MKT` performs the 10:30 check, then covers
+  the 10:45 recheck inside the same thread.
 - `robinhood-strategy-1-pm-close-check`: weekdays at exactly 1:00 PM Pacific.
+
+Observed scheduler limitation: on 2026-06-10 the newly-created standalone
+quarter-hour jobs `10-45-pt-rh-mkt` and `11-15-pt-rh-mkt` did not run, while
+`11-00-pt-rh-mkt`, `11-30-pt-rh-mkt`, and the older 00/30 jobs did run. The
+Codex manual documents custom cron cadence but does not document a minimum
+interval. Until retested, use the half-hour entry plus in-thread +15 recheck
+design for practical 15-minute market coverage.
 
 The automation scheduler currently stores and honors the RRULE `BYHOUR` values
 as UTC, even though the UI displays local time. Do not configure these as
@@ -66,33 +80,19 @@ for Pacific daylight time are:
 
 - market slots:
   - 06:00 PT: `BYHOUR=13;BYMINUTE=0`
-  - 06:15 PT: `BYHOUR=13;BYMINUTE=15`
   - 06:30 PT: `BYHOUR=13;BYMINUTE=30`
-  - 06:45 PT: `BYHOUR=13;BYMINUTE=45`
   - 07:00 PT: `BYHOUR=14;BYMINUTE=0`
-  - 07:15 PT: `BYHOUR=14;BYMINUTE=15`
   - 07:30 PT: `BYHOUR=14;BYMINUTE=30`
-  - 07:45 PT: `BYHOUR=14;BYMINUTE=45`
   - 08:00 PT: `BYHOUR=15;BYMINUTE=0`
-  - 08:15 PT: `BYHOUR=15;BYMINUTE=15`
   - 08:30 PT: `BYHOUR=15;BYMINUTE=30`
-  - 08:45 PT: `BYHOUR=15;BYMINUTE=45`
   - 09:00 PT: `BYHOUR=16;BYMINUTE=0`
-  - 09:15 PT: `BYHOUR=16;BYMINUTE=15`
   - 09:30 PT: `BYHOUR=16;BYMINUTE=30`
-  - 09:45 PT: `BYHOUR=16;BYMINUTE=45`
   - 10:00 PT: `BYHOUR=17;BYMINUTE=0`
-  - 10:15 PT: `BYHOUR=17;BYMINUTE=15`
   - 10:30 PT: `BYHOUR=17;BYMINUTE=30`
-  - 10:45 PT: `BYHOUR=17;BYMINUTE=45`
   - 11:00 PT: `BYHOUR=18;BYMINUTE=0`
-  - 11:15 PT: `BYHOUR=18;BYMINUTE=15`
   - 11:30 PT: `BYHOUR=18;BYMINUTE=30`
-  - 11:45 PT: `BYHOUR=18;BYMINUTE=45`
   - 12:00 PT: `BYHOUR=19;BYMINUTE=0`
-  - 12:15 PT: `BYHOUR=19;BYMINUTE=15`
   - 12:30 PT: `BYHOUR=19;BYMINUTE=30`
-  - 12:45 PT: `BYHOUR=19;BYMINUTE=45`
 - 1 PM close check: `BYHOUR=20;BYMINUTE=0`
 
 If Pacific standard time is in effect and the scheduler still uses UTC fields,
@@ -101,7 +101,7 @@ inside 6:00 AM through 1:00 PM Pacific.
 
 Thread titles:
 
-- Market-hours automation names must start with the slot time, for example
+- Market-hours automation names must start with the entry slot time, for example
   `09:00 PT - RH MKT`. This is the reliable fallback title in the mobile chat
   list.
 - Each market-hours prompt must tell the run not to spend time searching for
@@ -116,6 +116,9 @@ Thread titles:
 - Do not reactivate the paused combined `RH MKT 30m` automation unless the
   fixed time-slot automations are removed; otherwise duplicate runs or
   indistinguishable chat titles can return.
+- Do not reactivate paused standalone quarter-hour jobs unless a live scheduler
+  retest proves they fire. Otherwise they create false confidence without
+  coverage.
 
 Model settings:
 
@@ -147,8 +150,8 @@ automation setting rather than another runnable workspace.
 
 ## Market Monitor Execution
 
-The market-hours slot automations run during regular market hours and check in
-this order:
+The market-hours half-hour entry automations run during regular market hours
+and check in this order:
 
 1. sell targets at or above 10% return
 2. due double-downs
@@ -214,6 +217,15 @@ Execution rules:
   update `data/private/top-10-buy-candidates.md` and
   `data/private/top-10-sell-candidates.md` from the latest positions and quotes
   as the last cleanup step.
+- If the main half-hour scan finishes before the +15 mark and before 12:45 PT,
+  wait until that +15 mark in the same thread and run a fast recheck. The
+  recheck must quote the refreshed shortlist first, then use `FAST WATCH` or
+  an equivalent live owned-position scan to confirm any sell/DD candidate. It
+  must execute qualifying sell/DD immediately and must not place new openings.
+- If the main scan finds or is processing an executable sell/DD candidate, do
+  not wait for the +15 recheck. Execution remains priority one.
+- If the main scan or recheck would run into 1:00 PM PT, stop trading work and
+  leave post-market persistence to the close automation.
 
 It emails `rdgustave@gmail.com` only for urgent execution outcomes:
 

@@ -32,6 +32,20 @@ prefix_rule(
 )
 
 prefix_rule(
+    pattern = ["Start-Sleep", "-Seconds"],
+    decision = "allow",
+    justification = "Allow half-hour market automations to wait briefly for the in-thread +15 minute sell/DD recheck.",
+    match = [
+        "Start-Sleep -Seconds 60",
+        "Start-Sleep -Seconds 120",
+        "Start-Sleep -Seconds 300",
+    ],
+    not_match = [
+        "Start-Sleep -Milliseconds 500",
+    ],
+)
+
+prefix_rule(
     pattern = ["python", "-m", "agentic_strategy.sold_today"],
     decision = "allow",
     justification = "Allow the sold-today pending-reopen queue helper to update data/private/sold-today.md.",

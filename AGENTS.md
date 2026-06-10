@@ -92,9 +92,15 @@ See `docs/shortcuts.md` for the committed shortcut reference.
 
 The recurring Codex automations are:
 
-- Market-hours slot automations: weekday checks every 15 minutes from 06:00
-  through 12:45 Pacific. Their ids follow `HH-MM-pt-rh-mkt`; their visible
-  names start with `HH:mm PT - RH MKT`.
+- Market-hours half-hour slot automations: weekday entry-point checks at
+  06:00, 06:30, 07:00, 07:30, 08:00, 08:30, 09:00, 09:30, 10:00, 10:30,
+  11:00, 11:30, 12:00, and 12:30 Pacific. Their ids follow
+  `HH-MM-pt-rh-mkt`; their visible names start with `HH:mm PT - RH MKT`.
+  Each half-hour run must perform the main priority loop first, then if no
+  executable sell/DD remains and the +15 minute mark is still ahead, stay in
+  the same thread and run a fast +15 minute sell/DD recheck. This gives
+  practical 15-minute coverage through the scheduler lane that has proven to
+  fire.
 - `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific
   post-market reconciliation and summary.
 
@@ -103,7 +109,14 @@ because it created repeated threads named `RH MKT 30m` and dynamic thread-title
 renaming was not reliably available inside automation runs. Do not reactivate
 that combined automation unless the fixed slot automations are removed.
 
-The market-hours slot automations are pre-authorized to place qualifying
+Standalone quarter-hour slot automations such as `10-45-pt-rh-mkt` and
+`11-15-pt-rh-mkt` are paused. On 2026-06-10 the app skipped those new
+standalone +15 jobs while the older 00/30 jobs fired, so they are not the
+reliable coverage path. Do not unpause them unless the scheduler behavior is
+retested and proven.
+
+The market-hours half-hour automations and their in-thread +15 rechecks are
+pre-authorized to place qualifying
 strategy sell and double-down orders directly when the broker tool workflow
 allows placement. They email `rdgustave@gmail.com` after urgent sell or
 double-down orders are executed or blocked, including blocked DD scans. They do
