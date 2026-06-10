@@ -125,6 +125,9 @@ double-down candidates.
 
 Execution rules:
 
+- On the first market-hours run of the Pacific trading day, reset
+  `data/private/sold-today.md`. If the helper sees a stale date, it resets the
+  file automatically.
 - Read `data/private/top-10-sell-candidates.md` and
   `data/private/top-10-buy-candidates.md` if present, then quote those symbols
   first through Robinhood. These are speed hints only.
@@ -141,6 +144,11 @@ Execution rules:
   only.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
+- Do not write `data/private/sold-today.md` while sell execution is still in
+  progress. After all sell orders from the run are placed and confirmed
+  filled, append only the sell time and symbol to that file for symbols that
+  still need reopen. After reopen buy orders are confirmed filled, remove those
+  symbols from the file.
 - Do not place real orders from the fast read-only scripts, and do not place
   orders in parallel. Use the broker review/place workflow for the single
   qualifying candidate.
@@ -210,8 +218,11 @@ Do not import broker orders, write the local ledger, regenerate deprecated
 `data/private/LIVE_STATE.md`, or save raw broker payloads during market-hours
 execution unless the user explicitly asks for local persistence in that exact
 run. Updating the top-10 shortlist files at the end of a market-hours run is
-allowed as cleanup only after executable work is complete. The 1 PM close
-automation is the standing exception and should update the audit ledger,
+allowed as cleanup only after executable work is complete. Updating
+`data/private/sold-today.md` after confirmed sell fills or confirmed reopen
+fills is also allowed because it is the daily sold-not-reopened queue, but it
+must never delay a qualifying market-hours sell or double-down order. The 1 PM
+close automation is the standing exception and should update the audit ledger,
 `data/private/current-symbols.json`, `data/private/close-summary.md`, and both
 shortlist files. Local audit/cache writes must never delay a qualifying
 market-hours sell or double-down order.

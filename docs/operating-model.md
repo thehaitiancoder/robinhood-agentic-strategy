@@ -9,13 +9,17 @@ can disappear quickly.
 Priority order:
 
 1. Reconcile positions, orders, fills, buying power, and cash.
-2. Quote all owned positions.
-3. Generate full-position sell candidates at or above 10% return.
-4. Review due double-downs.
-5. Enter emergency cash mode if double-down cash is short.
-6. Open or reopen new positions only if there are no due double-downs.
-7. Report decisions. Do not write local audit/cache files during market-hours
-   execution unless the user explicitly asks.
+2. Reset `data/private/sold-today.md` if this is the first Pacific trading-day
+   run.
+3. Quote all owned positions.
+4. Generate full-position sell candidates at or above 10% return.
+5. Review due double-downs.
+6. Enter emergency cash mode if double-down cash is short.
+7. Open or reopen new positions only if there are no due double-downs.
+8. Report decisions. Do not write local audit/cache files during market-hours
+   execution unless the user explicitly asks, except for updating confirmed
+   filled sells and confirmed reopen fills in `data/private/sold-today.md`
+   after execution is done.
 
 ## Pre-Market
 
@@ -24,6 +28,7 @@ Priority order:
 - Read Robinhood broker state directly for the plan.
 - Do not rebuild or consult the local audit ledger before market-hours
   execution.
+- Reset `data/private/sold-today.md` for the new Pacific trading day.
 - Refresh the tradable universe if a source is available.
 - Mark symbols that are halted, delisted, non-tradable, or not fractional
   eligible.
@@ -38,6 +43,11 @@ Run a tight monitor loop over owned positions:
 - Quote owned symbols in batches.
 - Calculate sell return using bid-side pricing when available.
 - Surface any `sell_ready` positions immediately.
+- After sell orders from the run are placed and confirmed filled, append only
+  sell time and symbol to `data/private/sold-today.md` for symbols still
+  waiting for reopen.
+- After reopen buys from the run are confirmed filled, remove those symbols
+  from `data/private/sold-today.md`.
 - Check due double-downs after sell candidates.
 - Check new openings last.
 
@@ -52,6 +62,8 @@ Stale data should block new buys and warn on sell decisions.
 - Generate `data/private/close-summary.md`.
 - Generate `data/private/top-10-buy-candidates.md`.
 - Generate `data/private/top-10-sell-candidates.md`.
+- Reconcile `data/private/sold-today.md` against broker-filled sell orders and
+  any completed same-day reopens.
 - Treat `data/private/LIVE_STATE.md` as deprecated.
 - Recompute global base coverage.
 - Produce a daily report:

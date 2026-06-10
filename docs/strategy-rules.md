@@ -58,6 +58,30 @@ There is also no wash-sale or tax cooldown for openings or reopenings. Strategy
 decisions use actual fill prices and actual dollars invested, not tax-adjusted
 broker cost basis.
 
+## Sold-Today Reopen Queue
+
+When a profit sell fills, add the symbol to `data/private/sold-today.md` after
+the sell execution workflow is complete if the symbol has not been reopened.
+This file is reset at the beginning of each Pacific trading day and contains
+only sell time plus symbol.
+
+The sold-today list exists so the user can later reopen recently closed symbols
+before buying unrelated new names. It should contain only symbols sold today
+that are still not reopened. When a reopen buy is confirmed filled, remove that
+symbol from the list. It is not a trading authority. `REOPEN SOLD` must refresh
+Robinhood first, skip symbols already held or covered by active buy orders,
+then apply the normal priority checks:
+
+- sell targets first
+- due double-downs before reopens
+- emergency cash needs before reopens
+- 10% cash buffer
+- 10% single-position cap
+- active, tradable, eligible symbol
+
+If cash is needed for double-downs or the buffer, leave the symbol in the
+sold-today pending reopen list for later user-directed reopening.
+
 ## Profit Sell Rule
 
 Sell the full combined position whenever the position reaches 10% profit.

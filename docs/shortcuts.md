@@ -14,6 +14,8 @@ Use these short commands when asking any future agent to run the strategy.
 | `OPEN CASH` | Find eligible new openings after all higher-priority checks pass. |
 | `SELL REVIEW` | Review full-position sells for sell-ready symbols. |
 | `DD REVIEW` | Review due double-down orders using exact `next_lot_shares` quantity. |
+| `SOLD TODAY` | Show or update `data/private/sold-today.md`, the daily sold-not-reopened queue. |
+| `REOPEN SOLD` | Reopen eligible names from today's pending-reopen list after live sell/DD/cash checks. |
 | `FAST QUOTES` | Use the fast read-only MCP script to quote many symbols in one session. |
 | `FAST ORDERS` | Use the fast read-only MCP script to fetch active equity orders, or newest orders with `--all`. |
 | `FAST POSITIONS` | Use the fast read-only MCP script to fetch positions, optionally with quotes. |
@@ -43,6 +45,20 @@ symbols first, then continue the full broker scan if no candidate qualifies.
 For every qualifying DD, review/place the broker order with `quantity` equal to
 the exact `next_lot_shares` value. Do not convert DDs into rounded
 `dollar_amount` orders.
+
+## Sold-Today Rule
+
+`data/private/sold-today.md` is an ignored daily pending-reopen queue. It is
+cleared at the beginning of each Pacific trading day. After confirmed sell
+fills, append only the sell time and symbol, one line per symbol that has not
+yet been reopened. After confirmed reopen buy fills, remove those symbols from
+the file. Do this after execution is complete, not while another executable
+sell or double-down is waiting.
+
+`REOPEN SOLD` reads that list, refreshes Robinhood, skips symbols already held
+or covered by active buy orders, then reopens eligible symbols only if there
+are no due double-downs and the 10% cash buffer remains safe. Broker state is
+still the source of truth.
 
 ## Fast MCP Rule
 
