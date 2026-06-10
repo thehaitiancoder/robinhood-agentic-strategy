@@ -64,11 +64,16 @@ sell, double-down, emergency green sell, open, or reopen rule is met.
 
 Sizing clarification:
 
-- Stocks priced at `$1.00` or higher use dollar-based fractional sizing.
-- Stocks priced below `$1.00` use whole-share quantity sizing.
+- Openings and reopenings priced at `$1.00` or higher use dollar-based
+  fractional sizing.
+- Sub-dollar openings and reopenings use whole-share quantity sizing.
 - Sub-dollar penny stocks should not be bought fractionally.
 - For sub-dollar stocks, use the whole-share quantity that fits within the
   target lot dollars, with a minimum of 1 whole share.
+- Double-downs always use exact share quantity sizing. The broker review and
+  placement must pass `quantity=next_lot_shares`, never a rounded
+  `dollar_amount`, because the strategy rule is to double the prior lot's
+  filled share count.
 
 Operational implication: the user does not want to manually monitor orders. The
 intended production behavior is automatic market execution once strategy

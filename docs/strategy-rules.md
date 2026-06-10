@@ -82,8 +82,10 @@ strategy design. The execution system should monitor rules and execute market
 orders when criteria are met. The user does not want manual order monitoring.
 
 Do not interpret market execution to mean every buy is dollar-based fractional.
-Stocks priced at `$1.00` or higher use dollar-based fractional order sizing;
-sub-dollar penny stocks use whole-share quantity order sizing.
+Openings and reopenings priced at `$1.00` or higher use dollar-based fractional
+order sizing; sub-dollar penny stocks use whole-share quantity order sizing.
+Double-down buys are different: they must use exact share quantity sizing from
+the lot ladder.
 
 If the active broker or agent tool requires review or explicit confirmation for
 real-money order placement, implementation must obey that runtime constraint
@@ -111,6 +113,11 @@ The next lot buys:
 ```text
 lot_n_shares = lot_(n-1)_shares * 2
 ```
+
+Double-down broker orders must be reviewed and placed with `quantity` equal to
+`lot_n_shares`. Do not submit a DD as a rounded `dollar_amount`, even when the
+stock is priced at or above `$1.00`; use the estimated dollar value only to
+check buying power, cash buffer, and concentration risk.
 
 The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
 

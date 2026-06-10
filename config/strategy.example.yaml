@@ -50,6 +50,9 @@ execution:
   regular_hours_only_for_fractional_market_orders: true
   automatic_market_execution_when_criteria_met: true
   execution_style: market
+  # Open/reopen orders may use dollar sizing, but DD orders must be placed by
+  # exact share quantity: broker quantity = next_lot_shares.
+  order_sizing_for_double_down: exact_lot_share_quantity
   sell_scan_priority: highest
   buy_scan_priority: after_sells_and_double_downs
   broker_tool_confirmation_policy: obey_runtime_tool_requirements

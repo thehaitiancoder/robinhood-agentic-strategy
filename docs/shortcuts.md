@@ -13,7 +13,7 @@ Use these short commands when asking any future agent to run the strategy.
 | `FILL CHECK` | Import order history and fills into the local ledger. |
 | `OPEN CASH` | Find eligible new openings after all higher-priority checks pass. |
 | `SELL REVIEW` | Review full-position sells for sell-ready symbols. |
-| `DD REVIEW` | Review due double-down orders. |
+| `DD REVIEW` | Review due double-down orders using exact `next_lot_shares` quantity. |
 
 ## Cross-Computer Rule
 
@@ -33,3 +33,7 @@ For `SELL CHECK` and `DD CHECK`, read
 `data/private/top-10-sell-candidates.md` and
 `data/private/top-10-buy-candidates.md` first if they exist. Quote those
 symbols first, then continue the full broker scan if no candidate qualifies.
+
+For every qualifying DD, review/place the broker order with `quantity` equal to
+the exact `next_lot_shares` value. Do not convert DDs into rounded
+`dollar_amount` orders.

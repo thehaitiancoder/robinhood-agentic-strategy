@@ -133,6 +133,10 @@ Execution rules:
 - If the broker tool requires review, run the review immediately.
 - If the review has no blocking alerts and the refreshed price still qualifies,
   place the market order immediately.
+- For double-downs, review and place the order with the broker `quantity` set
+  to the exact `next_lot_shares` value from the ladder. Do not place DDs with a
+  rounded `dollar_amount`; dollar values are estimates for cash and risk checks
+  only.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
 - For new openings, compare `data/universe.csv` against live Robinhood

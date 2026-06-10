@@ -58,8 +58,10 @@ Use the Agentic account with `$1` base positions:
 
 - Start with a small approved symbol subset.
 - Use market execution for all strategy actions.
-- Validate dollar-based fractional sizing for stocks at or above `$1.00`.
-- Validate whole-share quantity sizing for sub-dollar stocks.
+- Validate dollar-based fractional sizing for openings/reopenings at or above
+  `$1.00`.
+- Validate whole-share quantity sizing for sub-dollar openings/reopenings.
+- Validate exact share quantity sizing for every double-down order.
 - Obey any runtime broker/tool confirmation requirements.
 - Compare broker fills against the local audit ledger after close.
 - Validate fractional order behavior.

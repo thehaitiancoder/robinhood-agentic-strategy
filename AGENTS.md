@@ -102,9 +102,9 @@ original rules, and make rule violations visible before money is put at risk.
   use actual fill prices and actual dollars invested.
 - Strategy stock orders use immediate market execution; do not design GTC limit
   target exits or a mixed market/limit executor.
-- Stocks at or above `$1.00` use dollar-based fractional sizing. Sub-dollar
-  penny stocks use whole-share quantity sizing and should not be bought
-  fractionally.
+- Opening or reopening stocks at or above `$1.00` uses dollar-based fractional
+  sizing. Sub-dollar penny stocks use whole-share quantity sizing and should
+  not be bought fractionally.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
 - For market-hours automation sell and double-down checks, process one
@@ -115,6 +115,10 @@ original rules, and make rule violations visible before money is put at risk.
 - Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
   lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
   lot's share count.
+- Double-down orders must follow the exact share ladder, not a rounded dollar
+  amount. For every DD review or placement, pass the broker `quantity` equal to
+  `next_lot_shares` (the prior lot's filled share count multiplied by 2). Use
+  dollar estimates only for cash, concentration, and affordability checks.
 - Do not place real orders unless the active broker tool workflow allows it,
   including any runtime review requirement. The market-hours monitor has
   standing user authorization for qualifying sell and double-down orders, so it

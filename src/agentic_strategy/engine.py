@@ -122,6 +122,9 @@ def evaluate_strategy(
             "buy_price": _money(buy_price),
             "trigger_price": _money(position.next_trigger_price),
             "next_lot_shares": str(position.next_lot_shares),
+            "order_sizing": "exact_share_quantity",
+            "order_quantity": str(position.next_lot_shares),
+            "order_amount_source": "estimate_only_do_not_place_dd_by_dollar_amount",
             "estimated_cost": _money(estimated_cost),
             "post_trade_position_pct": _str_pct(concentration),
         }

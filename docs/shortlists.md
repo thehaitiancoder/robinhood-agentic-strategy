@@ -23,8 +23,9 @@ scan.
   the last recorded quote. These are likely target-sell watch symbols.
 
 The DD decision still requires strategy ladder math and a fresh broker quote.
-The sell decision still requires bid-side 10% return math and a fresh broker
-quote.
+If a DD qualifies, the broker review/place call must use exact
+`quantity=next_lot_shares`, not a rounded `dollar_amount`. The sell decision
+still requires bid-side 10% return math and a fresh broker quote.
 
 ## Timing
 

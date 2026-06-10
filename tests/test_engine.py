@@ -49,6 +49,14 @@ class StrategyEngineTest(unittest.TestCase):
         self.assertIn("pause_new_positions", actions)
         self.assertNotIn("new_open_candidate", actions)
 
+        double_down = next(decision for decision in report.decisions if decision.action == "double_down_ready")
+        self.assertEqual(double_down.metrics["order_sizing"], "exact_share_quantity")
+        self.assertEqual(double_down.metrics["order_quantity"], "2")
+        self.assertEqual(
+            double_down.metrics["order_amount_source"],
+            "estimate_only_do_not_place_dd_by_dollar_amount",
+        )
+
     def test_cash_short_double_down_surfaces_green_sells(self) -> None:
         report = evaluate_strategy(
             portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("101")),
