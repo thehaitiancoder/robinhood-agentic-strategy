@@ -1,503 +1,1496 @@
 symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
 A,Agilent Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AA,Alcoa,stock,true,true,true,robinhood_validated,2026-06-09
+AAL,American Airlines,stock,true,true,true,robinhood_validated,2026-06-09
+AAMI,Acadian Asset Management Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+AAON,AAON,stock,true,true,true,robinhood_validated,2026-06-09
+AAP,Advance Auto Parts,stock,true,true,true,robinhood_validated,2026-06-09
 AAPL,Apple Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AAT,American Assets Trust,stock,true,true,true,robinhood_validated,2026-06-09
 ABBV,Abbvie Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ABCB,Ameris Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+ABG,Asbury Automotive,stock,true,true,true,robinhood_validated,2026-06-09
+ABM,ABM,stock,true,true,true,robinhood_validated,2026-06-09
 ABNB,Airbnb Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
+ABR,Arbor Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
 ABT,Abbott Laboratories,stock,true,true,true,robinhood_validated,2026-06-09
+ACA,Arcosa,stock,true,true,true,robinhood_validated,2026-06-09
+ACAD,ACADIA Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
 ACGL,Arch Capital Group,stock,true,true,true,robinhood_validated,2026-06-09
+ACHC,Acadia Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
+ACI,Albertsons,stock,true,true,true,robinhood_validated,2026-06-09
+ACIW,ACI Worldwide,stock,true,true,true,robinhood_validated,2026-06-09
+ACLS,Axcelis Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+ACM,AECOM,stock,true,true,true,robinhood_validated,2026-06-09
+ACMR,ACM Research,stock,true,true,true,robinhood_validated,2026-06-09
 ACN,Accenture Plc Class A,stock,true,true,true,robinhood_validated,2026-06-09
+ACT,Enact,stock,true,true,true,robinhood_validated,2026-06-09
+ADAM,Adamas Trust,stock,true,true,true,robinhood_validated,2026-06-09
 ADBE,Adobe Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ADC,Agree Realty,stock,true,true,true,robinhood_validated,2026-06-09
+ADEA,Adeia,stock,true,true,true,robinhood_validated,2026-06-09
 ADI,Analog Devices Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ADM,Archer-Daniels-Midland Company,stock,true,true,true,robinhood_validated,2026-06-09
+ADMA,ADMA Biologics,stock,true,true,true,robinhood_validated,2026-06-09
+ADNT,Adient,stock,true,true,true,robinhood_validated,2026-06-09
 ADP,Automatic Data Processing Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ADSK,Autodesk Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ADT,ADT,stock,true,true,true,robinhood_validated,2026-06-09
+ADUS,Addus HomeCare,stock,true,true,true,robinhood_validated,2026-06-09
 AEE,Ameren Corp,stock,true,true,true,robinhood_validated,2026-06-09
+AEIS,Advanced Energy,stock,true,true,true,robinhood_validated,2026-06-09
+AEO,American Eagle,stock,true,true,true,robinhood_validated,2026-06-09
 AEP,American Electric Power Inc,stock,true,true,true,robinhood_validated,2026-06-09
 AES,AES Corp,stock,true,true,true,robinhood_validated,2026-06-09
+AESI,Atlas Energy Solutions,stock,true,true,true,robinhood_validated,2026-06-09
+AFG,American Financial Group,stock,true,true,true,robinhood_validated,2026-06-09
 AFL,Aflac Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AGCO,AGCO,stock,true,true,true,robinhood_validated,2026-06-09
+AGNT,EXp World Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+AGO,Assured Guaranty,stock,true,true,true,robinhood_validated,2026-06-09
+AGX,Argan,stock,true,true,true,robinhood_validated,2026-06-09
+AGYS,Agilysys,stock,true,true,true,robinhood_validated,2026-06-09
+AHCO,AdaptHealth,stock,true,true,true,robinhood_validated,2026-06-09
+AHR,American Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
 AIG,American International Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AIN,Albany International,stock,true,true,true,robinhood_validated,2026-06-09
+AIR,AAR,stock,true,true,true,robinhood_validated,2026-06-09
+AIT,Applied Industrial Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 AIZ,Assurant Inc,stock,true,true,true,robinhood_validated,2026-06-09
 AJG,Arthur J Gallagher,stock,true,true,true,robinhood_validated,2026-06-09
 AKAM,Akamai Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AKR,Acadia Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
 ALB,Albemarle Corp,stock,true,true,true,robinhood_validated,2026-06-09
+ALG,Alamo Group,stock,true,true,true,robinhood_validated,2026-06-09
+ALGM,"Allegro MicroSystems,",stock,true,true,true,robinhood_validated,2026-06-09
 ALGN,Align Technology Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ALGT,Allegiant Air,stock,true,true,true,robinhood_validated,2026-06-09
+ALHC,Alignment Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
+ALK,Alaska Air,stock,true,true,true,robinhood_validated,2026-06-09
+ALKS,Alkermes,stock,true,true,true,robinhood_validated,2026-06-09
 ALL,Allstate Corp,stock,true,true,true,robinhood_validated,2026-06-09
 ALLE,Allegion PLC,stock,true,true,true,robinhood_validated,2026-06-09
+ALLY,Ally Financial,stock,true,true,true,robinhood_validated,2026-06-09
+ALRM,Alarm.com,stock,true,true,true,robinhood_validated,2026-06-09
+ALV,Autoliv,stock,true,true,true,robinhood_validated,2026-06-09
+AM,Antero Midstream,stock,true,true,true,robinhood_validated,2026-06-09
 AMAT,Applied Material Inc,stock,true,true,true,robinhood_validated,2026-06-09
 AMCR,Amcor plc,stock,true,true,true,robinhood_validated,2026-06-09
 AMD,Advanced Micro Devices Inc,stock,true,true,true,robinhood_validated,2026-06-09
 AME,Ametek Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AMG,Affiliated Managers,stock,true,true,true,robinhood_validated,2026-06-09
 AMGN,Amgen Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AMH,American Homes 4 Rent,stock,true,true,true,robinhood_validated,2026-06-09
+AMKR,Amkor Technology,stock,true,true,true,robinhood_validated,2026-06-09
+AMN,AMN Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
 AMP,Ameriprise Finance Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AMPH,Amphastar Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
+AMR,Alpha Metallurgical Resources,stock,true,true,true,robinhood_validated,2026-06-09
+AMRX,Amneal Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
+AMSF,AMERISAFE,stock,true,true,true,robinhood_validated,2026-06-09
 AMT,American Tower Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+AMTM,Amentum Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 AMZN,Amazon.Com Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+AN,Autonation,stock,true,true,true,robinhood_validated,2026-06-09
+ANDE,Andersons,stock,true,true,true,robinhood_validated,2026-06-09
 ANET,Arista Networks Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ANF,Abercrombie & Fitch,stock,true,true,true,robinhood_validated,2026-06-09
+ANIP,ANI Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
 ANSS,Ansys Inc,stock,false,false,false,robinhood_not_found,2026-06-09
 AON,Aon Plc,stock,true,true,true,robinhood_validated,2026-06-09
+AORT,Artivion,stock,true,true,true,robinhood_validated,2026-06-09
 AOS,A O Smith Corp,stock,true,true,true,robinhood_validated,2026-06-09
+AOSL,Alpha & Omega Semiconductor,stock,true,true,true,robinhood_validated,2026-06-09
 APA,Apa Corp,stock,true,true,true,robinhood_validated,2026-06-09
+APAM,Artisan Partners,stock,true,true,true,robinhood_validated,2026-06-09
 APD,Air Products And Chemicals Inc,stock,true,true,true,robinhood_validated,2026-06-09
+APG,APi Group,stock,true,true,true,robinhood_validated,2026-06-09
 APH,Amphenol Corp,stock,true,true,true,robinhood_validated,2026-06-09
+APLE,Apple Hospitality REIT,stock,true,true,true,robinhood_validated,2026-06-09
 APO,"Apollo Global Management, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+APOG,Apogee,stock,true,true,true,robinhood_validated,2026-06-09
 APP,AppLovin Corp,stock,true,true,true,robinhood_validated,2026-06-09
+APPF,AppFolio,stock,true,true,true,robinhood_validated,2026-06-09
 APTV,Aptiv Plc,stock,true,true,true,robinhood_validated,2026-06-09
+AR,Antero Resources,stock,true,true,true,robinhood_validated,2026-06-09
+ARCB,ArcBest,stock,true,true,true,robinhood_validated,2026-06-09
 ARE,"Alexandria Real Estate Equities, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+ARI,Apollo Commercial Real Estate Finance,stock,true,true,true,robinhood_validated,2026-06-09
+ARLO,Arlo Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+ARMK,Aramark,stock,true,true,true,robinhood_validated,2026-06-09
+AROC,Archrock,stock,true,true,true,robinhood_validated,2026-06-09
+ARR,ARMOUR Residential REIT,stock,true,true,true,robinhood_validated,2026-06-09
+ARW,Arrow Electronics,stock,true,true,true,robinhood_validated,2026-06-09
+ARWR,Arrowhead Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
+ASB,Associated Bank,stock,true,true,true,robinhood_validated,2026-06-09
+ASH,Ashland,stock,true,true,true,robinhood_validated,2026-06-09
+ASO,Academy Sports and Outdoors,stock,true,true,true,robinhood_validated,2026-06-09
+ASTE,Astec Industries,stock,true,true,true,robinhood_validated,2026-06-09
+ASTH,Astrana Health Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+ATEN,A10 Networks,stock,true,true,true,robinhood_validated,2026-06-09
+ATI,ATI,stock,true,true,true,robinhood_validated,2026-06-09
+ATMU,Atmus Filtration,stock,true,true,true,robinhood_validated,2026-06-09
 ATO,Atmos Energy Corp,stock,true,true,true,robinhood_validated,2026-06-09
+ATR,Aptargroup,stock,true,true,true,robinhood_validated,2026-06-09
+AUB,Atlantic Union,stock,true,true,true,robinhood_validated,2026-06-09
+AVA,Avista,stock,true,true,true,robinhood_validated,2026-06-09
+AVAV,AeroVironment,stock,true,true,true,robinhood_validated,2026-06-09
 AVB,"AvalonBay Communities, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 AVGO,Broadcom Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+AVNS,Avanos Medical,stock,true,true,true,robinhood_validated,2026-06-09
+AVNT,Avient,stock,true,true,true,robinhood_validated,2026-06-09
+AVT,Avnet,stock,true,true,true,robinhood_validated,2026-06-09
+AVTR,Avantor,stock,true,true,true,robinhood_validated,2026-06-09
 AVY,Avery Dennison Corp,stock,true,true,true,robinhood_validated,2026-06-09
+AWI,Armstrong World Industries,stock,true,true,true,robinhood_validated,2026-06-09
 AWK,American Water Works Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AWR,American States Water,stock,true,true,true,robinhood_validated,2026-06-09
+AX,Axos Financial,stock,true,true,true,robinhood_validated,2026-06-09
 AXON,Axon Enterprise Inc,stock,true,true,true,robinhood_validated,2026-06-09
 AXP,American Express,stock,true,true,true,robinhood_validated,2026-06-09
+AXTA,Axalta Coating Systems,stock,true,true,true,robinhood_validated,2026-06-09
+AYI,Acuity,stock,true,true,true,robinhood_validated,2026-06-09
 AZO,Autozone Inc,stock,true,true,true,robinhood_validated,2026-06-09
+AZTA,Azenta,stock,true,true,true,robinhood_validated,2026-06-09
+AZZ,AZZ,stock,true,true,true,robinhood_validated,2026-06-09
 BA,Boeing,stock,true,true,true,robinhood_validated,2026-06-09
 BAC,Bank of America Corp,stock,true,true,true,robinhood_validated,2026-06-09
+BAH,Booz Allen Hamilton,stock,true,true,true,robinhood_validated,2026-06-09
 BALL,Ball Corp,stock,true,true,true,robinhood_validated,2026-06-09
+BANC,Banc of California,stock,true,true,true,robinhood_validated,2026-06-09
+BANF,BancFirst,stock,true,true,true,robinhood_validated,2026-06-09
+BANR,Banner,stock,true,true,true,robinhood_validated,2026-06-09
 BAX,Baxter International Inc,stock,true,true,true,robinhood_validated,2026-06-09
+BBT,Beacon Financial Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+BBWI,Bath & Body Works,stock,true,true,true,robinhood_validated,2026-06-09
 BBY,Best Buy Inc,stock,true,true,true,robinhood_validated,2026-06-09
+BC,Brunswick,stock,true,true,true,robinhood_validated,2026-06-09
+BCC,Boise Cascade,stock,true,true,true,robinhood_validated,2026-06-09
+BCO,Brink's,stock,true,true,true,robinhood_validated,2026-06-09
+BCPC,Balchem,stock,true,true,true,robinhood_validated,2026-06-09
+BDC,Belden,stock,true,true,true,robinhood_validated,2026-06-09
 BDX,Becton Dickinson,stock,true,true,true,robinhood_validated,2026-06-09
 BEN,Franklin Resources Inc,stock,true,true,true,robinhood_validated,2026-06-09
 BF.B,Brown Forman Inc Class B,stock,true,true,true,robinhood_validated,2026-06-09
+BFAM,Bright Horizons,stock,true,true,true,robinhood_validated,2026-06-09
+BFH,Bread Financial,stock,true,true,true,robinhood_validated,2026-06-09
+BFS,Saul Centers,stock,true,true,true,robinhood_validated,2026-06-09
 BG,Bunge Global Sa,stock,true,true,true,robinhood_validated,2026-06-09
+BGC,"BGC Group, Inc. Class A",stock,true,true,true,robinhood_validated,2026-06-09
+BHE,Benchmark Electronics,stock,true,true,true,robinhood_validated,2026-06-09
+BHF,Brighthouse Financial,stock,true,true,true,robinhood_validated,2026-06-09
 BIIB,Biogen Inc,stock,true,true,true,robinhood_validated,2026-06-09
+BILL,BILL Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+BIO,Bio-Rad Laboratories Class A,stock,true,true,true,robinhood_validated,2026-06-09
+BJ,BJs,stock,true,true,true,robinhood_validated,2026-06-09
+BJRI,BJ's Restaurants,stock,true,true,true,robinhood_validated,2026-06-09
+BKE,Buckle,stock,true,true,true,robinhood_validated,2026-06-09
+BKH,Black Hills,stock,true,true,true,robinhood_validated,2026-06-09
 BKNG,Booking Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
 BKR,Baker Hughes Company Class A,stock,true,true,true,robinhood_validated,2026-06-09
+BKU,Bankunited,stock,true,true,true,robinhood_validated,2026-06-09
+BL,Blackline,stock,true,true,true,robinhood_validated,2026-06-09
+BLD,TopBuild,stock,true,true,true,robinhood_validated,2026-06-09
 BLDR,"Builders FirstSource, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+BLFS,BioLife Solutions,stock,true,true,true,robinhood_validated,2026-06-09
 BLK,Blackrock Inc,stock,true,true,true,robinhood_validated,2026-06-09
+BLKB,Blackbaud,stock,true,true,true,robinhood_validated,2026-06-09
+BMI,Badger Meter,stock,true,true,true,robinhood_validated,2026-06-09
+BMRN,BioMarin,stock,true,true,true,robinhood_validated,2026-06-09
 BMY,Bristol Myers Squibb,stock,true,true,true,robinhood_validated,2026-06-09
+BNL,Broadstone Net Lease,stock,true,true,true,robinhood_validated,2026-06-09
 BNY,Bank Of New York Mellon Corp,stock,true,true,true,robinhood_validated,2026-06-09
+BOH,Bank of Hawaii,stock,true,true,true,robinhood_validated,2026-06-09
+BOOT,Boot Barn,stock,true,true,true,robinhood_validated,2026-06-09
+BOX,Box,stock,true,true,true,robinhood_validated,2026-06-09
 BR,Broadridge Financial Solutions Inc,stock,true,true,true,robinhood_validated,2026-06-09
+BRBR,BellRing,stock,true,true,true,robinhood_validated,2026-06-09
+BRC,Brady,stock,true,true,true,robinhood_validated,2026-06-09
 BRK.B,Berkshire Hathaway Inc. Class B,stock,true,true,true,robinhood_validated,2026-06-09
+BRKR,Bruker,stock,true,true,true,robinhood_validated,2026-06-09
 BRO,Brown & Brown Inc,stock,true,true,true,robinhood_validated,2026-06-09
+BROS,Dutch Bros,stock,true,true,true,robinhood_validated,2026-06-09
+BRX,Brixmor Property Group,stock,true,true,true,robinhood_validated,2026-06-09
 BSX,Boston Scientific Corp,stock,true,true,true,robinhood_validated,2026-06-09
+BSY,Bentley Systems,stock,true,true,true,robinhood_validated,2026-06-09
+BTSG,BrightSpring Health Service,stock,true,true,true,robinhood_validated,2026-06-09
+BTU,Peabody Energy,stock,true,true,true,robinhood_validated,2026-06-09
+BURL,Burlington Coat Factory,stock,true,true,true,robinhood_validated,2026-06-09
+BWA,BorgWarner,stock,true,true,true,robinhood_validated,2026-06-09
+BWXT,BWX Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 BX,Blackstone Inc,stock,true,true,true,robinhood_validated,2026-06-09
+BXMT,Blackstone Mortgage Trust,stock,true,true,true,robinhood_validated,2026-06-09
 BXP,"Boston Properties, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+BYD,Boyd Gaming,stock,true,true,true,robinhood_validated,2026-06-09
 C,Citigroup Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CABO,Cable One,stock,true,true,true,robinhood_validated,2026-06-09
+CACI,CACI,stock,true,true,true,robinhood_validated,2026-06-09
 CAG,Conagra Brands Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CAH,Cardinal Health Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CAKE,Cheesecake Factory,stock,true,true,true,robinhood_validated,2026-06-09
+CALM,Cal-Maine Foods,stock,true,true,true,robinhood_validated,2026-06-09
+CALX,Calix,stock,true,true,true,robinhood_validated,2026-06-09
+CALY,Callaway Golf Company,stock,true,true,true,robinhood_validated,2026-06-09
+CAR,Avis Budget Group,stock,true,true,true,robinhood_validated,2026-06-09
+CARG,CarGurus,stock,true,true,true,robinhood_validated,2026-06-09
 CARR,Carrier Global Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+CART,Instacart (Maplebear Inc.),stock,true,true,true,robinhood_validated,2026-06-09
+CASH,Pathward Financial,stock,true,true,true,robinhood_validated,2026-06-09
 CAT,Caterpillar Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CATY,Cathay Bank,stock,true,true,true,robinhood_validated,2026-06-09
+CAVA,CAVA,stock,true,true,true,robinhood_validated,2026-06-09
 CB,Chubb Ltd,stock,true,true,true,robinhood_validated,2026-06-09
 CBOE,"Cboe Global Markets, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 CBRE,CBRE Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CBRL,Cracker Barrel,stock,true,true,true,robinhood_validated,2026-06-09
+CBSH,Commerce Bank,stock,true,true,true,robinhood_validated,2026-06-09
+CBT,Cabot,stock,true,true,true,robinhood_validated,2026-06-09
+CBU,"Community Financial System, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+CC,Chemours,stock,true,true,true,robinhood_validated,2026-06-09
 CCI,Crown Castle International Corp.,stock,true,true,true,robinhood_validated,2026-06-09
+CCK,Crown Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 CCL,Carnival Corp,stock,true,true,true,robinhood_validated,2026-06-09
+CCOI,Cogent Communications,stock,true,true,true,robinhood_validated,2026-06-09
+CCS,Century Communities,stock,true,true,true,robinhood_validated,2026-06-09
 CDNS,Cadence Design Systems Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CDP,COPT Defense Properties,stock,true,true,true,robinhood_validated,2026-06-09
 CDW,CDW Corp,stock,true,true,true,robinhood_validated,2026-06-09
+CE,Celanese,stock,true,true,true,robinhood_validated,2026-06-09
 CEG,Constellation Energy Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+CELH,Celsius,stock,true,true,true,robinhood_validated,2026-06-09
+CENT,Central Garden & Pet,stock,true,true,true,robinhood_validated,2026-06-09
+CENTA,Central Garden & Pet Company Class A,stock,true,true,true,robinhood_validated,2026-06-09
+CENX,Century Aluminum,stock,true,true,true,robinhood_validated,2026-06-09
+CERT,Certara,stock,true,true,true,robinhood_validated,2026-06-09
 CF,CF Industries Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CFFN,Capitol Federal,stock,true,true,true,robinhood_validated,2026-06-09
 CFG,Citizens Financial Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CFR,Cullen Frost,stock,true,true,true,robinhood_validated,2026-06-09
+CG,The Carlyle Group,stock,true,true,true,robinhood_validated,2026-06-09
+CGNX,Cognex,stock,true,true,true,robinhood_validated,2026-06-09
+CHCO,City Holding,stock,true,true,true,robinhood_validated,2026-06-09
 CHD,Church And Dwight Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CHDN,Churchill Downs,stock,true,true,true,robinhood_validated,2026-06-09
+CHE,Chemed,stock,true,true,true,robinhood_validated,2026-06-09
+CHEF,Chef's Warehouse,stock,true,true,true,robinhood_validated,2026-06-09
+CHH,Choice Hotels,stock,true,true,true,robinhood_validated,2026-06-09
+CHRD,Chord Energy,stock,true,true,true,robinhood_validated,2026-06-09
 CHRW,"C.H. Robinson Worldwide, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 CHTR,Charter Communications Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
+CHWY,Chewy,stock,true,true,true,robinhood_validated,2026-06-09
 CI,Cigna Corp,stock,true,true,true,robinhood_validated,2026-06-09
 CINF,Cincinnati Financial Corp,stock,true,true,true,robinhood_validated,2026-06-09
 CL,Colgate-Palmolive,stock,true,true,true,robinhood_validated,2026-06-09
+CLB,Core Laboratories,stock,true,true,true,robinhood_validated,2026-06-09
+CLF,Cleveland-Cliffs,stock,true,true,true,robinhood_validated,2026-06-09
+CLH,Clean Harbors,stock,true,true,true,robinhood_validated,2026-06-09
+CLSK,CleanSpark,stock,true,true,true,robinhood_validated,2026-06-09
 CLX,Clorox,stock,true,true,true,robinhood_validated,2026-06-09
+CMC,Commercial Metals,stock,true,true,true,robinhood_validated,2026-06-09
 CMCSA,Comcast A Corp,stock,true,true,true,robinhood_validated,2026-06-09
 CME,CME Group Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
 CMG,Chipotle Mexican Grill Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CMI,Cummins Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CMS,CMS Energy Corp,stock,true,true,true,robinhood_validated,2026-06-09
 CNC,Centene Corp,stock,true,true,true,robinhood_validated,2026-06-09
+CNH,CNH Industrial,stock,true,true,true,robinhood_validated,2026-06-09
+CNK,Cinemark,stock,true,true,true,robinhood_validated,2026-06-09
+CNM,Core & Main,stock,true,true,true,robinhood_validated,2026-06-09
+CNMD,Conmed,stock,true,true,true,robinhood_validated,2026-06-09
+CNO,CNO Financial,stock,true,true,true,robinhood_validated,2026-06-09
 CNP,Centerpoint Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CNR,Core Natural,stock,true,true,true,robinhood_validated,2026-06-09
+CNS,Cohen & Steers,stock,true,true,true,robinhood_validated,2026-06-09
+CNX,CNX Resources,stock,true,true,true,robinhood_validated,2026-06-09
+CNXC,Concentrix Corp,stock,true,true,true,robinhood_validated,2026-06-09
+CNXN,PC Connection,stock,true,true,true,robinhood_validated,2026-06-09
+COCO,The Vita Coco Company,stock,true,true,true,robinhood_validated,2026-06-09
 COF,Capital One Financial Corp,stock,true,true,true,robinhood_validated,2026-06-09
+COHU,Cohu,stock,true,true,true,robinhood_validated,2026-06-09
 COIN,Coinbase Global,stock,true,true,true,robinhood_validated,2026-06-09
+COKE,Coca-Cola Consolidated,stock,true,true,true,robinhood_validated,2026-06-09
+COLB,Columbia Banking System,stock,true,true,true,robinhood_validated,2026-06-09
+COLL,Collegium Pharmaceutical,stock,true,true,true,robinhood_validated,2026-06-09
+COLM,Columbia Sportswear,stock,true,true,true,robinhood_validated,2026-06-09
+CON,Concentra Group Holdings Parent,stock,true,true,true,robinhood_validated,2026-06-09
 COO,"Cooper Companies, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 COP,ConocoPhillips,stock,true,true,true,robinhood_validated,2026-06-09
 COR,Cencora Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CORT,Corcept Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
 COST,Costco Wholesale Corp,stock,true,true,true,robinhood_validated,2026-06-09
+COTY,Coty,stock,true,true,true,robinhood_validated,2026-06-09
 CPAY,Corpay Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CPB,Campbell Soup,stock,true,true,true,robinhood_validated,2026-06-09
+CPF,Central Pacific Financial,stock,true,true,true,robinhood_validated,2026-06-09
+CPK,Chesapeake Utilities,stock,true,true,true,robinhood_validated,2026-06-09
+CPRI,Capri Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 CPRT,Copart Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CPRX,Catalyst Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
 CPT,Camden Property Trust,stock,true,true,true,robinhood_validated,2026-06-09
+CR,Crane Company,stock,true,true,true,robinhood_validated,2026-06-09
+CRBG,Corebridge Financial,stock,true,true,true,robinhood_validated,2026-06-09
+CRC,California Resources,stock,true,true,true,robinhood_validated,2026-06-09
+CRGY,Crescent Energy Company,stock,true,true,true,robinhood_validated,2026-06-09
+CRI,Carter's,stock,true,true,true,robinhood_validated,2026-06-09
+CRK,Comstock Resources,stock,true,true,true,robinhood_validated,2026-06-09
 CRL,Charles River Laboratories International,stock,true,true,true,robinhood_validated,2026-06-09
 CRM,Salesforce.Com Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CROX,Crocs,stock,true,true,true,robinhood_validated,2026-06-09
+CRS,Carpenter Technology,stock,true,true,true,robinhood_validated,2026-06-09
+CRSR,Corsair Gaming,stock,true,true,true,robinhood_validated,2026-06-09
+CRUS,Cirrus Logic,stock,true,true,true,robinhood_validated,2026-06-09
+CRVL,CorVel,stock,true,true,true,robinhood_validated,2026-06-09
 CRWD,CrowdStrike Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 CSCO,Cisco Systems Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CSGP,Costar Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+CSL,Carlisle,stock,true,true,true,robinhood_validated,2026-06-09
+CSR,Centerspace,stock,true,true,true,robinhood_validated,2026-06-09
+CSW,CSW Industrials,stock,true,true,true,robinhood_validated,2026-06-09
 CSX,CSX Corp,stock,true,true,true,robinhood_validated,2026-06-09
 CTAS,Cintas Corp,stock,true,true,true,robinhood_validated,2026-06-09
+CTKB,Cytek Biosciences,stock,true,true,true,robinhood_validated,2026-06-09
 CTRA,Coterra Energy Inc.,stock,false,false,false,robinhood_not_found,2026-06-09
+CTRE,CareTrust REIT,stock,true,true,true,robinhood_validated,2026-06-09
+CTS,CTS,stock,true,true,true,robinhood_validated,2026-06-09
 CTSH,Cognizant Technology Solutions,stock,true,true,true,robinhood_validated,2026-06-09
 CTVA,"Corteva, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+CUBE,CubeSmart,stock,true,true,true,robinhood_validated,2026-06-09
+CUBI,Customers Bank,stock,true,true,true,robinhood_validated,2026-06-09
+CURB,Curbline Properties,stock,true,true,true,robinhood_validated,2026-06-09
+CUZ,Cousins Properties,stock,true,true,true,robinhood_validated,2026-06-09
+CVBF,CVB Financial,stock,true,true,true,robinhood_validated,2026-06-09
+CVCO,Cavco,stock,true,true,true,robinhood_validated,2026-06-09
+CVI,CVR Energy,stock,true,true,true,robinhood_validated,2026-06-09
+CVLT,CommVault Systems,stock,true,true,true,robinhood_validated,2026-06-09
 CVS,CVS Health Corp,stock,true,true,true,robinhood_validated,2026-06-09
+CVSA,Covista Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 CVX,Chevron Corp,stock,true,true,true,robinhood_validated,2026-06-09
+CW,Curtiss Wright,stock,true,true,true,robinhood_validated,2026-06-09
+CWEN,Clearway Energy,stock,true,true,true,robinhood_validated,2026-06-09
+CWEN.A,"Clearway Energy, Inc. (Class A)",stock,false,false,false,robinhood_not_found,2026-06-09
+CWK,Cushman & Wakefield,stock,true,true,true,robinhood_validated,2026-06-09
+CWST,Casella,stock,true,true,true,robinhood_validated,2026-06-09
+CWT,California Water,stock,true,true,true,robinhood_validated,2026-06-09
+CXM,Sprinklr,stock,true,true,true,robinhood_validated,2026-06-09
+CXT,Crane NXT,stock,true,true,true,robinhood_validated,2026-06-09
+CXW,CoreCivic,stock,true,true,true,robinhood_validated,2026-06-09
+CYTK,Cytokinetics,stock,true,true,true,robinhood_validated,2026-06-09
+CZR,Caesars Entertainment,stock,true,true,true,robinhood_validated,2026-06-09
 D,Dominion Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
 DAL,Delta Air Lines Inc,stock,true,true,true,robinhood_validated,2026-06-09
+DAN,Dana,stock,true,true,true,robinhood_validated,2026-06-09
+DAR,Darling Ingredients,stock,true,true,true,robinhood_validated,2026-06-09
 DASH,DoorDash Inc,stock,true,true,true,robinhood_validated,2026-06-09
+DAVE,Dave,stock,true,true,true,robinhood_validated,2026-06-09
 DAY,"Dayforce, Inc.",stock,false,false,false,robinhood_not_found,2026-06-09
+DBD,Diebold Nixdorf,stock,true,true,true,robinhood_validated,2026-06-09
+DBX,Dropbox,stock,true,true,true,robinhood_validated,2026-06-09
+DCH,Dauch Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+DCI,Donaldson,stock,true,true,true,robinhood_validated,2026-06-09
+DCOM,Dime Community Bancshares,stock,true,true,true,robinhood_validated,2026-06-09
 DD,"DuPont de Nemours, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 DDOG,Datadog Inc,stock,true,true,true,robinhood_validated,2026-06-09
 DE,Deere & Company,stock,true,true,true,robinhood_validated,2026-06-09
+DEA,Easterly Government Properties,stock,true,true,true,robinhood_validated,2026-06-09
 DECK,Deckers Outdoor Corp,stock,true,true,true,robinhood_validated,2026-06-09
+DEI,Douglas Emmett,stock,true,true,true,robinhood_validated,2026-06-09
 DELL,Dell Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+DFH,Dream Finders Homes,stock,true,true,true,robinhood_validated,2026-06-09
+DFIN,Donnelley Financial Solutions,stock,true,true,true,robinhood_validated,2026-06-09
 DG,Dollar General Corp,stock,true,true,true,robinhood_validated,2026-06-09
+DGII,Digi International,stock,true,true,true,robinhood_validated,2026-06-09
 DGX,Quest Diagnostics Inc,stock,true,true,true,robinhood_validated,2026-06-09
 DHI,D R Horton Inc,stock,true,true,true,robinhood_validated,2026-06-09
 DHR,Danaher Corp,stock,true,true,true,robinhood_validated,2026-06-09
+DINO,HF Sinclair,stock,true,true,true,robinhood_validated,2026-06-09
+DIOD,Diodes,stock,true,true,true,robinhood_validated,2026-06-09
 DIS,Walt Disney,stock,true,true,true,robinhood_validated,2026-06-09
+DKS,Dicks Sporting Goods,stock,true,true,true,robinhood_validated,2026-06-09
+DLB,Dolby,stock,true,true,true,robinhood_validated,2026-06-09
 DLR,"Digital Realty Trust, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 DLTR,Dollar Tree Inc,stock,true,true,true,robinhood_validated,2026-06-09
+DLX,Deluxe,stock,true,true,true,robinhood_validated,2026-06-09
+DNOW,DNOW Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 DOC,"Healthpeak Properties, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+DOCN,DigitalOcean,stock,true,true,true,robinhood_validated,2026-06-09
+DOCS,Doximity,stock,true,true,true,robinhood_validated,2026-06-09
+DOCU,DocuSign,stock,true,true,true,robinhood_validated,2026-06-09
+DORM,Dorman,stock,true,true,true,robinhood_validated,2026-06-09
 DOV,Dover Corp,stock,true,true,true,robinhood_validated,2026-06-09
 DOW,Dow Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 DPZ,Dominos Pizza Inc,stock,true,true,true,robinhood_validated,2026-06-09
+DRH,Diamondrock Hospitality Company,stock,true,true,true,robinhood_validated,2026-06-09
 DRI,Darden Restaurants Inc,stock,true,true,true,robinhood_validated,2026-06-09
+DT,Dynatrace,stock,true,true,true,robinhood_validated,2026-06-09
 DTE,DTE Energy,stock,true,true,true,robinhood_validated,2026-06-09
+DTM,DT Midstream,stock,true,true,true,robinhood_validated,2026-06-09
 DUK,Duke Energy Corp,stock,true,true,true,robinhood_validated,2026-06-09
+DUOL,Duolingo,stock,true,true,true,robinhood_validated,2026-06-09
+DV,DoubleVerify,stock,true,true,true,robinhood_validated,2026-06-09
 DVA,Davita Inc,stock,true,true,true,robinhood_validated,2026-06-09
 DVN,Devon Energy Corp,stock,true,true,true,robinhood_validated,2026-06-09
+DXC,DXC Technology,stock,true,true,true,robinhood_validated,2026-06-09
 DXCM,Dexcom Inc,stock,true,true,true,robinhood_validated,2026-06-09
+DXPE,DXP,stock,true,true,true,robinhood_validated,2026-06-09
+DY,Dycom,stock,true,true,true,robinhood_validated,2026-06-09
 EA,Electronic Arts Inc,stock,true,true,true,robinhood_validated,2026-06-09
+EAT,Brinker,stock,true,true,true,robinhood_validated,2026-06-09
 EBAY,Ebay Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ECG,Everus Construction Group,stock,true,true,true,robinhood_validated,2026-06-09
 ECL,Ecolab Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ECPG,Encore Capital Group,stock,true,true,true,robinhood_validated,2026-06-09
 ED,Consolidated Edison Inc,stock,true,true,true,robinhood_validated,2026-06-09
+EEFT,Euronet Worldwide,stock,true,true,true,robinhood_validated,2026-06-09
+EFC,Ellington Financial,stock,true,true,true,robinhood_validated,2026-06-09
+EFOR,Everforth,stock,true,true,true,robinhood_validated,2026-06-09
 EFX,Equifax Inc,stock,true,true,true,robinhood_validated,2026-06-09
 EG,Everest Group Ltd,stock,true,true,true,robinhood_validated,2026-06-09
+EGBN,EagleBank,stock,true,true,true,robinhood_validated,2026-06-09
+EGP,EastGroup Properties,stock,true,true,true,robinhood_validated,2026-06-09
+EHC,Encompass Health,stock,true,true,true,robinhood_validated,2026-06-09
+EIG,Employers Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 EIX,Edison International,stock,true,true,true,robinhood_validated,2026-06-09
 EL,Estee Lauder Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
+ELAN,Elanco,stock,true,true,true,robinhood_validated,2026-06-09
+ELF,e.l.f. Beauty,stock,true,true,true,robinhood_validated,2026-06-09
+ELS,Equity LifeStyle Properties,stock,true,true,true,robinhood_validated,2026-06-09
 ELV,"Elevance Health, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+EMBC,Embecta,stock,true,true,true,robinhood_validated,2026-06-09
 EME,"Emcor Group, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 EMN,Eastman Chemical,stock,true,true,true,robinhood_validated,2026-06-09
 EMR,Emerson Electric,stock,true,true,true,robinhood_validated,2026-06-09
+ENOV,Enovis,stock,true,true,true,robinhood_validated,2026-06-09
+ENPH,Enphase Energy,stock,true,true,true,robinhood_validated,2026-06-09
+ENR,Energizer,stock,true,true,true,robinhood_validated,2026-06-09
+ENS,Enersys,stock,true,true,true,robinhood_validated,2026-06-09
+ENSG,Ensign Group,stock,true,true,true,robinhood_validated,2026-06-09
+ENTG,Entegris,stock,true,true,true,robinhood_validated,2026-06-09
+ENVA,Enova International,stock,true,true,true,robinhood_validated,2026-06-09
 EOG,EOG Resources Inc,stock,true,true,true,robinhood_validated,2026-06-09
-EPAM,Epam Systems Inc,stock,true,true,true,robinhood_validated,2026-06-09
+EPAC,Enerpac Tool Group,stock,true,true,true,robinhood_validated,2026-06-09
+EPAM,EPAM Systems,stock,true,true,true,robinhood_validated,2026-06-09
+EPC,Edgewell Personal Care,stock,true,true,true,robinhood_validated,2026-06-09
+EPR,EPR Properties,stock,true,true,true,robinhood_validated,2026-06-09
+EPRT,Essential Properties Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
+EQH,Equitable Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 EQIX,"Equinix, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 EQR,Equity Residential,stock,true,true,true,robinhood_validated,2026-06-09
 EQT,EQT Corp,stock,true,true,true,robinhood_validated,2026-06-09
 ERIE,Erie Indemnity Co,stock,true,true,true,robinhood_validated,2026-06-09
 ES,Eversource Energy,stock,true,true,true,robinhood_validated,2026-06-09
+ESAB,ESAB Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+ESE,ESCO Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+ESI,Element Solutions,stock,true,true,true,robinhood_validated,2026-06-09
+ESNT,Essent,stock,true,true,true,robinhood_validated,2026-06-09
 ESS,"Essex Property Trust, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+ETD,Ethan Allen,stock,true,true,true,robinhood_validated,2026-06-09
 ETN,"Eaton Corporation, PLC",stock,true,true,true,robinhood_validated,2026-06-09
 ETR,Entergy Corp,stock,true,true,true,robinhood_validated,2026-06-09
+ETSY,Etsy,stock,true,true,true,robinhood_validated,2026-06-09
+EVR,Evercore,stock,true,true,true,robinhood_validated,2026-06-09
 EVRG,Evergy Inc,stock,true,true,true,robinhood_validated,2026-06-09
+EVTC,Evertec,stock,true,true,true,robinhood_validated,2026-06-09
 EW,Edwards Lifesciences Corp,stock,true,true,true,robinhood_validated,2026-06-09
+EWBC,East West Bank,stock,true,true,true,robinhood_validated,2026-06-09
 EXC,Exelon Corp,stock,true,true,true,robinhood_validated,2026-06-09
 EXE,Expand Energy,stock,true,true,true,robinhood_validated,2026-06-09
+EXEL,Exelixis,stock,true,true,true,robinhood_validated,2026-06-09
+EXLS,EXL Service,stock,true,true,true,robinhood_validated,2026-06-09
+EXP,Eagle Materials,stock,true,true,true,robinhood_validated,2026-06-09
 EXPD,Expeditors International Of Washington,stock,true,true,true,robinhood_validated,2026-06-09
 EXPE,Expedia Inc,stock,true,true,true,robinhood_validated,2026-06-09
+EXPO,Exponent,stock,true,true,true,robinhood_validated,2026-06-09
 EXR,Extra Space Storage Inc,stock,true,true,true,robinhood_validated,2026-06-09
+EXTR,Extreme Networks,stock,true,true,true,robinhood_validated,2026-06-09
+EYE,National Vision Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+EZPW,EZCORP,stock,true,true,true,robinhood_validated,2026-06-09
 F,Ford Motor Company,stock,true,true,true,robinhood_validated,2026-06-09
+FAF,First American,stock,true,true,true,robinhood_validated,2026-06-09
 FANG,Diamondback Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
 FAST,Fastenal,stock,true,true,true,robinhood_validated,2026-06-09
+FBIN,Fortune Brands Innovations,stock,true,true,true,robinhood_validated,2026-06-09
+FBK,FB Financial,stock,true,true,true,robinhood_validated,2026-06-09
+FBNC,First Bancorp (NC),stock,true,true,true,robinhood_validated,2026-06-09
+FBP,First Bancorp (Puerto Rico),stock,true,true,true,robinhood_validated,2026-06-09
+FBRT,Franklin BSP Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
+FCF,First Commonwealth Financial,stock,true,true,true,robinhood_validated,2026-06-09
+FCFS,FirstCash,stock,true,true,true,robinhood_validated,2026-06-09
+FCN,FTI Consulting,stock,true,true,true,robinhood_validated,2026-06-09
+FCPT,Four Corners Property Trust,stock,true,true,true,robinhood_validated,2026-06-09
 FCX,"Freeport-McMoRan, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+FDP,Del Monte,stock,true,true,true,robinhood_validated,2026-06-09
 FDS,Factset Research Systems Inc,stock,true,true,true,robinhood_validated,2026-06-09
 FDX,FedEx Corporation,stock,true,true,true,robinhood_validated,2026-06-09
 FE,Firstenergy Corp,stock,true,true,true,robinhood_validated,2026-06-09
+FELE,Franklin Electric,stock,true,true,true,robinhood_validated,2026-06-09
+FFBC,First Financial Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+FFIN,First Financial Bank,stock,true,true,true,robinhood_validated,2026-06-09
 FFIV,F5 Networks Inc,stock,true,true,true,robinhood_validated,2026-06-09
+FG,F&G Annuities & Life,stock,true,true,true,robinhood_validated,2026-06-09
+FHB,First Hawaiian,stock,true,true,true,robinhood_validated,2026-06-09
+FHI,Federated Hermes,stock,true,true,true,robinhood_validated,2026-06-09
+FHN,First Horizon,stock,true,true,true,robinhood_validated,2026-06-09
 FI,Fiserv Inc,stock,false,false,false,robinhood_not_found,2026-06-09
+FIBK,First Interstate,stock,true,true,true,robinhood_validated,2026-06-09
 FICO,Fair Isaac Corp,stock,true,true,true,robinhood_validated,2026-06-09
 FIS,Fidelity National Information Services,stock,true,true,true,robinhood_validated,2026-06-09
 FITB,Fifth Third Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+FIVE,Five Below,stock,true,true,true,robinhood_validated,2026-06-09
+FIZZ,National Beverage,stock,true,true,true,robinhood_validated,2026-06-09
+FLEX,Flex,stock,true,true,true,robinhood_validated,2026-06-09
+FLG,Flagstar Bank,stock,true,true,true,robinhood_validated,2026-06-09
+FLO,Flowers Foods,stock,true,true,true,robinhood_validated,2026-06-09
+FLR,Fluor,stock,true,true,true,robinhood_validated,2026-06-09
+FLS,Flowserve,stock,true,true,true,robinhood_validated,2026-06-09
+FMC,FMC,stock,true,true,true,robinhood_validated,2026-06-09
+FN,Fabrinet,stock,true,true,true,robinhood_validated,2026-06-09
+FNB,F.N.B.,stock,true,true,true,robinhood_validated,2026-06-09
+FND,Floor & Decor,stock,true,true,true,robinhood_validated,2026-06-09
+FNF,Fidelity National Financial,stock,true,true,true,robinhood_validated,2026-06-09
+FORM,FormFactor,stock,true,true,true,robinhood_validated,2026-06-09
+FOUR,Shift4 Payments,stock,true,true,true,robinhood_validated,2026-06-09
 FOX,Fox Corporation Class B,stock,true,true,true,robinhood_validated,2026-06-09
 FOXA,Fox Corporation Class A,stock,true,true,true,robinhood_validated,2026-06-09
+FOXF,Fox Factory Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+FR,First Industrial Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
+FRPT,Freshpet,stock,true,true,true,robinhood_validated,2026-06-09
 FRT,Federal Realty Investment Trust,stock,true,true,true,robinhood_validated,2026-06-09
 FSLR,First Solar Inc,stock,true,true,true,robinhood_validated,2026-06-09
+FSS,Federal Signal,stock,true,true,true,robinhood_validated,2026-06-09
+FTDR,Frontdoor,stock,true,true,true,robinhood_validated,2026-06-09
+FTI,TechnipFMC,stock,true,true,true,robinhood_validated,2026-06-09
 FTNT,Fortinet Inc,stock,true,true,true,robinhood_validated,2026-06-09
+FTRE,Fortrea Holdings Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 FTV,Fortive Corp,stock,true,true,true,robinhood_validated,2026-06-09
+FUL,H. B. Fuller,stock,true,true,true,robinhood_validated,2026-06-09
+FULT,Fulton Financial,stock,true,true,true,robinhood_validated,2026-06-09
+FUN,Six Flags Entertainment,stock,true,true,true,robinhood_validated,2026-06-09
+FWRD,Forward Air,stock,true,true,true,robinhood_validated,2026-06-09
+G,Genpact,stock,true,true,true,robinhood_validated,2026-06-09
+GAP,Gap,stock,true,true,true,robinhood_validated,2026-06-09
+GATX,GATX,stock,true,true,true,robinhood_validated,2026-06-09
+GBCI,Glacier Bank,stock,true,true,true,robinhood_validated,2026-06-09
+GBX,Greenbrier,stock,true,true,true,robinhood_validated,2026-06-09
 GD,General Dynamics Corp,stock,true,true,true,robinhood_validated,2026-06-09
 GDDY,GoDaddy Inc,stock,true,true,true,robinhood_validated,2026-06-09
+GDYN,Grid Dynamics,stock,true,true,true,robinhood_validated,2026-06-09
 GE,GE Aerospace,stock,true,true,true,robinhood_validated,2026-06-09
+GEF,Greif,stock,true,true,true,robinhood_validated,2026-06-09
 GEHC,GE Healthcare Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
 GEN,"Gen Digital, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+GEO,GEO Group,stock,true,true,true,robinhood_validated,2026-06-09
 GEV,GE Vernova Inc,stock,true,true,true,robinhood_validated,2026-06-09
+GFF,Griffon,stock,true,true,true,robinhood_validated,2026-06-09
+GGG,Graco,stock,true,true,true,robinhood_validated,2026-06-09
+GHC,Graham Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+GIII,G-III Apparel,stock,true,true,true,robinhood_validated,2026-06-09
 GILD,Gilead Sciences Inc,stock,true,true,true,robinhood_validated,2026-06-09
 GIS,General Mills Inc,stock,true,true,true,robinhood_validated,2026-06-09
+GKOS,Glaukos,stock,true,true,true,robinhood_validated,2026-06-09
 GL,Globe Life Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+GLPI,Gaming & Leisure Properties,stock,true,true,true,robinhood_validated,2026-06-09
 GLW,Corning Inc,stock,true,true,true,robinhood_validated,2026-06-09
 GM,General Motors,stock,true,true,true,robinhood_validated,2026-06-09
+GME,GameStop,stock,true,true,true,robinhood_validated,2026-06-09
+GMED,Globus Medical,stock,true,true,true,robinhood_validated,2026-06-09
+GNL,Global Net Lease,stock,true,true,true,robinhood_validated,2026-06-09
 GNRC,Generac Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
+GNTX,Gentex,stock,true,true,true,robinhood_validated,2026-06-09
+GNW,Genworth Financial,stock,true,true,true,robinhood_validated,2026-06-09
+GO,Grocery Outlet,stock,true,true,true,robinhood_validated,2026-06-09
+GOGO,Gogo,stock,true,true,true,robinhood_validated,2026-06-09
+GOLF,Acushnet,stock,true,true,true,robinhood_validated,2026-06-09
 GOOG,Alphabet Inc Class C,stock,true,true,true,robinhood_validated,2026-06-09
 GOOGL,Alphabet Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
 GPC,Genuine Parts,stock,true,true,true,robinhood_validated,2026-06-09
+GPI,Group 1 Automotive,stock,true,true,true,robinhood_validated,2026-06-09
+GPK,Graphic Packaging International,stock,true,true,true,robinhood_validated,2026-06-09
 GPN,Global Payments Inc,stock,true,true,true,robinhood_validated,2026-06-09
+GRBK,Green Brick Partners,stock,true,true,true,robinhood_validated,2026-06-09
 GRMN,Garmin Ltd,stock,true,true,true,robinhood_validated,2026-06-09
 GS,Goldman Sachs Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+GSHD,Goosehead Insurance,stock,true,true,true,robinhood_validated,2026-06-09
+GT,Goodyear,stock,true,true,true,robinhood_validated,2026-06-09
+GTES,Gates Industrial,stock,true,true,true,robinhood_validated,2026-06-09
+GTLS,Chart Industries,stock,true,true,true,robinhood_validated,2026-06-09
+GTM,ZoomInfo Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+GTY,Getty Realty,stock,true,true,true,robinhood_validated,2026-06-09
+GVA,Granite Construction,stock,true,true,true,robinhood_validated,2026-06-09
+GWRE,Guidewire Software,stock,true,true,true,robinhood_validated,2026-06-09
 GWW,W.W. Grainger Inc,stock,true,true,true,robinhood_validated,2026-06-09
+GXO,GXO Logistics,stock,true,true,true,robinhood_validated,2026-06-09
+H,Hyatt,stock,true,true,true,robinhood_validated,2026-06-09
+HAE,Haemonetics,stock,true,true,true,robinhood_validated,2026-06-09
+HAFC,Hanmi Bank,stock,true,true,true,robinhood_validated,2026-06-09
 HAL,Halliburton,stock,true,true,true,robinhood_validated,2026-06-09
+HALO,Halozyme Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
 HAS,Hasbro Inc,stock,true,true,true,robinhood_validated,2026-06-09
+HASI,HA Sustainable Infrastructure Capital,stock,true,true,true,robinhood_validated,2026-06-09
+HAYW,Hayward,stock,true,true,true,robinhood_validated,2026-06-09
 HBAN,Huntington Bancshares Inc,stock,true,true,true,robinhood_validated,2026-06-09
 HCA,"HCA Healthcare, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+HCC,Warrior Met Coal,stock,true,true,true,robinhood_validated,2026-06-09
+HCI,HCI,stock,true,true,true,robinhood_validated,2026-06-09
+HCSG,Healthcare Services Group,stock,true,true,true,robinhood_validated,2026-06-09
 HD,Home Depot Inc,stock,true,true,true,robinhood_validated,2026-06-09
+HE,Hawaiian Electric,stock,true,true,true,robinhood_validated,2026-06-09
 HES,Hess Corp,stock,false,false,false,robinhood_not_found,2026-06-09
+HFWA,Heritage Financial,stock,true,true,true,robinhood_validated,2026-06-09
+HGV,Hilton Grand Vacations,stock,true,true,true,robinhood_validated,2026-06-09
 HIG,Hartford Financial Services Group,stock,true,true,true,robinhood_validated,2026-06-09
 HII,Huntington Ingalls Industries Inc,stock,true,true,true,robinhood_validated,2026-06-09
+HIMS,Hims & Hers Health,stock,true,true,true,robinhood_validated,2026-06-09
+HIW,Highwoods Properties,stock,true,true,true,robinhood_validated,2026-06-09
+HL,Hecla Mining,stock,true,true,true,robinhood_validated,2026-06-09
+HLI,Houlihan Lokey,stock,true,true,true,robinhood_validated,2026-06-09
+HLIT,Harmonic,stock,true,true,true,robinhood_validated,2026-06-09
+HLNE,Hamilton Lane,stock,true,true,true,robinhood_validated,2026-06-09
 HLT,Hilton Worldwide Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
+HLX,Helix Energy,stock,true,true,true,robinhood_validated,2026-06-09
+HMN,Horace Mann,stock,true,true,true,robinhood_validated,2026-06-09
+HNI,HNI,stock,true,true,true,robinhood_validated,2026-06-09
+HOG,Harley-Davidson,stock,true,true,true,robinhood_validated,2026-06-09
 HOLX,Hologic Inc,stock,false,false,false,robinhood_not_found,2026-06-09
+HOMB,Home Bank,stock,true,true,true,robinhood_validated,2026-06-09
 HON,Honeywell International Inc,stock,true,true,true,robinhood_validated,2026-06-09
 HOOD,"Robinhood Markets, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+HOPE,Hope Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+HP,Helmerich & Payne,stock,true,true,true,robinhood_validated,2026-06-09
 HPE,Hewlett Packard Enterprise,stock,true,true,true,robinhood_validated,2026-06-09
 HPQ,HP Inc,stock,true,true,true,robinhood_validated,2026-06-09
+HQY,HealthEquity,stock,true,true,true,robinhood_validated,2026-06-09
+HR,Healthcare Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
+HRB,H&R Block,stock,true,true,true,robinhood_validated,2026-06-09
 HRL,Hormel Foods Corp,stock,true,true,true,robinhood_validated,2026-06-09
+HRMY,Harmony Biosciences,stock,true,true,true,robinhood_validated,2026-06-09
 HSIC,Henry Schein Inc,stock,true,true,true,robinhood_validated,2026-06-09
 HST,"Host Hotels & Resorts, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+HSTM,HealthStream,stock,true,true,true,robinhood_validated,2026-06-09
 HSY,Hershey Foods,stock,true,true,true,robinhood_validated,2026-06-09
+HTH,Hilltop Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+HTLD,Heartland Express,stock,true,true,true,robinhood_validated,2026-06-09
+HTO,H2O America,stock,true,true,true,robinhood_validated,2026-06-09
+HTZ,Hertz Global,stock,true,true,true,robinhood_validated,2026-06-09
 HUBB,Hubbell Incorporated,stock,true,true,true,robinhood_validated,2026-06-09
+HUBG,Hub Group,stock,true,true,true,robinhood_validated,2026-06-09
 HUM,Humana Inc,stock,true,true,true,robinhood_validated,2026-06-09
+HWC,Hancock Whitney,stock,true,true,true,robinhood_validated,2026-06-09
+HWKN,Hawkins,stock,true,true,true,robinhood_validated,2026-06-09
 HWM,Howmet Aerospace Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+HXL,Hexcel,stock,true,true,true,robinhood_validated,2026-06-09
+HZO,MarineMax,stock,true,true,true,robinhood_validated,2026-06-09
+IART,Integra LifeSciences,stock,true,true,true,robinhood_validated,2026-06-09
 IBM,International Business Machines Co,stock,true,true,true,robinhood_validated,2026-06-09
+IBOC,IBC Bank,stock,true,true,true,robinhood_validated,2026-06-09
+IBP,Installed Building Products,stock,true,true,true,robinhood_validated,2026-06-09
 ICE,Intercontinental Exchange Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ICHR,Ichor Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+ICUI,ICU Medical,stock,true,true,true,robinhood_validated,2026-06-09
+IDA,IdaCorp,stock,true,true,true,robinhood_validated,2026-06-09
+IDCC,InterDigital,stock,true,true,true,robinhood_validated,2026-06-09
 IDXX,Idexx Laboratories Inc,stock,true,true,true,robinhood_validated,2026-06-09
 IEX,IDEX Corp,stock,true,true,true,robinhood_validated,2026-06-09
 IFF,International Flavors & Fragrances,stock,true,true,true,robinhood_validated,2026-06-09
+IIIN,Insteel Industries,stock,true,true,true,robinhood_validated,2026-06-09
+IIPR,Innovative Industrial Properties,stock,true,true,true,robinhood_validated,2026-06-09
+ILMN,Illumina,stock,true,true,true,robinhood_validated,2026-06-09
 INCY,Incyte Corp,stock,true,true,true,robinhood_validated,2026-06-09
+INDB,Independent Bank Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+INDV,Indivior Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
+INGR,Ingredion,stock,true,true,true,robinhood_validated,2026-06-09
+INSP,Inspire Medical Systems,stock,true,true,true,robinhood_validated,2026-06-09
+INSW,International Seaways,stock,true,true,true,robinhood_validated,2026-06-09
 INTC,Intel Corporation Corp,stock,true,true,true,robinhood_validated,2026-06-09
 INTU,Intuit Inc,stock,true,true,true,robinhood_validated,2026-06-09
+INVA,Innoviva,stock,true,true,true,robinhood_validated,2026-06-09
 INVH,Invitation Homes Inc,stock,true,true,true,robinhood_validated,2026-06-09
+INVX,Innovex International,stock,true,true,true,robinhood_validated,2026-06-09
+IOSP,Innospec,stock,true,true,true,robinhood_validated,2026-06-09
 IP,International Paper,stock,true,true,true,robinhood_validated,2026-06-09
+IPAR,Interparfums,stock,true,true,true,robinhood_validated,2026-06-09
 IPG,Interpublic Group Of Companies Inc,stock,false,false,false,robinhood_not_found,2026-06-09
+IPGP,IPG Photonics,stock,true,true,true,robinhood_validated,2026-06-09
 IQV,"IQVIA Holdings, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 IR,Ingersoll Rand Plc,stock,true,true,true,robinhood_validated,2026-06-09
+IRDM,Iridium Communications,stock,true,true,true,robinhood_validated,2026-06-09
 IRM,Iron Mountain Incorporated,stock,true,true,true,robinhood_validated,2026-06-09
+IRT,Independence Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
 ISRG,Intuitive Surgical Inc,stock,true,true,true,robinhood_validated,2026-06-09
 IT,Gartner Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ITGR,Integer Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+ITRI,Itron,stock,true,true,true,robinhood_validated,2026-06-09
+ITT,ITT,stock,true,true,true,robinhood_validated,2026-06-09
 ITW,Illinois Tool Inc,stock,true,true,true,robinhood_validated,2026-06-09
 IVZ,Invesco Ltd,stock,true,true,true,robinhood_validated,2026-06-09
 J,Jacobs Engineering Group Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+JAZZ,Jazz Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
+JBGS,JBG SMITH Properties,stock,true,true,true,robinhood_validated,2026-06-09
 JBHT,JB Hunt Transport Services Inc,stock,true,true,true,robinhood_validated,2026-06-09
 JBL,Jabil Inc,stock,true,true,true,robinhood_validated,2026-06-09
+JBLU,JetBlue Airways,stock,true,true,true,robinhood_validated,2026-06-09
+JBSS,John B. Sanfilippo & Son,stock,true,true,true,robinhood_validated,2026-06-09
+JBTM,JBT Marel Corporation,stock,true,true,true,robinhood_validated,2026-06-09
 JCI,Johnson Controls International Plc,stock,true,true,true,robinhood_validated,2026-06-09
+JEF,Jefferies,stock,true,true,true,robinhood_validated,2026-06-09
+JHG,Janus Henderson Group,stock,true,true,true,robinhood_validated,2026-06-09
+JJSF,J&J Snack Foods,stock,true,true,true,robinhood_validated,2026-06-09
 JKHY,"Jack Henry & Associates, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+JLL,JLL,stock,true,true,true,robinhood_validated,2026-06-09
 JNJ,Johnson & Johnson,stock,true,true,true,robinhood_validated,2026-06-09
+JOE,St. Joe,stock,true,true,true,robinhood_validated,2026-06-09
 JPM,JP Morgan Chase & Co,stock,true,true,true,robinhood_validated,2026-06-09
+JXN,Jackson Financial,stock,true,true,true,robinhood_validated,2026-06-09
 K,Kellanova,stock,false,false,false,robinhood_not_found,2026-06-09
+KAI,Kadant,stock,true,true,true,robinhood_validated,2026-06-09
+KALU,Kaiser Aluminum,stock,true,true,true,robinhood_validated,2026-06-09
+KBH,KB Home,stock,true,true,true,robinhood_validated,2026-06-09
+KBR,KBR,stock,true,true,true,robinhood_validated,2026-06-09
+KD,Kyndryl,stock,true,true,true,robinhood_validated,2026-06-09
 KDP,Keurig Dr Pepper Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+KEX,Kirby,stock,true,true,true,robinhood_validated,2026-06-09
 KEY,Keycorp,stock,true,true,true,robinhood_validated,2026-06-09
 KEYS,Keysight Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+KFY,Korn Ferry,stock,true,true,true,robinhood_validated,2026-06-09
+KGS,Kodiak Gas Services,stock,true,true,true,robinhood_validated,2026-06-09
 KHC,Kraft Heinz,stock,true,true,true,robinhood_validated,2026-06-09
 KIM,Kimco Realty Corporation,stock,true,true,true,robinhood_validated,2026-06-09
 KKR,KKR & Co Inc,stock,true,true,true,robinhood_validated,2026-06-09
 KLAC,KLA-Tencor Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+KLIC,Kulicke & Soffa,stock,true,true,true,robinhood_validated,2026-06-09
 KMB,Kimberly Clark Corp,stock,true,true,true,robinhood_validated,2026-06-09
 KMI,Kinder Morgan Inc,stock,true,true,true,robinhood_validated,2026-06-09
-KMX,Carmax Inc,stock,true,true,true,robinhood_validated,2026-06-09
+KMPR,Kemper,stock,true,true,true,robinhood_validated,2026-06-09
+KMT,Kennametal,stock,true,true,true,robinhood_validated,2026-06-09
+KMX,CarMax,stock,true,true,true,robinhood_validated,2026-06-09
+KN,Knowles,stock,true,true,true,robinhood_validated,2026-06-09
+KNF,Knife River,stock,true,true,true,robinhood_validated,2026-06-09
+KNSL,Kinsale Capital Group,stock,true,true,true,robinhood_validated,2026-06-09
+KNTK,Kinetik Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+KNX,Knight-Swift Transportation,stock,true,true,true,robinhood_validated,2026-06-09
 KO,Coca-Cola,stock,true,true,true,robinhood_validated,2026-06-09
+KOP,Koppers,stock,true,true,true,robinhood_validated,2026-06-09
 KR,Kroger,stock,true,true,true,robinhood_validated,2026-06-09
+KRC,Kilroy Realty,stock,true,true,true,robinhood_validated,2026-06-09
+KRG,Kite Realty Group Trust,stock,true,true,true,robinhood_validated,2026-06-09
+KRYS,Krystal Biotech,stock,true,true,true,robinhood_validated,2026-06-09
+KSS,Kohls Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+KTB,Kontoor Brands,stock,true,true,true,robinhood_validated,2026-06-09
+KTOS,Kratos Defense & Security Solutions,stock,true,true,true,robinhood_validated,2026-06-09
 KVUE,"Kenvue, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+KW,Kennedy Wilson,stock,true,true,true,robinhood_validated,2026-06-09
+KWR,Quaker Houghton,stock,true,true,true,robinhood_validated,2026-06-09
 L,Loews Corp,stock,true,true,true,robinhood_validated,2026-06-09
+LAD,Lithia Motors,stock,true,true,true,robinhood_validated,2026-06-09
+LAMR,Lamar Advertising,stock,true,true,true,robinhood_validated,2026-06-09
+LAUR,Laureate Education,stock,true,true,true,robinhood_validated,2026-06-09
+LBRT,Liberty Energy,stock,true,true,true,robinhood_validated,2026-06-09
+LCII,LCI Industries,stock,true,true,true,robinhood_validated,2026-06-09
 LDOS,Leidos Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
+LEA,Lear,stock,true,true,true,robinhood_validated,2026-06-09
+LECO,Lincoln Electric,stock,true,true,true,robinhood_validated,2026-06-09
+LEG,Leggett & Platt,stock,true,true,true,robinhood_validated,2026-06-09
 LEN,Lennar Corporation Class A,stock,true,true,true,robinhood_validated,2026-06-09
+LFST,LifeStance Health Group,stock,true,true,true,robinhood_validated,2026-06-09
+LFUS,Littelfuse,stock,true,true,true,robinhood_validated,2026-06-09
+LGIH,LGI Homes,stock,true,true,true,robinhood_validated,2026-06-09
+LGND,Ligand Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
 LH,Laboratory Corporation Of America,stock,true,true,true,robinhood_validated,2026-06-09
 LHX,"L3Harris Technologies, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+LIF,Life360,stock,true,true,true,robinhood_validated,2026-06-09
 LII,Lennox International,stock,true,true,true,robinhood_validated,2026-06-09
 LIN,Linde Plc,stock,true,true,true,robinhood_validated,2026-06-09
-LKQ,LKQ Corp,stock,true,true,true,robinhood_validated,2026-06-09
+LIVN,LivaNova,stock,true,true,true,robinhood_validated,2026-06-09
+LKFN,Lakeland Financial,stock,true,true,true,robinhood_validated,2026-06-09
+LKQ,LKQ,stock,true,true,true,robinhood_validated,2026-06-09
 LLY,Eli Lilly,stock,true,true,true,robinhood_validated,2026-06-09
+LMAT,LeMaitre Vascular,stock,true,true,true,robinhood_validated,2026-06-09
 LMT,Lockheed Martin Corp,stock,true,true,true,robinhood_validated,2026-06-09
+LNC,Lincoln Financial Group,stock,true,true,true,robinhood_validated,2026-06-09
+LNN,Lindsay Manufacturing,stock,true,true,true,robinhood_validated,2026-06-09
 LNT,Alliant Energy Corp,stock,true,true,true,robinhood_validated,2026-06-09
+LNTH,Lantheus,stock,true,true,true,robinhood_validated,2026-06-09
+LOPE,Grand Canyon Education,stock,true,true,true,robinhood_validated,2026-06-09
 LOW,Lowes Companies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+LPG,Dorian LPG,stock,true,true,true,robinhood_validated,2026-06-09
+LPX,Louisiana Pacific,stock,true,true,true,robinhood_validated,2026-06-09
+LQDT,Liquidity Services,stock,true,true,true,robinhood_validated,2026-06-09
 LRCX,Lam Research Corp,stock,true,true,true,robinhood_validated,2026-06-09
+LRN,Stride,stock,true,true,true,robinhood_validated,2026-06-09
+LSCC,Lattice Semiconductor,stock,true,true,true,robinhood_validated,2026-06-09
+LSTR,Landstar,stock,true,true,true,robinhood_validated,2026-06-09
+LTC,LTC Properties,stock,true,true,true,robinhood_validated,2026-06-09
+LTH,Life Time Group,stock,true,true,true,robinhood_validated,2026-06-09
 LULU,Lululemon Athletica Inc,stock,true,true,true,robinhood_validated,2026-06-09
+LUMN,Lumen Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 LUV,Southwest Airlines,stock,true,true,true,robinhood_validated,2026-06-09
 LVS,Las Vegas Sands Corp,stock,true,true,true,robinhood_validated,2026-06-09
-LW,Lamb Weston Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
+LW,Lamb Weston,stock,true,true,true,robinhood_validated,2026-06-09
+LXP,LXP Industrial Trust,stock,true,true,true,robinhood_validated,2026-06-09
 LYB,Lyondellbasell Industries NV,stock,true,true,true,robinhood_validated,2026-06-09
+LYFT,Lyft,stock,true,true,true,robinhood_validated,2026-06-09
 LYV,Live Nation Entertainment Inc,stock,true,true,true,robinhood_validated,2026-06-09
+LZ,LegalZoom.com,stock,true,true,true,robinhood_validated,2026-06-09
+LZB,La-Z-Boy,stock,true,true,true,robinhood_validated,2026-06-09
+M,Macy's,stock,true,true,true,robinhood_validated,2026-06-09
 MA,Mastercard Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
 MAA,"Mid-America Apartment Communities, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+MAC,Macerich,stock,true,true,true,robinhood_validated,2026-06-09
+MAN,ManpowerGroup,stock,true,true,true,robinhood_validated,2026-06-09
+MANH,Manhattan Associates,stock,true,true,true,robinhood_validated,2026-06-09
 MAR,Marriott International Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MARA,MARA Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 MAS,Masco Corp,stock,true,true,true,robinhood_validated,2026-06-09
+MASI,Masimo,stock,true,true,true,robinhood_validated,2026-06-09
+MAT,Mattel,stock,true,true,true,robinhood_validated,2026-06-09
+MATW,Matthews International,stock,true,true,true,robinhood_validated,2026-06-09
+MATX,Matson,stock,true,true,true,robinhood_validated,2026-06-09
+MBC,MasterBrand,stock,true,true,true,robinhood_validated,2026-06-09
+MBIN,Merchants Bank,stock,true,true,true,robinhood_validated,2026-06-09
+MC,Moelis & Company,stock,true,true,true,robinhood_validated,2026-06-09
 MCD,Mcdonalds Corp,stock,true,true,true,robinhood_validated,2026-06-09
 MCHP,Microchip Technology Inc,stock,true,true,true,robinhood_validated,2026-06-09
 MCK,Mckesson Corp,stock,true,true,true,robinhood_validated,2026-06-09
 MCO,Moodys Corp,stock,true,true,true,robinhood_validated,2026-06-09
+MCRI,Monarch Casino & Resort,stock,true,true,true,robinhood_validated,2026-06-09
+MCY,Mercury Insurance,stock,true,true,true,robinhood_validated,2026-06-09
+MD,Pediatrix Medical Group,stock,true,true,true,robinhood_validated,2026-06-09
 MDLZ,Mondelez International Inc,stock,true,true,true,robinhood_validated,2026-06-09
 MDT,Medtronic Plc,stock,true,true,true,robinhood_validated,2026-06-09
+MDU,MDU Resources,stock,true,true,true,robinhood_validated,2026-06-09
+MEDP,Medpace,stock,true,true,true,robinhood_validated,2026-06-09
 MET,Metlife Inc,stock,true,true,true,robinhood_validated,2026-06-09
 META,"Meta Platforms, Inc. Class A",stock,true,true,true,robinhood_validated,2026-06-09
+MGEE,MGE Energy,stock,true,true,true,robinhood_validated,2026-06-09
 MGM,MGM Resorts International,stock,true,true,true,robinhood_validated,2026-06-09
-MHK,Mohawk Industries Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MGY,Magnolia Oil & Gas,stock,true,true,true,robinhood_validated,2026-06-09
+MHK,Mohawk,stock,true,true,true,robinhood_validated,2026-06-09
+MHO,M/I Homes,stock,true,true,true,robinhood_validated,2026-06-09
+MIDD,Middleby,stock,true,true,true,robinhood_validated,2026-06-09
+MIR,Mirion Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 MKC,McCormick & Co  Non-voting,stock,true,true,true,robinhood_validated,2026-06-09
+MKSI,MKS Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MKTX,MarketAxess,stock,true,true,true,robinhood_validated,2026-06-09
+MLI,Mueller Industries,stock,true,true,true,robinhood_validated,2026-06-09
+MLKN,MillerKnoll,stock,true,true,true,robinhood_validated,2026-06-09
 MLM,Martin Marietta Materials Inc,stock,true,true,true,robinhood_validated,2026-06-09
 MMC,Marsh & McLennan Inc,stock,false,false,false,robinhood_not_found,2026-06-09
+MMI,Marcus & Millichap,stock,true,true,true,robinhood_validated,2026-06-09
 MMM,3M,stock,true,true,true,robinhood_validated,2026-06-09
+MMS,Maximus,stock,true,true,true,robinhood_validated,2026-06-09
+MMSI,Merit Medical Systems,stock,true,true,true,robinhood_validated,2026-06-09
+MNRO,Monro,stock,true,true,true,robinhood_validated,2026-06-09
 MNST,Monster Beverage Corp,stock,true,true,true,robinhood_validated,2026-06-09
 MO,Altria Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
-MOH,Molina Healthcare Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MOG.A,MOOG,stock,true,true,true,robinhood_validated,2026-06-09
+MOH,Molina Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
+MORN,Morningstar,stock,true,true,true,robinhood_validated,2026-06-09
 MOS,Mosaic,stock,true,true,true,robinhood_validated,2026-06-09
+MP,MP Materials,stock,true,true,true,robinhood_validated,2026-06-09
 MPC,Marathon Petroleum Corp,stock,true,true,true,robinhood_validated,2026-06-09
+MPT,Medical Properties Trust,stock,true,true,true,robinhood_validated,2026-06-09
 MPWR,Monolithic Power Systems Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MRCY,Mercury Systems,stock,true,true,true,robinhood_validated,2026-06-09
 MRK,Merck & Co Inc,stock,true,true,true,robinhood_validated,2026-06-09
 MRNA,"Moderna, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 MRO,Marathon Oil Corp,stock,false,false,false,robinhood_not_found,2026-06-09
+MRP,Millrose Properties,stock,true,true,true,robinhood_validated,2026-06-09
+MRTN,Marten Transport,stock,true,true,true,robinhood_validated,2026-06-09
 MS,Morgan Stanley,stock,true,true,true,robinhood_validated,2026-06-09
+MSA,Mine Safety Appliances,stock,true,true,true,robinhood_validated,2026-06-09
 MSCI,MSCI Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MSEX,Middlesex Water,stock,true,true,true,robinhood_validated,2026-06-09
 MSFT,Microsoft Corp,stock,true,true,true,robinhood_validated,2026-06-09
+MSGS,Madison Square Garden,stock,true,true,true,robinhood_validated,2026-06-09
 MSI,Motorola Solutions Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MSM,MSC Industrial Direct,stock,true,true,true,robinhood_validated,2026-06-09
 MTB,M&T Bank Corp,stock,true,true,true,robinhood_validated,2026-06-09
-MTCH,Match Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MTCH,Match,stock,true,true,true,robinhood_validated,2026-06-09
 MTD,Mettler Toledo Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MTDR,Matador Resources,stock,true,true,true,robinhood_validated,2026-06-09
+MTG,MGIC,stock,true,true,true,robinhood_validated,2026-06-09
+MTH,Meritage Homes,stock,true,true,true,robinhood_validated,2026-06-09
+MTN,Vail Resorts,stock,true,true,true,robinhood_validated,2026-06-09
+MTRN,Materion,stock,true,true,true,robinhood_validated,2026-06-09
+MTSI,MACOM,stock,true,true,true,robinhood_validated,2026-06-09
+MTUS,Metallus Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+MTX,Minerals Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+MTZ,Mastec,stock,true,true,true,robinhood_validated,2026-06-09
 MU,Micron Technology Inc,stock,true,true,true,robinhood_validated,2026-06-09
+MUR,Murphy Oil,stock,true,true,true,robinhood_validated,2026-06-09
+MUSA,Murphy USA,stock,true,true,true,robinhood_validated,2026-06-09
+MWA,Mueller water,stock,true,true,true,robinhood_validated,2026-06-09
+MXL,MaxLinear,stock,true,true,true,robinhood_validated,2026-06-09
+MYRG,MYR Group,stock,true,true,true,robinhood_validated,2026-06-09
+MZTI,The Marzetti Company,stock,true,true,true,robinhood_validated,2026-06-09
+NABL,N-able,stock,true,true,true,robinhood_validated,2026-06-09
+NATL,NCR Atleos,stock,true,true,true,robinhood_validated,2026-06-09
+NAVI,Navient,stock,true,true,true,robinhood_validated,2026-06-09
+NBHC,National Bank,stock,true,true,true,robinhood_validated,2026-06-09
+NBIX,Neurocrine,stock,true,true,true,robinhood_validated,2026-06-09
+NBTB,NBT Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
 NCLH,Norwegian Cruise Line Holdings Ltd,stock,true,true,true,robinhood_validated,2026-06-09
 NDAQ,Nasdaq Inc,stock,true,true,true,robinhood_validated,2026-06-09
 NDSN,Nordson Corp,stock,true,true,true,robinhood_validated,2026-06-09
+NE,Noble,stock,true,true,true,robinhood_validated,2026-06-09
 NEE,Nextera Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
 NEM,Newmont Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+NEO,NeoGenomics,stock,true,true,true,robinhood_validated,2026-06-09
+NEOG,Neogen,stock,true,true,true,robinhood_validated,2026-06-09
+NEU,NewMarket,stock,true,true,true,robinhood_validated,2026-06-09
+NFG,National Fuel Gas,stock,true,true,true,robinhood_validated,2026-06-09
 NFLX,Netflix Inc,stock,true,true,true,robinhood_validated,2026-06-09
+NGVT,Ingevity,stock,true,true,true,robinhood_validated,2026-06-09
+NHC,National Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
 NI,Nisource Inc,stock,true,true,true,robinhood_validated,2026-06-09
+NJR,New Jersey Resources,stock,true,true,true,robinhood_validated,2026-06-09
 NKE,Nike Inc Class B,stock,true,true,true,robinhood_validated,2026-06-09
+NLY,Annaly Capital,stock,true,true,true,robinhood_validated,2026-06-09
+NMIH,NMI Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
+NNN,NNN REIT,stock,true,true,true,robinhood_validated,2026-06-09
 NOC,Northrop Grumman Corp,stock,true,true,true,robinhood_validated,2026-06-09
+NOG,Northern Oil and Gas,stock,true,true,true,robinhood_validated,2026-06-09
+NOV,NOV Inc,stock,true,true,true,robinhood_validated,2026-06-09
+NOVT,Novanta,stock,true,true,true,robinhood_validated,2026-06-09
 NOW,Servicenow Inc,stock,true,true,true,robinhood_validated,2026-06-09
+NPK,National Presto,stock,true,true,true,robinhood_validated,2026-06-09
+NPO,Enpro Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 NRG,NRG Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
+NSA,National Storage Affiliates Trust,stock,true,true,true,robinhood_validated,2026-06-09
 NSC,Norfolk Southern Corp,stock,true,true,true,robinhood_validated,2026-06-09
+NSIT,Insight Enterprises,stock,true,true,true,robinhood_validated,2026-06-09
+NSP,Insperity,stock,true,true,true,robinhood_validated,2026-06-09
+NSSC,NAPCO,stock,true,true,true,robinhood_validated,2026-06-09
 NTAP,NetApp Inc,stock,true,true,true,robinhood_validated,2026-06-09
+NTCT,NetScout Systems,stock,true,true,true,robinhood_validated,2026-06-09
+NTNX,Nutanix,stock,true,true,true,robinhood_validated,2026-06-09
 NTRS,Northern Trust Corporation,stock,true,true,true,robinhood_validated,2026-06-09
 NUE,Nucor Corp,stock,true,true,true,robinhood_validated,2026-06-09
 NVDA,Nvidia Corp,stock,true,true,true,robinhood_validated,2026-06-09
 NVR,"NVR, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+NVST,Envista,stock,true,true,true,robinhood_validated,2026-06-09
+NVT,nVent Electric,stock,true,true,true,robinhood_validated,2026-06-09
+NWBI,Northwest Bank,stock,true,true,true,robinhood_validated,2026-06-09
+NWE,NorthWestern Energy Group,stock,true,true,true,robinhood_validated,2026-06-09
+NWL,Newell Brands,stock,true,true,true,robinhood_validated,2026-06-09
+NWN,Northwest Natural,stock,true,true,true,robinhood_validated,2026-06-09
 NWS,News Corp Class B,stock,true,true,true,robinhood_validated,2026-06-09
 NWSA,News Corp Class A,stock,true,true,true,robinhood_validated,2026-06-09
+NX,Quanex,stock,true,true,true,robinhood_validated,2026-06-09
 NXPI,NXP Semiconductors Nv,stock,true,true,true,robinhood_validated,2026-06-09
+NXRT,NexPoint Residential Trust,stock,true,true,true,robinhood_validated,2026-06-09
+NXST,Nexstar Media Group,stock,true,true,true,robinhood_validated,2026-06-09
+NXT,Nextpower Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+NYT,The New York Times,stock,true,true,true,robinhood_validated,2026-06-09
 O,Realty Income Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+OC,Owens Corning,stock,true,true,true,robinhood_validated,2026-06-09
 ODFL,Old Dominion Freight Line Inc,stock,true,true,true,robinhood_validated,2026-06-09
+OFG,OFG Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+OGE,OGE Energy,stock,true,true,true,robinhood_validated,2026-06-09
+OGN,Organon,stock,true,true,true,robinhood_validated,2026-06-09
+OGS,ONE Gas,stock,true,true,true,robinhood_validated,2026-06-09
+OHI,Omega Healthcare Investors,stock,true,true,true,robinhood_validated,2026-06-09
+OI,O-I Glass,stock,true,true,true,robinhood_validated,2026-06-09
+OII,Oceaneering,stock,true,true,true,robinhood_validated,2026-06-09
 OKE,Oneok Inc,stock,true,true,true,robinhood_validated,2026-06-09
+OKTA,Okta,stock,true,true,true,robinhood_validated,2026-06-09
+OLED,Universal Display,stock,true,true,true,robinhood_validated,2026-06-09
+OLLI,Ollie's Bargain Outlet,stock,true,true,true,robinhood_validated,2026-06-09
+OLN,Olin,stock,true,true,true,robinhood_validated,2026-06-09
 OMC,Omnicom Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+OMCL,Omnicell,stock,true,true,true,robinhood_validated,2026-06-09
 ON,On Semiconductor Corp,stock,true,true,true,robinhood_validated,2026-06-09
+ONB,Old National Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+ONTO,Onto Innovation,stock,true,true,true,robinhood_validated,2026-06-09
+OPCH,Option Care Health,stock,true,true,true,robinhood_validated,2026-06-09
+OPLN,OPENLANE,stock,true,true,true,robinhood_validated,2026-06-09
+ORA,Ormat,stock,true,true,true,robinhood_validated,2026-06-09
 ORCL,Oracle Corp,stock,true,true,true,robinhood_validated,2026-06-09
+ORI,Old Republic,stock,true,true,true,robinhood_validated,2026-06-09
 ORLY,Oreilly Automotive Inc,stock,true,true,true,robinhood_validated,2026-06-09
+OSIS,OSI Systems,stock,true,true,true,robinhood_validated,2026-06-09
+OSK,Oshkosh,stock,true,true,true,robinhood_validated,2026-06-09
+OSW,OneSpaWorld,stock,true,true,true,robinhood_validated,2026-06-09
 OTIS,Otis Worldwide Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+OTTR,Otter Tail,stock,true,true,true,robinhood_validated,2026-06-09
+OUT,OUTFRONT Media,stock,true,true,true,robinhood_validated,2026-06-09
+OVV,Ovintiv,stock,true,true,true,robinhood_validated,2026-06-09
+OXM,Oxford Industries,stock,true,true,true,robinhood_validated,2026-06-09
 OXY,Occidental Petroleum Corp,stock,true,true,true,robinhood_validated,2026-06-09
+OZK,Bank OZK,stock,true,true,true,robinhood_validated,2026-06-09
+P,Everpure,stock,true,true,true,robinhood_validated,2026-06-09
+PAG,Penske Automotive Group,stock,true,true,true,robinhood_validated,2026-06-09
+PAHC,Phibro Animal Health,stock,true,true,true,robinhood_validated,2026-06-09
 PANW,"Palo Alto Networks, Inc",stock,true,true,true,robinhood_validated,2026-06-09
-PAYC,Paycom Software Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PARR,Par Pacific,stock,true,true,true,robinhood_validated,2026-06-09
+PATH,UiPath,stock,true,true,true,robinhood_validated,2026-06-09
+PATK,Patrick Industries,stock,true,true,true,robinhood_validated,2026-06-09
+PAYC,Paycom,stock,true,true,true,robinhood_validated,2026-06-09
+PAYO,Payoneer Global,stock,true,true,true,robinhood_validated,2026-06-09
 PAYX,Paychex Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PB,Prosperity Bancshares,stock,true,true,true,robinhood_validated,2026-06-09
+PBF,PBF Energy,stock,true,true,true,robinhood_validated,2026-06-09
+PBH,Prestige Consumer Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
+PBI,Pitney Bowes,stock,true,true,true,robinhood_validated,2026-06-09
 PCAR,Paccar Inc,stock,true,true,true,robinhood_validated,2026-06-09
 PCG,PG&E Corp,stock,true,true,true,robinhood_validated,2026-06-09
+PCRX,Pacira BioSciences,stock,true,true,true,robinhood_validated,2026-06-09
+PCTY,Paylocity,stock,true,true,true,robinhood_validated,2026-06-09
+PDFS,PDF Solutions,stock,true,true,true,robinhood_validated,2026-06-09
+PEB,Pebblebrook Hotel Trust,stock,true,true,true,robinhood_validated,2026-06-09
+PECO,Phillips Edison & Company,stock,true,true,true,robinhood_validated,2026-06-09
 PEG,Public Service Enterprise Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PEGA,Pegasystems,stock,true,true,true,robinhood_validated,2026-06-09
+PEN,Penumbra,stock,true,true,true,robinhood_validated,2026-06-09
+PENG,Penguin Solutions,stock,true,true,true,robinhood_validated,2026-06-09
+PENN,PENN Entertainment,stock,true,true,true,robinhood_validated,2026-06-09
 PEP,Pepsico Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PFBC,Preferred Bank,stock,true,true,true,robinhood_validated,2026-06-09
 PFE,Pfizer Inc,stock,true,true,true,robinhood_validated,2026-06-09
 PFG,Principal Financial Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PFGC,Performance Food Group,stock,true,true,true,robinhood_validated,2026-06-09
+PFS,Provident Bank of New Jersey,stock,true,true,true,robinhood_validated,2026-06-09
 PG,Procter & Gamble,stock,true,true,true,robinhood_validated,2026-06-09
+PGNY,Progyny,stock,true,true,true,robinhood_validated,2026-06-09
 PGR,Progressive Corp,stock,true,true,true,robinhood_validated,2026-06-09
 PH,Parker-Hannifin Corp,stock,true,true,true,robinhood_validated,2026-06-09
+PHIN,PHINIA Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 PHM,Pultegroup Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PI,Impinj,stock,true,true,true,robinhood_validated,2026-06-09
+PII,Polaris,stock,true,true,true,robinhood_validated,2026-06-09
+PINS,Pinterest,stock,true,true,true,robinhood_validated,2026-06-09
+PIPR,Piper Sandler,stock,true,true,true,robinhood_validated,2026-06-09
+PJT,PJT Partners,stock,true,true,true,robinhood_validated,2026-06-09
+PK,Park Hotels & Resorts,stock,true,true,true,robinhood_validated,2026-06-09
 PKG,Packaging Corp Of America,stock,true,true,true,robinhood_validated,2026-06-09
+PLAB,Photronics,stock,true,true,true,robinhood_validated,2026-06-09
 PLD,"Prologis, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+PLMR,Palomar Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+PLNT,Planet Fitness,stock,true,true,true,robinhood_validated,2026-06-09
 PLTR,Palantir Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PLUS,ePlus,stock,true,true,true,robinhood_validated,2026-06-09
+PLXS,Plexus,stock,true,true,true,robinhood_validated,2026-06-09
 PM,Philip Morris International Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PMT,PennyMac Mortgage Investment Trust,stock,true,true,true,robinhood_validated,2026-06-09
 PNC,"PNC Financial Services Group, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+PNFP,Pinnacle Financial Partners,stock,true,true,true,robinhood_validated,2026-06-09
 PNR,Pentair,stock,true,true,true,robinhood_validated,2026-06-09
 PNW,Pinnacle West Corp,stock,true,true,true,robinhood_validated,2026-06-09
 PODD,Insulet Corp,stock,true,true,true,robinhood_validated,2026-06-09
 POOL,Pool Corp,stock,true,true,true,robinhood_validated,2026-06-09
+POR,Portland General Electric,stock,true,true,true,robinhood_validated,2026-06-09
+POST,Post Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+POWI,Power Integrations,stock,true,true,true,robinhood_validated,2026-06-09
+POWL,Powell Industries,stock,true,true,true,robinhood_validated,2026-06-09
+PPC,Pilgrim's Pride,stock,true,true,true,robinhood_validated,2026-06-09
 PPG,PPG Industries Inc,stock,true,true,true,robinhood_validated,2026-06-09
 PPL,PPL Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+PPLI,People Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+PR,Permian Resources,stock,true,true,true,robinhood_validated,2026-06-09
+PRA,ProAssurance,stock,true,true,true,robinhood_validated,2026-06-09
+PRAA,PRA Group,stock,true,true,true,robinhood_validated,2026-06-09
+PRDO,Perdoceo Education,stock,true,true,true,robinhood_validated,2026-06-09
+PRG,PROG Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+PRGO,Perrigo,stock,true,true,true,robinhood_validated,2026-06-09
+PRGS,Progress Software,stock,true,true,true,robinhood_validated,2026-06-09
+PRI,Primerica,stock,true,true,true,robinhood_validated,2026-06-09
+PRIM,Primoris Services,stock,true,true,true,robinhood_validated,2026-06-09
+PRK,Park National,stock,true,true,true,robinhood_validated,2026-06-09
+PRKS,United Parks & Resorts Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+PRLB,Proto Labs,stock,true,true,true,robinhood_validated,2026-06-09
+PRSU,Pursuit Attractions and Hospitality,stock,true,true,true,robinhood_validated,2026-06-09
 PRU,Prudential Financial Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PRVA,Privia Health Group,stock,true,true,true,robinhood_validated,2026-06-09
 PSA,Public Storage,stock,true,true,true,robinhood_validated,2026-06-09
 PSKY,Paramount Skydance Corp - Class B,stock,true,true,true,robinhood_validated,2026-06-09
+PSMT,PriceSmart,stock,true,true,true,robinhood_validated,2026-06-09
+PSN,Parsons,stock,true,true,true,robinhood_validated,2026-06-09
 PSX,Phillips 66,stock,true,true,true,robinhood_validated,2026-06-09
 PTC,PTC Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PTCT,PTC Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
+PTEN,Patterson-UTI Energy,stock,true,true,true,robinhood_validated,2026-06-09
+PTGX,Protagonist Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
+PTON,Peloton Interactive,stock,true,true,true,robinhood_validated,2026-06-09
+PVH,PVH,stock,true,true,true,robinhood_validated,2026-06-09
 PWR,Quanta Services Inc,stock,true,true,true,robinhood_validated,2026-06-09
 PYPL,Paypal Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
+PZZA,Papa John's,stock,true,true,true,robinhood_validated,2026-06-09
 QCOM,Qualcomm Inc,stock,true,true,true,robinhood_validated,2026-06-09
+QDEL,QuidelOrtho,stock,true,true,true,robinhood_validated,2026-06-09
+QLYS,Qualys,stock,true,true,true,robinhood_validated,2026-06-09
+QNST,QuinStreet,stock,true,true,true,robinhood_validated,2026-06-09
+QRVO,Qorvo,stock,true,true,true,robinhood_validated,2026-06-09
+QTWO,Q2 Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+R,Ryder,stock,true,true,true,robinhood_validated,2026-06-09
+RAL,Ralliant Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+RAMP,LiveRamp,stock,true,true,true,robinhood_validated,2026-06-09
+RBA,RB Global,stock,true,true,true,robinhood_validated,2026-06-09
+RBC,RBC Bearings,stock,true,true,true,robinhood_validated,2026-06-09
 RCL,Royal Caribbean Cruises Ltd,stock,true,true,true,robinhood_validated,2026-06-09
+RCUS,Arcus Biosciences,stock,true,true,true,robinhood_validated,2026-06-09
+RDN,Radian,stock,true,true,true,robinhood_validated,2026-06-09
+RDNT,RadNet,stock,true,true,true,robinhood_validated,2026-06-09
 REG,Regency Centers Corporation,stock,true,true,true,robinhood_validated,2026-06-09
 REGN,Regeneron Pharmaceuticals Inc,stock,true,true,true,robinhood_validated,2026-06-09
+RELY,Remitly Global,stock,true,true,true,robinhood_validated,2026-06-09
+RES,Rpc,stock,true,true,true,robinhood_validated,2026-06-09
+REX,REX American Resources,stock,true,true,true,robinhood_validated,2026-06-09
+REXR,Rexford Industrial Realty,stock,true,true,true,robinhood_validated,2026-06-09
+REYN,Reynolds Consumer Products,stock,true,true,true,robinhood_validated,2026-06-09
+REZI,Resideo Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 RF,Regions Financial Corp,stock,true,true,true,robinhood_validated,2026-06-09
+RGA,RGA,stock,true,true,true,robinhood_validated,2026-06-09
+RGEN,Repligen,stock,true,true,true,robinhood_validated,2026-06-09
+RGLD,Royal Gold,stock,true,true,true,robinhood_validated,2026-06-09
+RH,RH,stock,true,true,true,robinhood_validated,2026-06-09
+RHI,Robert Half Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+RHP,Ryman Hospitality Properties,stock,true,true,true,robinhood_validated,2026-06-09
+RITM,Rithm Capital,stock,true,true,true,robinhood_validated,2026-06-09
 RJF,Raymond James Inc,stock,true,true,true,robinhood_validated,2026-06-09
 RL,Ralph Lauren Corp Class A,stock,true,true,true,robinhood_validated,2026-06-09
+RLI,Rli,stock,true,true,true,robinhood_validated,2026-06-09
+RMBS,Rambus,stock,true,true,true,robinhood_validated,2026-06-09
 RMD,Resmed Inc,stock,true,true,true,robinhood_validated,2026-06-09
+RNG,RingCentral,stock,true,true,true,robinhood_validated,2026-06-09
+RNR,RenaissanceRe,stock,true,true,true,robinhood_validated,2026-06-09
+RNST,Renasant Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+ROCK,Gibraltar Industries,stock,true,true,true,robinhood_validated,2026-06-09
+ROG,Rogers,stock,true,true,true,robinhood_validated,2026-06-09
+ROIV,Roivant Sciences,stock,true,true,true,robinhood_validated,2026-06-09
 ROK,Rockwell Automation Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ROL,Rollins Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ROP,Roper Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ROST,Ross Stores Inc,stock,true,true,true,robinhood_validated,2026-06-09
+RPM,RPM International,stock,true,true,true,robinhood_validated,2026-06-09
+RRC,Range Resources,stock,true,true,true,robinhood_validated,2026-06-09
+RRR,Red Rock Resorts,stock,true,true,true,robinhood_validated,2026-06-09
+RRX,Regal Rexnord,stock,true,true,true,robinhood_validated,2026-06-09
+RS,"Reliance, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 RSG,Republic Services Inc,stock,true,true,true,robinhood_validated,2026-06-09
 RTX,Raytheon Technologies Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+RUN,Sunrun,stock,true,true,true,robinhood_validated,2026-06-09
+RUSHA,Rush Enterprises,stock,true,true,true,robinhood_validated,2026-06-09
 RVTY,Revvity Inc,stock,true,true,true,robinhood_validated,2026-06-09
+RWT,Redwood Trust,stock,true,true,true,robinhood_validated,2026-06-09
+RXO,RXO,stock,true,true,true,robinhood_validated,2026-06-09
+RYAN,Ryan Specialty Group,stock,true,true,true,robinhood_validated,2026-06-09
+RYN,Rayonier,stock,true,true,true,robinhood_validated,2026-06-09
+SABR,Sabre,stock,true,true,true,robinhood_validated,2026-06-09
+SAFE,SAFE,stock,true,true,true,robinhood_validated,2026-06-09
+SAFT,Safety Insurance Group,stock,true,true,true,robinhood_validated,2026-06-09
+SAH,Sonic Automotive,stock,true,true,true,robinhood_validated,2026-06-09
+SAIA,Saia,stock,true,true,true,robinhood_validated,2026-06-09
+SAIC,Science Applications International Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+SAM,Boston Beer,stock,true,true,true,robinhood_validated,2026-06-09
+SANM,Sanmina,stock,true,true,true,robinhood_validated,2026-06-09
+SARO,StandardAero,stock,true,true,true,robinhood_validated,2026-06-09
 SBAC,SBA Communications Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+SBCF,Seacoast Banking,stock,true,true,true,robinhood_validated,2026-06-09
+SBH,Sally Beauty,stock,true,true,true,robinhood_validated,2026-06-09
+SBRA,Sabra Health Care REIT,stock,true,true,true,robinhood_validated,2026-06-09
+SBSI,Southside Bancshares,stock,true,true,true,robinhood_validated,2026-06-09
 SBUX,Starbucks Corp,stock,true,true,true,robinhood_validated,2026-06-09
+SCHL,Scholastic,stock,true,true,true,robinhood_validated,2026-06-09
 SCHW,Charles Schwab Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+SCI,Service Corporation International,stock,true,true,true,robinhood_validated,2026-06-09
+SCL,Stepan,stock,true,true,true,robinhood_validated,2026-06-09
+SCSC,ScanSource,stock,true,true,true,robinhood_validated,2026-06-09
+SDGR,Schrodinger,stock,true,true,true,robinhood_validated,2026-06-09
+SEDG,SolarEdge,stock,true,true,true,robinhood_validated,2026-06-09
+SEIC,SEI Investments,stock,true,true,true,robinhood_validated,2026-06-09
+SEM,Select Medical,stock,true,true,true,robinhood_validated,2026-06-09
+SEZL,Sezzle Inc.,stock,true,false,true,robinhood_validated,2026-06-09
+SF,Stifel,stock,true,true,true,robinhood_validated,2026-06-09
+SFBS,ServisFirst Bank,stock,true,true,true,robinhood_validated,2026-06-09
+SFM,Sprouts Farmers Market,stock,true,true,true,robinhood_validated,2026-06-09
+SFNC,Simmons First National,stock,true,true,true,robinhood_validated,2026-06-09
+SGI,Somnigroup International Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+SHAK,Shake Shack,stock,true,true,true,robinhood_validated,2026-06-09
+SHC,Sotera Health,stock,true,true,true,robinhood_validated,2026-06-09
+SHEN,Shenandoah Telecommunications,stock,true,true,true,robinhood_validated,2026-06-09
+SHO,Sunstone Hotel Investors,stock,true,true,true,robinhood_validated,2026-06-09
+SHOO,Steven Madden,stock,true,true,true,robinhood_validated,2026-06-09
 SHW,Sherwin Williams,stock,true,true,true,robinhood_validated,2026-06-09
+SIG,Signet Jewelers,stock,true,true,true,robinhood_validated,2026-06-09
+SIGI,Selective Insurance Group,stock,true,true,true,robinhood_validated,2026-06-09
+SITM,Sitime,stock,true,true,true,robinhood_validated,2026-06-09
 SJM,J.M. Smucker,stock,true,true,true,robinhood_validated,2026-06-09
+SKT,Tanger Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+SKY,Champion Homes,stock,true,true,true,robinhood_validated,2026-06-09
+SKYW,SkyWest,stock,true,true,true,robinhood_validated,2026-06-09
+SLAB,Silicon Laboratories,stock,true,true,true,robinhood_validated,2026-06-09
 SLB,Schlumberger Nv,stock,true,true,true,robinhood_validated,2026-06-09
+SLG,SL Green Realty,stock,true,true,true,robinhood_validated,2026-06-09
+SLGN,Silgan Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+SLM,Sallie Mae,stock,true,true,true,robinhood_validated,2026-06-09
+SLVM,Sylvamo Corp,stock,true,true,true,robinhood_validated,2026-06-09
+SM,SM Energy,stock,true,true,true,robinhood_validated,2026-06-09
 SMCI,Super Micro Computer Inc,stock,true,true,true,robinhood_validated,2026-06-09
+SMG,Scotts Miracle-Gro,stock,true,true,true,robinhood_validated,2026-06-09
+SMP,Standard Motor Products,stock,true,true,true,robinhood_validated,2026-06-09
+SMPL,Simply Good Foods,stock,true,true,true,robinhood_validated,2026-06-09
+SMTC,Semtech,stock,true,true,true,robinhood_validated,2026-06-09
+SN,SharkNinja,stock,true,true,true,robinhood_validated,2026-06-09
 SNA,Snap On Inc,stock,true,true,true,robinhood_validated,2026-06-09
+SNDR,Schneider National,stock,true,true,true,robinhood_validated,2026-06-09
+SNEX,StoneX,stock,true,true,true,robinhood_validated,2026-06-09
 SNPS,Synopsys Inc,stock,true,true,true,robinhood_validated,2026-06-09
+SNX,TD SYNNEX,stock,true,true,true,robinhood_validated,2026-06-09
 SO,Southern Co,stock,true,true,true,robinhood_validated,2026-06-09
+SOLS,Solstice Advanced Materials,stock,true,true,true,robinhood_validated,2026-06-09
 SOLV,Solventum Corp,stock,true,true,true,robinhood_validated,2026-06-09
+SON,Sonoco,stock,true,true,true,robinhood_validated,2026-06-09
+SONO,Sonos,stock,true,true,true,robinhood_validated,2026-06-09
 SPG,"Simon Property Group, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 SPGI,S&P Global Inc,stock,true,true,true,robinhood_validated,2026-06-09
+SPHR,Sphere Entertainment,stock,true,true,true,robinhood_validated,2026-06-09
+SPNT,SiriusPoint,stock,true,true,true,robinhood_validated,2026-06-09
+SPSC,SPS Commerce,stock,true,true,true,robinhood_validated,2026-06-09
+SPXC,SPX Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+SR,Spire,stock,true,true,true,robinhood_validated,2026-06-09
 SRE,Sempra Energy,stock,true,true,true,robinhood_validated,2026-06-09
+SRPT,Sarepta Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
+SSB,SouthState Bank,stock,true,true,true,robinhood_validated,2026-06-09
+SSD,Simpson Manufacturing,stock,true,true,true,robinhood_validated,2026-06-09
+ST,SENSATA TECHNOLOGIES,stock,true,true,true,robinhood_validated,2026-06-09
+STAA,STAAR,stock,true,true,true,robinhood_validated,2026-06-09
+STAG,STAG Industrial,stock,true,true,true,robinhood_validated,2026-06-09
+STBA,S&T Bank,stock,true,true,true,robinhood_validated,2026-06-09
+STC,Stewart,stock,true,true,true,robinhood_validated,2026-06-09
 STE,STERIS PLC,stock,true,true,true,robinhood_validated,2026-06-09
+STEL,Stellar Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+STEP,StepStone Group,stock,true,true,true,robinhood_validated,2026-06-09
 STLD,Steel Dynamics Inc,stock,true,true,true,robinhood_validated,2026-06-09
+STRA,Strategic Education,stock,true,true,true,robinhood_validated,2026-06-09
+STRL,Sterling Infrastructure,stock,true,true,true,robinhood_validated,2026-06-09
 STT,State Street Corp,stock,true,true,true,robinhood_validated,2026-06-09
+STWD,Starwood Property Trust,stock,true,true,true,robinhood_validated,2026-06-09
 STX,Seagate Technology Plc,stock,true,true,true,robinhood_validated,2026-06-09
 STZ,Constellation Brands Class A,stock,true,true,true,robinhood_validated,2026-06-09
+SUPN,Supernus Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
 SW,Smurfit Westrock Plc,stock,true,true,true,robinhood_validated,2026-06-09
 SWK,Stanley Black & Decker Inc,stock,true,true,true,robinhood_validated,2026-06-09
 SWKS,Skyworks Solutions Inc,stock,true,true,true,robinhood_validated,2026-06-09
+SWX,Southwest Gas,stock,true,true,true,robinhood_validated,2026-06-09
+SXI,Standex International,stock,true,true,true,robinhood_validated,2026-06-09
+SXT,Sensient Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 SYF,Synchrony Financial,stock,true,true,true,robinhood_validated,2026-06-09
 SYK,Stryker Corp,stock,true,true,true,robinhood_validated,2026-06-09
+SYNA,Synaptics,stock,true,true,true,robinhood_validated,2026-06-09
 SYY,Sysco Corp,stock,true,true,true,robinhood_validated,2026-06-09
 T,AT&T Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+TALO,Talos Energy,stock,true,true,true,robinhood_validated,2026-06-09
 TAP,Molson Coors Brewing Class B,stock,true,true,true,robinhood_validated,2026-06-09
+TBBK,Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+TCBI,Texas Capital Bank,stock,true,true,true,robinhood_validated,2026-06-09
+TDC,Teradata,stock,true,true,true,robinhood_validated,2026-06-09
 TDG,Transdigm Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TDS,Telephone & Data Systems,stock,true,true,true,robinhood_validated,2026-06-09
+TDW,Tidewater,stock,true,true,true,robinhood_validated,2026-06-09
 TDY,Teledyne Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TECH,Bio-Techne Corp,stock,true,true,true,robinhood_validated,2026-06-09
 TEL,TE Connectivity Ltd,stock,true,true,true,robinhood_validated,2026-06-09
 TER,Teradyne Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TEX,Terex,stock,true,true,true,robinhood_validated,2026-06-09
 TFC,Truist Financial Corporation,stock,true,true,true,robinhood_validated,2026-06-09
-TFX,Teleflex Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TFIN,Triumph Financial,stock,true,true,true,robinhood_validated,2026-06-09
+TFX,Teleflex,stock,true,true,true,robinhood_validated,2026-06-09
 TGT,Target Corp,stock,true,true,true,robinhood_validated,2026-06-09
+TGTX,TG Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
+THC,Tenet Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
+THG,Hanover Insurance,stock,true,true,true,robinhood_validated,2026-06-09
+THO,Thor Industries,stock,true,true,true,robinhood_validated,2026-06-09
+THRM,Gentherm,stock,true,true,true,robinhood_validated,2026-06-09
+TILE,Interface,stock,true,true,true,robinhood_validated,2026-06-09
 TJX,"TJX Companies, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+TKR,Timken,stock,true,true,true,robinhood_validated,2026-06-09
+TLN,Talen Energy,stock,true,true,true,robinhood_validated,2026-06-09
+TMDX,TransMedics Group,stock,true,true,true,robinhood_validated,2026-06-09
+TMHC,Taylor Morrison Home,stock,true,true,true,robinhood_validated,2026-06-09
 TMO,Thermo Fisher Scientific Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TMP,Tompkins Financial,stock,true,true,true,robinhood_validated,2026-06-09
 TMUS,T Mobile US Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TNC,Tennant,stock,true,true,true,robinhood_validated,2026-06-09
+TNDM,Tandem Diabetes Care,stock,true,true,true,robinhood_validated,2026-06-09
+TNL,Travel + Leisure,stock,true,true,true,robinhood_validated,2026-06-09
+TOL,Toll Brothers,stock,true,true,true,robinhood_validated,2026-06-09
 TPR,Tapestry,stock,true,true,true,robinhood_validated,2026-06-09
+TR,Tootsie Roll,stock,true,true,true,robinhood_validated,2026-06-09
+TREX,Trex,stock,true,true,true,robinhood_validated,2026-06-09
 TRGP,Targa Resources Corp,stock,true,true,true,robinhood_validated,2026-06-09
+TRIP,TripAdvisor,stock,true,true,true,robinhood_validated,2026-06-09
 TRMB,Trimble Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TRMK,Trustmark,stock,true,true,true,robinhood_validated,2026-06-09
+TRN,Trinity Industries,stock,true,true,true,robinhood_validated,2026-06-09
+TRNO,Terreno Realty,stock,true,true,true,robinhood_validated,2026-06-09
 TROW,T Rowe Price Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TRST,TrustCo Bank,stock,true,true,true,robinhood_validated,2026-06-09
+TRU,TransUnion,stock,true,true,true,robinhood_validated,2026-06-09
+TRUP,Trupanion,stock,true,true,true,robinhood_validated,2026-06-09
 TRV,Travelers Companies Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TSCO,Tractor Supply,stock,true,true,true,robinhood_validated,2026-06-09
 TSLA,Tesla Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TSN,Tyson Foods Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
 TT,Trane Technologies plc,stock,true,true,true,robinhood_validated,2026-06-09
+TTC,Toro,stock,true,true,true,robinhood_validated,2026-06-09
+TTEK,Tetra Tech,stock,true,true,true,robinhood_validated,2026-06-09
+TTMI,TTM Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 TTWO,Take Two Interactive Software Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TWLO,Twilio,stock,true,true,true,robinhood_validated,2026-06-09
+TWO,Two Harbors Investment,stock,true,true,true,robinhood_validated,2026-06-09
 TXN,Texas Instrument Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TXNM,"TXNM Energy, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+TXRH,Texas Roadhouse,stock,true,true,true,robinhood_validated,2026-06-09
 TXT,Textron Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TYL,Tyler Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+UA,Under Armour,stock,true,true,true,robinhood_validated,2026-06-09
+UAA,Under Armour,stock,true,true,true,robinhood_validated,2026-06-09
 UAL,United Continental Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
 UBER,"Uber Technologies, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+UBSI,United Bank,stock,true,true,true,robinhood_validated,2026-06-09
+UCB,United Community Banks,stock,true,true,true,robinhood_validated,2026-06-09
+UCTT,Ultra Clean,stock,true,true,true,robinhood_validated,2026-06-09
 UDR,"UDR, Inc",stock,true,true,true,robinhood_validated,2026-06-09
+UE,Urban Edge Properties,stock,true,true,true,robinhood_validated,2026-06-09
+UFCS,United Fire Group,stock,true,true,true,robinhood_validated,2026-06-09
+UFPI,UFP Industries,stock,true,true,true,robinhood_validated,2026-06-09
+UFPT,UFP Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+UGI,UGI Corp,stock,true,true,true,robinhood_validated,2026-06-09
 UHS,Universal Health Services Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+UHT,Universal Health Realty Income Trust,stock,true,true,true,robinhood_validated,2026-06-09
+ULS,UL Solutions Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 ULTA,Ulta Beauty Inc,stock,true,true,true,robinhood_validated,2026-06-09
+UMBF,UMB Financial,stock,true,true,true,robinhood_validated,2026-06-09
+UNF,UniFirst,stock,true,true,true,robinhood_validated,2026-06-09
+UNFI,United Natural Foods,stock,true,true,true,robinhood_validated,2026-06-09
 UNH,Unitedhealth Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+UNIT,Uniti Group,stock,true,true,true,robinhood_validated,2026-06-09
+UNM,Unum,stock,true,true,true,robinhood_validated,2026-06-09
 UNP,Union Pacific Corp,stock,true,true,true,robinhood_validated,2026-06-09
+UPBD,Upbound Group,stock,true,true,true,robinhood_validated,2026-06-09
 UPS,United Parcel Service Inc Class B,stock,true,true,true,robinhood_validated,2026-06-09
+UPWK,Upwork,stock,true,true,true,robinhood_validated,2026-06-09
+URBN,Urban Outfitters,stock,true,true,true,robinhood_validated,2026-06-09
 URI,United Rentals Inc,stock,true,true,true,robinhood_validated,2026-06-09
 USB,US Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
+USFD,US Foods,stock,true,true,true,robinhood_validated,2026-06-09
+USPH,US Physical Therapy,stock,true,true,true,robinhood_validated,2026-06-09
+UTHR,United Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
+UTI,Universal Technical Institute,stock,true,true,true,robinhood_validated,2026-06-09
+UTL,Unitil,stock,true,true,true,robinhood_validated,2026-06-09
+UVV,Universal Holding,stock,true,true,true,robinhood_validated,2026-06-09
 V,Visa Inc Class A,stock,true,true,true,robinhood_validated,2026-06-09
+VAC,Marriott Vacations,stock,true,true,true,robinhood_validated,2026-06-09
+VAL,Valaris,stock,true,true,true,robinhood_validated,2026-06-09
+VC,Visteon,stock,true,true,true,robinhood_validated,2026-06-09
+VCEL,Vericel,stock,true,true,true,robinhood_validated,2026-06-09
+VCTR,Victory Capital Holdings,stock,true,true,true,robinhood_validated,2026-06-09
+VCYT,Veracyte,stock,true,true,true,robinhood_validated,2026-06-09
+VECO,Veeco,stock,true,true,true,robinhood_validated,2026-06-09
+VFC,VF,stock,true,true,true,robinhood_validated,2026-06-09
+VGNT,Versigent,stock,true,true,true,robinhood_validated,2026-06-09
+VIAV,Viavi,stock,true,true,true,robinhood_validated,2026-06-09
 VICI,Vici Properties Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+VICR,Vicor,stock,true,true,true,robinhood_validated,2026-06-09
+VIR,Vir Biotechnology,stock,true,true,true,robinhood_validated,2026-06-09
+VIRT,Virtu Financial,stock,true,true,true,robinhood_validated,2026-06-09
+VITL,Vital Farms,stock,true,true,true,robinhood_validated,2026-06-09
 VLO,Valero Energy Corp,stock,true,true,true,robinhood_validated,2026-06-09
 VLTO,Veralto Corp,stock,true,true,true,robinhood_validated,2026-06-09
+VLY,Valley National Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
 VMC,Vulcan Materials,stock,true,true,true,robinhood_validated,2026-06-09
+VMI,Valmont,stock,true,true,true,robinhood_validated,2026-06-09
+VNO,Vornado Realty Trust,stock,true,true,true,robinhood_validated,2026-06-09
+VNOM,"Viper Energy, Inc. Class A",stock,true,true,true,robinhood_validated,2026-06-09
+VNT,Vontier,stock,true,true,true,robinhood_validated,2026-06-09
+VOYA,Voya,stock,true,true,true,robinhood_validated,2026-06-09
+VRRM,Verra Mobility,stock,true,true,true,robinhood_validated,2026-06-09
 VRSK,Verisk Analytics Inc,stock,true,true,true,robinhood_validated,2026-06-09
 VRSN,Verisign Inc,stock,true,true,true,robinhood_validated,2026-06-09
+VRTS,"Virtus Investment Partners,",stock,true,true,true,robinhood_validated,2026-06-09
 VRTX,Vertex Pharmaceuticals Inc,stock,true,true,true,robinhood_validated,2026-06-09
+VSAT,ViaSat,stock,true,true,true,robinhood_validated,2026-06-09
+VSEC,VSE,stock,true,true,true,robinhood_validated,2026-06-09
+VSH,Vishay,stock,true,true,true,robinhood_validated,2026-06-09
+VSNT,Versant Media Group,stock,true,true,true,robinhood_validated,2026-06-09
 VST,Vistra Corp,stock,true,true,true,robinhood_validated,2026-06-09
+VSTS,Vestis Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+VSXY,Victorias Secret & Co.,stock,true,true,true,robinhood_validated,2026-06-09
+VTOL,Bristow,stock,true,true,true,robinhood_validated,2026-06-09
 VTR,"Ventas, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 VTRS,Viatris Inc.,stock,true,true,true,robinhood_validated,2026-06-09
+VVV,Valvoline,stock,true,true,true,robinhood_validated,2026-06-09
+VYX,NCR Voyix Corporation,stock,true,true,true,robinhood_validated,2026-06-09
 VZ,Verizon Communications Inc,stock,true,true,true,robinhood_validated,2026-06-09
 WAB,Westinghouse Air Brake Technologies,stock,true,true,true,robinhood_validated,2026-06-09
+WABC,Westamerica,stock,true,true,true,robinhood_validated,2026-06-09
+WAFD,"WaFd, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
+WAL,Western Alliance Bank,stock,true,true,true,robinhood_validated,2026-06-09
 WAT,Waters Corp,stock,true,true,true,robinhood_validated,2026-06-09
+WAY,Waystar Holding Corp.,stock,true,true,true,robinhood_validated,2026-06-09
 WBA,Walgreen Boots Alliance Inc,stock,false,false,false,robinhood_not_found,2026-06-09
+WBS,Webster Bank,stock,true,true,true,robinhood_validated,2026-06-09
+WCC,Wesco,stock,true,true,true,robinhood_validated,2026-06-09
+WD,Walker & Dunlop,stock,true,true,true,robinhood_validated,2026-06-09
 WDAY,"Workday, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 WDC,Western Digital Corp,stock,true,true,true,robinhood_validated,2026-06-09
+WDFC,WD-40,stock,true,true,true,robinhood_validated,2026-06-09
 WEC,WEC Energy Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
 WELL,Welltower Inc,stock,true,true,true,robinhood_validated,2026-06-09
+WEN,Wendy's,stock,true,true,true,robinhood_validated,2026-06-09
+WERN,Werner,stock,true,true,true,robinhood_validated,2026-06-09
+WEX,WEX,stock,true,true,true,robinhood_validated,2026-06-09
 WFC,Wells Fargo,stock,true,true,true,robinhood_validated,2026-06-09
+WFRD,Weatherford International,stock,true,true,true,robinhood_validated,2026-06-09
+WGO,Winnebago,stock,true,true,true,robinhood_validated,2026-06-09
+WH,Wyndham,stock,true,true,true,robinhood_validated,2026-06-09
+WHD,Cactus,stock,true,true,true,robinhood_validated,2026-06-09
+WHR,Whirlpool,stock,true,true,true,robinhood_validated,2026-06-09
+WINA,Winmark,stock,true,true,true,robinhood_validated,2026-06-09
+WING,Wingstop,stock,true,true,true,robinhood_validated,2026-06-09
+WKC,World Kinect,stock,true,true,true,robinhood_validated,2026-06-09
+WLK,Westlake,stock,true,true,true,robinhood_validated,2026-06-09
+WLY,John Wiley & Sons,stock,true,true,true,robinhood_validated,2026-06-09
 WM,Waste Management Inc,stock,true,true,true,robinhood_validated,2026-06-09
 WMB,Williams Inc,stock,true,true,true,robinhood_validated,2026-06-09
+WMG,Warner Music Group,stock,true,true,true,robinhood_validated,2026-06-09
+WMS,Advanced Drainage Systems,stock,true,true,true,robinhood_validated,2026-06-09
 WMT,Walmart Stores Inc,stock,true,true,true,robinhood_validated,2026-06-09
+WOR,Worthington Enterprise,stock,true,true,true,robinhood_validated,2026-06-09
+WPC,W.P. Carey,stock,true,true,true,robinhood_validated,2026-06-09
 WRB,WR Berkley Corp,stock,true,true,true,robinhood_validated,2026-06-09
+WRLD,World Acceptance Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+WS,Worthington Steel,stock,true,true,true,robinhood_validated,2026-06-09
+WSC,WillScot Holdings Corporation,stock,true,true,true,robinhood_validated,2026-06-09
+WSFS,WSFS,stock,true,true,true,robinhood_validated,2026-06-09
 WSM,Williams-Sonoma,stock,true,true,true,robinhood_validated,2026-06-09
+WSO,Watsco,stock,true,true,true,robinhood_validated,2026-06-09
+WSR,Whitestone REIT,stock,true,true,true,robinhood_validated,2026-06-09
 WST,West Pharmaceutical Services Inc,stock,true,true,true,robinhood_validated,2026-06-09
+WT,WisdomTree,stock,true,true,true,robinhood_validated,2026-06-09
+WTFC,Wintrust Financial,stock,true,true,true,robinhood_validated,2026-06-09
+WTRG,Essential Utilities,stock,true,true,true,robinhood_validated,2026-06-09
+WTS,Watts Water Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 WTW,Willis Towers Watson Public Limited Company,stock,true,true,true,robinhood_validated,2026-06-09
+WU,Western Union,stock,true,true,true,robinhood_validated,2026-06-09
+WWD,Woodward,stock,true,true,true,robinhood_validated,2026-06-09
+WWW,Wolverine World Wide,stock,true,true,true,robinhood_validated,2026-06-09
 WY,Weyerhaeuser Company,stock,true,true,true,robinhood_validated,2026-06-09
 WYNN,Wynn Resorts Ltd,stock,true,true,true,robinhood_validated,2026-06-09
 XEL,Xcel Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
+XHR,Xenia Hotels & Resorts,stock,true,true,true,robinhood_validated,2026-06-09
+XNCR,Xencor,stock,true,true,true,robinhood_validated,2026-06-09
 XOM,Exxon Mobil Corp,stock,true,true,true,robinhood_validated,2026-06-09
+XPEL,XPEL,stock,true,true,true,robinhood_validated,2026-06-09
+XPO,XPO,stock,true,true,true,robinhood_validated,2026-06-09
+XRAY,Dentsply Sirona,stock,true,true,true,robinhood_validated,2026-06-09
 XYL,Xylem Inc,stock,true,true,true,robinhood_validated,2026-06-09
+YELP,Yelp,stock,true,true,true,robinhood_validated,2026-06-09
+YETI,YETI,stock,true,true,true,robinhood_validated,2026-06-09
+YOU,Clear Secure,stock,true,true,true,robinhood_validated,2026-06-09
 YUM,Yum Brands Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ZBH,Zimmer Biomet Holdings Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ZBRA,Zebra Technologies Corp,stock,true,true,true,robinhood_validated,2026-06-09
+ZD,Ziff Davis,stock,true,true,true,robinhood_validated,2026-06-09
+ZION,Zions Bank,stock,true,true,true,robinhood_validated,2026-06-09
 ZTS,Zoetis Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ZWS,Zurn Elkay Water Solutions,stock,true,true,true,robinhood_validated,2026-06-09

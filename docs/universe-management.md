@@ -21,6 +21,28 @@ When future agents receive symbols:
 Do not delete delisted or inactive symbols by default. Mark them inactive so the
 system has an audit trail and does not keep rediscovering the same dead ticker.
 
+## Current Coverage
+
+As of the 2026-06-09 universe import, `data/universe.csv` contains the original
+S&P 500 batch plus S&P MidCap 400 and S&P SmallCap 600 constituents. The
+S&P 400/600 batch was pulled from public constituent tables and then validated
+against Robinhood instrument data before merging.
+
+Import summary:
+
+- 400 S&P MidCap 400 rows parsed.
+- 603 S&P SmallCap 600 rows parsed.
+- 1,003 unique source symbols processed.
+- 1,002 source symbols validated as active/tradable on Robinhood.
+- `CWEN.A` was not found by Robinhood and is kept inactive/non-tradable.
+- Committed universe size after the import: 1,495 rows.
+
+Ignored import artifacts may exist locally under
+`data/private/sp-400-600.source.csv`,
+`data/private/sp-400-600.validations.csv`, and
+`data/private/sp-400-600.import-summary.json`. Those files are local evidence
+only; the committed durable state is `data/universe.csv`.
+
 ## Validation CSV
 
 The merge utility expects the same columns as the canonical universe:
