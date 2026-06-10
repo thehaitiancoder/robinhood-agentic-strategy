@@ -143,6 +143,20 @@ Double-down broker orders must be reviewed and placed with `quantity` equal to
 stock is priced at or above `$1.00`; use the estimated dollar value only to
 check buying power, cash buffer, and concentration risk.
 
+During live market checks, a full basket scan is preferred. If the monitor
+cannot exhaustively scan every live position, it must still validate the top
+downside holdings directly before reporting that no double-down is due. Any
+owned symbol exposed by the downside shortlist, a partial broker/fast scan, or
+other current broker-backed evidence at `<= -10%` return and with no active buy
+order is a mandatory DD verification candidate.
+
+That `<= -10%` screen is not automatic buy authority. For each candidate, fetch
+the filled buy/order history needed to reconstruct current lot state, calculate
+the exact `next_lot_shares` and `next_trigger_price`, refresh the live quote,
+and buy only if current ask price is at or below the next trigger and cash,
+buffer, concentration, and broker checks pass. Do not stop after checking only
+symbols that already doubled down recently.
+
 The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
 
 | Lot range | Drop from previous trigger | Number of buys |

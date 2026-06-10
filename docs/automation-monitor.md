@@ -142,6 +142,16 @@ Execution rules:
   to the exact `next_lot_shares` value from the ladder. Do not place DDs with a
   rounded `dollar_amount`; dollar values are estimates for cash and risk checks
   only.
+- If the full live position basket cannot be exhaustively scanned, the monitor
+  must still validate the top downside holdings directly before reporting no
+  DD. Any owned symbol shown by the top downside shortlist, a partial broker or
+  fast scan, or other current broker-backed evidence at `<= -10%` return and
+  with no active buy order is a mandatory DD verification candidate. Fetch the
+  filled buy/order history needed to reconstruct current lot state, calculate
+  `next_lot_shares` and `next_trigger_price`, refresh the live quote, and if
+  current ask price is at or below the trigger and cash/risk checks pass,
+  review/place immediately with `quantity=next_lot_shares`. Do not stop after
+  checking only a recent-DD subset.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
 - Do not write `data/private/sold-today.md` while sell execution is still in
@@ -196,6 +206,10 @@ should:
   against the broker-derived owned and active-order symbols
 - reconcile queued orders, fills, current positions, position sizes, buying
   power, and cash buffer status
+- if full position coverage is incomplete, still validate the top downside
+  holdings as next-session DD watch candidates by reconstructing lot state and
+  comparing current ask to `next_trigger_price`; report only, do not place
+  orders after close
 - produce a concise close summary in Codex
 
 If a sell or double-down candidate is found at or after 1:00 PM Pacific, report

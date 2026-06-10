@@ -46,6 +46,13 @@ For every qualifying DD, review/place the broker order with `quantity` equal to
 the exact `next_lot_shares` value. Do not convert DDs into rounded
 `dollar_amount` orders.
 
+If a DD/full-position scan cannot exhaustively cover the live basket, directly
+verify the top downside holdings before saying no DD is due. Any broker-backed
+owned position shown at `<= -10%` return with no active buy order is a
+mandatory DD verification candidate. Reconstruct lot state from filled buys,
+refresh the quote, then place only if current ask is at or below the exact next
+trigger and all cash/risk checks pass.
+
 ## Sold-Today Rule
 
 `data/private/sold-today.md` is an ignored daily pending-reopen queue. It is

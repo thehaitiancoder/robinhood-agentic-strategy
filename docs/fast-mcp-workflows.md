@@ -17,6 +17,12 @@ workflow one candidate at a time.
 - When a sell or double-down candidate is found, stop the broad scan, refresh
   that symbol, run broker review if required, and place only that one order if
   the broker workflow allows it.
+- If a broad position/watch scan cannot complete or returns truncated coverage,
+  still verify the top downside holdings directly before reporting no DD due.
+  Any owned symbol surfaced at `<= -10%` return with no active buy order is a
+  mandatory DD verification candidate: fetch filled buys/orders, reconstruct
+  the next lot, refresh the quote, and compare current ask to the exact next
+  trigger.
 - Write outputs under ignored `data/runtime/` unless the user explicitly asks
   for post-market persistence.
 - The scripts require `RH_ACCOUNT_NUMBER`; do not commit full account numbers.
@@ -116,6 +122,11 @@ Important: `FAST WATCH` is a speed screen. It estimates returns from broker
 position average price and bid/last quotes. Before any order, confirm the
 strategy calculation with broker data, exact fills/lot state where required,
 and the active review/place tool workflow.
+
+If `FAST WATCH` or the underlying broker payloads cannot cover the full live
+position basket, treat its worst downside symbols plus the committed top-buy
+shortlist as mandatory DD verification input. Do not conclude "no DD due" from
+only checking positions that already had recent DD activity.
 
 ### FAST UNIVERSE
 

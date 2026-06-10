@@ -27,6 +27,13 @@ If a DD qualifies, the broker review/place call must use exact
 `quantity=next_lot_shares`, not a rounded `dollar_amount`. The sell decision
 still requires bid-side 10% return math and a fresh broker quote.
 
+If a full owned-position scan is incomplete or tool payloads truncate, the top
+buy/downside shortlist becomes mandatory DD verification input. Any shortlisted
+or partially scanned owned symbol shown at `<= -10%` return with no active buy
+order must be checked directly: fetch filled buys/orders, reconstruct the next
+lot, refresh the quote, and compare current ask against `next_trigger_price`.
+Only place if the exact ladder, cash, concentration, and broker checks pass.
+
 ## Timing
 
 At the start of a market-hours run:
@@ -35,6 +42,9 @@ At the start of a market-hours run:
 2. Quote those symbols first through Robinhood.
 3. If one qualifies for sell or DD, execute/review it immediately.
 4. If no shortlist symbol qualifies, continue the full owned-position scan.
+5. If that full scan cannot complete, do not stop after a recent-DD subset.
+   Directly verify the top downside holdings and any exposed `<= -10%` owned
+   positions with no active buy order before reporting no DD due.
 
 At the end of a run:
 

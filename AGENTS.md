@@ -20,6 +20,18 @@ persistence.
 When a qualifying sell or double-down candidate exists, execution speed is the
 priority. Do not delay a market order for local audit writes or broad reporting.
 
+If a market-hours run cannot exhaustively scan the full live position basket,
+it must still validate top downside holdings directly before reporting that no
+double-down is due. Any owned symbol exposed by the top downside shortlist, a
+partial broker/fast scan, or other current broker-backed evidence at `<= -10%`
+return with no active buy order is a mandatory DD verification candidate. For
+each such symbol, fetch the filled buy/order history needed to reconstruct the
+current lot state, calculate `next_lot_shares` and `next_trigger_price`,
+refresh the live quote, and if current ask price is at or below the trigger and
+cash/risk checks pass, review/place immediately with
+`quantity=next_lot_shares`. Do not stop after checking only recently doubled
+down symbols.
+
 Shortlist files under `data/private/top-10-buy-candidates.md` and
 `data/private/top-10-sell-candidates.md` are speed hints from the previous run.
 At the start of a market-hours check, quote those symbols first because the next
@@ -135,6 +147,10 @@ original rules, and make rule violations visible before money is put at risk.
   requires it, and place immediately if still qualified and not blocked. The
   1:00 PM Pacific close automation is post-market only and must not place
   orders.
+- If a full owned-position scan is incomplete, verify the top downside holdings
+  directly before declaring no DD. A current `<= -10%` broker-backed return is
+  a mandatory DD verification trigger, not automatic buy authority; reconstruct
+  lot state and compare current ask to the exact next trigger first.
 - Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
   lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
   lot's share count.
@@ -241,7 +257,9 @@ During regular market hours, run the decision loop in this order:
    a read-only speed screen, but any candidate still needs normal
    single-symbol confirmation before execution.
 5. Identify full-position sells at or above 10% combined return.
-6. Identify due double-downs.
+6. Identify due double-downs. If the full basket scan is incomplete, directly
+   verify the top downside holdings and any currently exposed `<= -10%` owned
+   position with no active buy order before declaring that no DD is due.
 7. If double-down cash is short, identify green positions to liquidate.
 8. Only if no double-down is due and the cash buffer is safe, open or reopen
    positions from the eligible universe.
