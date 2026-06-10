@@ -4,19 +4,33 @@ Automation ids:
 
 - Market-hours slots:
   - `06-00-pt-rh-mkt`
+  - `06-15-pt-rh-mkt`
   - `06-30-pt-rh-mkt`
+  - `06-45-pt-rh-mkt`
   - `07-00-pt-rh-mkt`
+  - `07-15-pt-rh-mkt`
   - `07-30-pt-rh-mkt`
+  - `07-45-pt-rh-mkt`
   - `08-00-pt-rh-mkt`
+  - `08-15-pt-rh-mkt`
   - `08-30-pt-rh-mkt`
+  - `08-45-pt-rh-mkt`
   - `09-00-pt-rh-mkt`
+  - `09-15-pt-rh-mkt`
   - `09-30-pt-rh-mkt`
+  - `09-45-pt-rh-mkt`
   - `10-00-pt-rh-mkt`
+  - `10-15-pt-rh-mkt`
   - `10-30-pt-rh-mkt`
+  - `10-45-pt-rh-mkt`
   - `11-00-pt-rh-mkt`
+  - `11-15-pt-rh-mkt`
   - `11-30-pt-rh-mkt`
+  - `11-45-pt-rh-mkt`
   - `12-00-pt-rh-mkt`
+  - `12-15-pt-rh-mkt`
   - `12-30-pt-rh-mkt`
+  - `12-45-pt-rh-mkt`
 - `robinhood-strategy-1-pm-close-check`
 - `robinhood-strategy-market-monitor` is a paused legacy combined monitor.
 
@@ -40,8 +54,8 @@ post-market reconciliation that updates local state.
 
 Schedule:
 
-- Market-hours slot automations: weekdays every 30 minutes from 6:00 AM
-  through 12:30 PM Pacific.
+- Market-hours slot automations: weekdays every 15 minutes from 6:00 AM
+  through 12:45 PM Pacific.
 - `robinhood-strategy-1-pm-close-check`: weekdays at exactly 1:00 PM Pacific.
 
 The automation scheduler currently stores and honors the RRULE `BYHOUR` values
@@ -52,19 +66,33 @@ for Pacific daylight time are:
 
 - market slots:
   - 06:00 PT: `BYHOUR=13;BYMINUTE=0`
+  - 06:15 PT: `BYHOUR=13;BYMINUTE=15`
   - 06:30 PT: `BYHOUR=13;BYMINUTE=30`
+  - 06:45 PT: `BYHOUR=13;BYMINUTE=45`
   - 07:00 PT: `BYHOUR=14;BYMINUTE=0`
+  - 07:15 PT: `BYHOUR=14;BYMINUTE=15`
   - 07:30 PT: `BYHOUR=14;BYMINUTE=30`
+  - 07:45 PT: `BYHOUR=14;BYMINUTE=45`
   - 08:00 PT: `BYHOUR=15;BYMINUTE=0`
+  - 08:15 PT: `BYHOUR=15;BYMINUTE=15`
   - 08:30 PT: `BYHOUR=15;BYMINUTE=30`
+  - 08:45 PT: `BYHOUR=15;BYMINUTE=45`
   - 09:00 PT: `BYHOUR=16;BYMINUTE=0`
+  - 09:15 PT: `BYHOUR=16;BYMINUTE=15`
   - 09:30 PT: `BYHOUR=16;BYMINUTE=30`
+  - 09:45 PT: `BYHOUR=16;BYMINUTE=45`
   - 10:00 PT: `BYHOUR=17;BYMINUTE=0`
+  - 10:15 PT: `BYHOUR=17;BYMINUTE=15`
   - 10:30 PT: `BYHOUR=17;BYMINUTE=30`
+  - 10:45 PT: `BYHOUR=17;BYMINUTE=45`
   - 11:00 PT: `BYHOUR=18;BYMINUTE=0`
+  - 11:15 PT: `BYHOUR=18;BYMINUTE=15`
   - 11:30 PT: `BYHOUR=18;BYMINUTE=30`
+  - 11:45 PT: `BYHOUR=18;BYMINUTE=45`
   - 12:00 PT: `BYHOUR=19;BYMINUTE=0`
+  - 12:15 PT: `BYHOUR=19;BYMINUTE=15`
   - 12:30 PT: `BYHOUR=19;BYMINUTE=30`
+  - 12:45 PT: `BYHOUR=19;BYMINUTE=45`
 - 1 PM close check: `BYHOUR=20;BYMINUTE=0`
 
 If Pacific standard time is in effect and the scheduler still uses UTC fields,

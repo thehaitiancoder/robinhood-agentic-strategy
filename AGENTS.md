@@ -92,10 +92,9 @@ See `docs/shortcuts.md` for the committed shortcut reference.
 
 The recurring Codex automations are:
 
-- Market-hours slot automations: weekday checks at 06:00, 06:30, 07:00,
-  07:30, 08:00, 08:30, 09:00, 09:30, 10:00, 10:30, 11:00, 11:30,
-  12:00, and 12:30 Pacific. Their ids follow `HH-MM-pt-rh-mkt`; their
-  visible names start with `HH:mm PT - RH MKT`.
+- Market-hours slot automations: weekday checks every 15 minutes from 06:00
+  through 12:45 Pacific. Their ids follow `HH-MM-pt-rh-mkt`; their visible
+  names start with `HH:mm PT - RH MKT`.
 - `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific
   post-market reconciliation and summary.
 
