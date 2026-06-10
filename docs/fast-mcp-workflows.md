@@ -23,6 +23,9 @@ workflow one candidate at a time.
   mandatory DD verification candidate: fetch filled buys/orders, reconstruct
   the next lot, refresh the quote, and compare current ask to the exact next
   trigger.
+- If the fast path is blocked and no other path can verify the mandatory
+  downside candidates, the correct result is `DD SCAN BLOCKED`; do not emit a
+  routine no-action report.
 - Write outputs under ignored `data/runtime/` unless the user explicitly asks
   for post-market persistence.
 - The scripts require `RH_ACCOUNT_NUMBER`; do not commit full account numbers.

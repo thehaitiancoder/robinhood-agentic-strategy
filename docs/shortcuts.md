@@ -53,6 +53,10 @@ mandatory DD verification candidate. Reconstruct lot state from filled buys,
 refresh the quote, then place only if current ask is at or below the exact next
 trigger and all cash/risk checks pass.
 
+If that verification cannot be completed, the shortcut result is
+`DD SCAN BLOCKED`, not "no DD due." Include the exact blocker and which symbols
+were not verified. For automation runs, this must email the user.
+
 ## Sold-Today Rule
 
 `data/private/sold-today.md` is an ignored daily pending-reopen queue. It is

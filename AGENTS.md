@@ -32,6 +32,15 @@ cash/risk checks pass, review/place immediately with
 `quantity=next_lot_shares`. Do not stop after checking only recently doubled
 down symbols.
 
+If the monitor cannot complete full DD coverage and also cannot verify the
+mandatory top-downside candidates because the fast path is blocked, broker
+payloads are too large/truncated, permissions are read-only, or required order
+history cannot be fetched, the run is blocked. It must not report "no DD due,"
+"no order placed," or a routine no-action result. Start the report with
+`DD SCAN BLOCKED`, email `rdgustave@gmail.com` with subject
+`DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`, include the exact blocker, and
+state which symbols were and were not verified.
+
 Shortlist files under `data/private/top-10-buy-candidates.md` and
 `data/private/top-10-sell-candidates.md` are speed hints from the previous run.
 At the start of a market-hours check, quote those symbols first because the next
@@ -98,15 +107,17 @@ that combined automation unless the fixed slot automations are removed.
 The market-hours slot automations are pre-authorized to place qualifying
 strategy sell and double-down orders directly when the broker tool workflow
 allows placement. They email `rdgustave@gmail.com` after urgent sell or
-double-down orders are executed or blocked. They do not place new-opening buys
-unless the user explicitly authorizes openings in that run.
+double-down orders are executed or blocked, including blocked DD scans. They do
+not place new-opening buys unless the user explicitly authorizes openings in
+that run.
 
 `robinhood-strategy-1-pm-close-check` must not place buy or sell orders because
 the regular market is closed at 1:00 PM Pacific. Its job is to refresh
 Robinhood broker truth, import broker order history/fills/cancellations into
 the audit ledger, update `data/private/current-symbols.json`, write
-`data/private/close-summary.md`, and produce a close summary. This 1 PM run is
-explicitly authorized to update repo-local private state.
+`data/private/close-summary.md`, produce a close summary, and email if DD scan
+coverage is blocked for next-session review. This 1 PM run is explicitly
+authorized to update repo-local private state.
 
 The market automation names intentionally put the time at the front because the
 saved automation name is the reliable mobile chat-list label. Each market run
@@ -151,6 +162,9 @@ original rules, and make rule violations visible before money is put at risk.
   directly before declaring no DD. A current `<= -10%` broker-backed return is
   a mandatory DD verification trigger, not automatic buy authority; reconstruct
   lot state and compare current ask to the exact next trigger first.
+- If DD coverage remains incomplete after that fallback, report `DD SCAN
+  BLOCKED`, email the user, and do not present the run as a successful no-action
+  scan.
 - Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
   lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
   lot's share count.

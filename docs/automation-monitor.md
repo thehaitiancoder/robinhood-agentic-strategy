@@ -152,6 +152,13 @@ Execution rules:
   current ask price is at or below the trigger and cash/risk checks pass,
   review/place immediately with `quantity=next_lot_shares`. Do not stop after
   checking only a recent-DD subset.
+- If full DD coverage remains incomplete because the fast path is blocked,
+  broker payloads are too large or truncated, workspace permissions prevent
+  required state reads/writes, or order history needed for lot reconstruction
+  cannot be fetched, the market run is blocked. Start the report with exactly
+  `DD SCAN BLOCKED`, email `rdgustave@gmail.com`, include the exact blocker and
+  which symbols were/weren't verified, and do not report a routine no-action
+  result.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
 - Do not write `data/private/sold-today.md` while sell execution is still in
@@ -176,8 +183,11 @@ It emails `rdgustave@gmail.com` only for urgent execution outcomes:
 - `URGENT SELL BLOCKED - Robinhood strategy`
 - `DOUBLE-DOWN EXECUTED - Robinhood strategy`
 - `DOUBLE-DOWN BLOCKED - Robinhood strategy`
+- `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`
 
 It does not email routine no-action checks or `OPEN CASH AVAILABLE` by default.
+An incomplete DD scan is not routine no-action; it is a blocked scan and must
+email.
 
 New-opening buys remain report-only in automation runs unless the user
 explicitly authorizes new openings in that run.
@@ -210,6 +220,10 @@ should:
   holdings as next-session DD watch candidates by reconstructing lot state and
   comparing current ask to `next_trigger_price`; report only, do not place
   orders after close
+- if that downside/DD validation cannot complete, mark the close report
+  `DD SCAN BLOCKED`, email `rdgustave@gmail.com` with subject
+  `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`, and include the exact
+  blocker plus the symbols that were and were not verified
 - produce a concise close summary in Codex
 
 If a sell or double-down candidate is found at or after 1:00 PM Pacific, report
@@ -218,8 +232,8 @@ the close automation.
 
 The close automation does not email routine no-action summaries by default. It
 emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
-fails, local ledger/cache update fails, or a high-priority next-session
-candidate is detected after the market has closed.
+fails, local ledger/cache update fails, DD scan coverage is blocked, or a
+high-priority next-session candidate is detected after the market has closed.
 
 ## Live Source Of Truth
 

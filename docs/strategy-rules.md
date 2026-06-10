@@ -157,6 +157,12 @@ and buy only if current ask price is at or below the next trigger and cash,
 buffer, concentration, and broker checks pass. Do not stop after checking only
 symbols that already doubled down recently.
 
+If the monitor cannot exhaustively scan the basket and cannot verify those
+mandatory downside candidates, it must not call the result "no DD due." The
+correct status is `DD SCAN BLOCKED` with the exact missing coverage or tool
+failure. During market-hours automations, that blocked scan must email the user
+because a due double-down may be waiting.
+
 The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
 
 | Lot range | Drop from previous trigger | Number of buys |
