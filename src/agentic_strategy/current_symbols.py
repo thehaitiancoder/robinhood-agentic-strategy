@@ -85,7 +85,7 @@ def select_open_symbols(
             break
         if symbol in blocked:
             continue
-        if not record.active or not record.tradable:
+        if not record.active or not record.tradable or not record.fractional_eligible:
             continue
         selected.append(symbol)
     return selected

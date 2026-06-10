@@ -76,6 +76,8 @@ PYTHONPATH=src python3 -m unittest discover -s tests
   candidate selector.
 - `docs/shortlists.md`: previous-run top-10 buy/sell watchlists for faster
   market checks.
+- `docs/fast-mcp-workflows.md`: read-only fast Robinhood MCP scripts for broad
+  scans and planning.
 - `docs/live-state.md`: deprecated legacy live-state handoff workflow.
 - `docs/order-ledger.md`: how to persist local audit ledger events.
 - `docs/shortcuts.md`: short commands the user can give future agents.
@@ -89,6 +91,8 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `config/strategy.example.yaml`: first machine-readable rules draft.
 - `config/strategy.example.json`: config used by the Python monitor.
 - `data/README.md`: where universe, private caches, audit ledger, fills, and runtime data live.
+- `scripts/`: local helper scripts, including read-only fast Robinhood MCP
+  workflows.
 
 ## Source References
 

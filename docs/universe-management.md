@@ -43,6 +43,37 @@ Ignored import artifacts may exist locally under
 `data/private/sp-400-600.import-summary.json`. Those files are local evidence
 only; the committed durable state is `data/universe.csv`.
 
+As of the 2026-06-10 exchange-listed expansion, the universe was expanded from
+official Nasdaq Trader symbol directories after explicit user approval for
+read-only bulk Robinhood validation. Candidate priority after the S&P indexes
+was:
+
+1. Nasdaq Global Select common stocks.
+2. Nasdaq Global Market common stocks.
+3. Nasdaq Capital Market common stocks.
+4. NYSE common stocks.
+5. NYSE American common stocks.
+6. Other listed common stocks.
+
+Expansion summary:
+
+- 4,280 post-dedupe common-stock candidates parsed from Nasdaq Trader symbol
+  directories.
+- 1,518 new symbols validated as active/tradable/fractional on Robinhood.
+- 222 candidates rejected or not found before the 1,518 target was reached.
+- `SEZL` is retained in the universe but marked `tradable=false` and
+  `fractional_eligible=false` after Robinhood rejected new fractional openings.
+- Committed universe size after the expansion: 3,013 rows, including 3,000
+  active/tradable/fractional rows and 13 retained blocked/non-fractional rows.
+
+Ignored expansion artifacts may exist locally under:
+
+- `data/runtime/nasdaqlisted.txt`
+- `data/runtime/otherlisted.txt`
+- `data/runtime/universe-expansion-candidates.csv`
+- `data/runtime/universe-expansion.validations.csv`
+- `data/runtime/universe-expansion.rejections.csv`
+
 ## Validation CSV
 
 The merge utility expects the same columns as the canonical universe:
@@ -74,4 +105,34 @@ PYTHONPATH=src python3 -m agentic_strategy.universe \
   --universe data/universe.csv \
   --validations data/private/validated-symbols.csv \
   --output data/runtime/universe.preview.csv
+```
+
+## Bulk Robinhood Validation
+
+`scripts/bulk_validate_robinhood_universe.mjs` performs read-only calls to the
+Robinhood Agentic MCP `get_equity_tradability` tool using the locally configured
+Codex connector credential. Use it only after the user explicitly approves bulk
+Robinhood validation. It uses `scripts/rh_fast_mcp_client.mjs` and does not
+place orders.
+
+Default inputs and outputs:
+
+- input: `data/runtime/universe-expansion-candidates.csv`
+- output: `data/runtime/universe-expansion.validations.csv`
+- rejection evidence: `data/runtime/universe-expansion.rejections.csv`
+
+Run it with the bundled or system Node runtime:
+
+```powershell
+$env:RH_ACCOUNT_NUMBER = "<agentic account number>"
+node scripts/bulk_validate_robinhood_universe.mjs
+```
+
+Useful environment overrides:
+
+```powershell
+$env:RH_ACCOUNT_NUMBER = "<agentic account number>"
+$env:RH_VALIDATION_NEEDED = "1518"
+$env:RH_VALIDATION_DATE = "2026-06-10"
+node scripts/bulk_validate_robinhood_universe.mjs
 ```

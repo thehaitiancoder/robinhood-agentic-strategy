@@ -128,6 +128,8 @@ Execution rules:
 - Read `data/private/top-10-sell-candidates.md` and
   `data/private/top-10-buy-candidates.md` if present, then quote those symbols
   first through Robinhood. These are speed hints only.
+- Fast read-only scripts from `docs/fast-mcp-workflows.md` may be used to speed
+  broad quotes, positions, orders, and watch scans when available.
 - Process one executable sell or double-down candidate at a time.
 - Refresh the quote immediately before order review.
 - If the broker tool requires review, run the review immediately.
@@ -139,6 +141,9 @@ Execution rules:
   only.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
+- Do not place real orders from the fast read-only scripts, and do not place
+  orders in parallel. Use the broker review/place workflow for the single
+  qualifying candidate.
 - For new openings, compare `data/universe.csv` against live Robinhood
   positions and active orders. Do not use the local ledger as the owned-symbol
   source during market hours.

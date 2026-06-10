@@ -71,12 +71,13 @@ class CurrentSymbolsTest(unittest.TestCase):
             "blocked_open_symbols": ["AAPL", "AMD", "TSLA"],
         }
         universe = [
-            UniverseRecord(symbol="AAPL", active=True, tradable=True),
-            UniverseRecord(symbol="AMD", active=True, tradable=True),
-            UniverseRecord(symbol="MSFT", active=True, tradable=True),
-            UniverseRecord(symbol="NVDA", active=True, tradable=True),
-            UniverseRecord(symbol="OLD", active=False, tradable=True),
-            UniverseRecord(symbol="TSLA", active=True, tradable=True),
+            UniverseRecord(symbol="AAPL", active=True, tradable=True, fractional_eligible=True),
+            UniverseRecord(symbol="AMD", active=True, tradable=True, fractional_eligible=True),
+            UniverseRecord(symbol="MSFT", active=True, tradable=True, fractional_eligible=True),
+            UniverseRecord(symbol="NOFRAC", active=True, tradable=True, fractional_eligible=False),
+            UniverseRecord(symbol="NVDA", active=True, tradable=True, fractional_eligible=True),
+            UniverseRecord(symbol="OLD", active=False, tradable=True, fractional_eligible=True),
+            UniverseRecord(symbol="TSLA", active=True, tradable=True, fractional_eligible=True),
         ]
 
         self.assertEqual(

@@ -41,6 +41,16 @@ The user may use short commands. Treat them as exact workflow requests:
 - `OPEN CASH`: find eligible new openings after higher-priority checks pass.
 - `SELL REVIEW`: review sell-ready full-position market sells.
 - `DD REVIEW`: review due double-down market buys.
+- `FAST QUOTES`: use `scripts/rh_fast.mjs quotes` for read-only bulk quotes.
+- `FAST ORDERS`: use `scripts/rh_fast.mjs orders` for read-only order scans.
+- `FAST POSITIONS`: use `scripts/rh_fast.mjs positions` for read-only
+  position scans, optionally with bulk quotes.
+- `FAST OPEN PLAN`: use `scripts/rh_fast.mjs open-plan` to compare
+  `data/universe.csv` against live Robinhood positions and active orders.
+- `FAST WATCH`: use `scripts/rh_fast.mjs watch` for rough sell/DD watch
+  candidates, then confirm through the normal broker review/place workflow.
+- `FAST UNIVERSE`: use `scripts/bulk_validate_robinhood_universe.mjs` for
+  read-only universe validation after explicit bulk-validation approval.
 
 See `docs/shortcuts.md` for the committed shortcut reference.
 
@@ -168,6 +178,13 @@ requests and the 1 PM close automation:
   the main work is complete.
 - `agentic_strategy.live_state`: deprecated legacy Markdown snapshot writer.
   Do not use `data/private/LIVE_STATE.md` as the trading handoff surface.
+- `scripts/rh_fast_mcp_client.mjs`: shared read-only Robinhood MCP session
+  helper for fast broad scans.
+- `scripts/rh_fast.mjs`: read-only fast commands for quotes, orders, positions,
+  open planning, and sell/DD watch screens. These scripts must not place
+  orders.
+- `scripts/bulk_validate_robinhood_universe.mjs`: read-only universe
+  tradability validator built on the shared fast MCP client.
 
 Do not commit private ledger data, current-symbol cache files, close summaries,
 shortlist files, legacy live-state snapshots, raw broker payloads, or full
@@ -200,7 +217,9 @@ During regular market hours, run the decision loop in this order:
 1. Reconcile account, positions, orders, and fills from Robinhood.
 2. Read the previous-run top-10 buy/sell shortlist files if present, then quote
    those symbols first.
-3. Quote the remaining owned positions in batches.
+3. Quote the remaining owned positions in batches. `FAST WATCH` may be used as
+   a read-only speed screen, but any candidate still needs normal
+   single-symbol confirmation before execution.
 4. Identify full-position sells at or above 10% combined return.
 5. Identify due double-downs.
 6. If double-down cash is short, identify green positions to liquidate.
