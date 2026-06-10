@@ -129,6 +129,13 @@ root only; adding the automation memory directory as a second `cwd` launches
 duplicate threads. See `docs/automation-monitor.md` before changing automation
 configuration.
 
+Codex project-local automation permissions live under `.codex/config.toml` and
+`.codex/rules/robinhood-automation.rules`. They are committed intentionally so
+new PCs and automation runs can load the same repo-local write/network policy.
+If a market or close run reports denied writes for repo-local files or the fast
+MCP shell path is blocked, read `docs/codex-automation-permissions.md` before
+changing automation settings.
+
 ## Mission
 
 Build a disciplined execution system for the user's broad fractional-stock

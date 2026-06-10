@@ -98,6 +98,16 @@ Workspace configuration:
 
 - `C:\Users\ralph\.codex\worktrees\de6e\robinhood-agentic-strategy`
 
+The repo has a committed Codex project layer for these runs:
+
+- `.codex/config.toml`
+- `.codex/rules/robinhood-automation.rules`
+- `docs/codex-automation-permissions.md`
+
+That layer keeps the repo workspace writable, enables network access for the
+repo fast MCP scripts, and allows only the narrow command prefixes used for
+Robinhood scans and repo-local persistence.
+
 Keep the `cwds` field to this single repo root only. In the Codex automation
 tool, `cwds` are runnable workspaces, not generic writable roots. Adding
 `C:\Users\ralph\.codex\automations\...` as a second `cwd` causes the same

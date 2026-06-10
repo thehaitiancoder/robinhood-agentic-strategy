@@ -1,0 +1,144 @@
+# Repo-scoped Codex exec policy for the Robinhood strategy automation.
+#
+# Rules control which command prefixes may run outside the sandbox when an
+# automation needs an escalated command path. Filesystem access still comes from
+# the active permissions profile in .codex/config.toml.
+
+prefix_rule(
+    pattern = ["node", "scripts/rh_fast.mjs"],
+    decision = "allow",
+    justification = "Allow the repo fast Robinhood MCP scanner to reach the broker MCP endpoint and write data/runtime outputs.",
+    match = [
+        "node scripts/rh_fast.mjs positions --account 878067701 --with-quotes",
+        "node scripts/rh_fast.mjs watch --account 878067701 --mode both",
+        "node scripts/rh_fast.mjs orders --account 878067701 --all",
+    ],
+    not_match = [
+        "node other-script.mjs",
+        "node scripts/bulk_validate_robinhood_universe.mjs",
+    ],
+)
+
+prefix_rule(
+    pattern = ["node", "scripts/bulk_validate_robinhood_universe.mjs"],
+    decision = "allow",
+    justification = "Allow explicit Robinhood universe validation to use the repo fast MCP client and write data/runtime validation outputs.",
+    match = [
+        "node scripts/bulk_validate_robinhood_universe.mjs",
+    ],
+    not_match = [
+        "node scripts/rh_fast.mjs watch --account 878067701 --mode both",
+    ],
+)
+
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.sold_today"],
+    decision = "allow",
+    justification = "Allow the sold-today pending-reopen queue helper to update data/private/sold-today.md.",
+    match = [
+        "python -m agentic_strategy.sold_today --reset",
+        "python -m agentic_strategy.sold_today --symbol UCTT --sold-at 2026-06-10T14:29:06Z",
+        "python -m agentic_strategy.sold_today --reopened-symbol UCTT",
+    ],
+    not_match = [
+        "python -m agentic_strategy.ledger --help",
+        "python script.py",
+    ],
+)
+
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.shortlists"],
+    decision = "allow",
+    justification = "Allow end-of-run shortlist cleanup under data/private/top-10-*-candidates.md.",
+    match = [
+        "python -m agentic_strategy.shortlists --positions-json data/private/latest/positions.json --quotes-json data/private/latest/quotes.json --buy-output data/private/top-10-buy-candidates.md --sell-output data/private/top-10-sell-candidates.md",
+    ],
+    not_match = [
+        "python -m agentic_strategy.sold_today --reset",
+    ],
+)
+
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.current_symbols"],
+    decision = "allow",
+    justification = "Allow the 1 PM close automation to refresh data/private/current-symbols.json and close-summary.md from broker payloads.",
+    match = [
+        "python -m agentic_strategy.current_symbols --account-key Agentic --portfolio-json data/private/latest/portfolio.json --positions-json data/private/latest/positions.json --orders-json data/private/latest/orders.json --output-json data/private/current-symbols.json --summary-md data/private/close-summary.md --universe data/universe.csv --open-limit 50",
+    ],
+    not_match = [
+        "python -m agentic_strategy.shortlists --help",
+    ],
+)
+
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.ledger"],
+    decision = "allow",
+    justification = "Allow explicit sync or 1 PM close runs to append broker audit records to data/private/order-ledger.csv.",
+    match = [
+        "python -m agentic_strategy.ledger --help",
+    ],
+    not_match = [
+        "python -m agentic_strategy.current_symbols --help",
+    ],
+)
+
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.broker_snapshot"],
+    decision = "allow",
+    justification = "Allow explicit broker snapshot persistence under ignored data/private paths.",
+    match = [
+        "python -m agentic_strategy.broker_snapshot --portfolio-json data/private/latest/portfolio.json --positions-json data/private/latest/positions.json --quotes-json data/private/latest/quotes.json --tradability-json data/private/latest/tradability.json",
+    ],
+    not_match = [
+        "python -m agentic_strategy.ledger --help",
+    ],
+)
+
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.universe"],
+    decision = "allow",
+    justification = "Allow explicit universe maintenance to update data/universe.csv from validated broker-tradability evidence.",
+    match = [
+        "python -m agentic_strategy.universe --universe data/universe.csv --validations data/private/validated-symbols.csv",
+    ],
+    not_match = [
+        "python -m agentic_strategy.sold_today --reset",
+    ],
+)
+
+# Windows launcher variants for agents that use py instead of python.
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.sold_today"],
+    decision = "allow",
+    justification = "Allow the sold-today pending-reopen queue helper through the Windows py launcher.",
+)
+
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.shortlists"],
+    decision = "allow",
+    justification = "Allow shortlist cleanup through the Windows py launcher.",
+)
+
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.current_symbols"],
+    decision = "allow",
+    justification = "Allow close-cache refresh through the Windows py launcher.",
+)
+
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.ledger"],
+    decision = "allow",
+    justification = "Allow ledger append/import through the Windows py launcher.",
+)
+
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.broker_snapshot"],
+    decision = "allow",
+    justification = "Allow broker snapshot persistence through the Windows py launcher.",
+)
+
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.universe"],
+    decision = "allow",
+    justification = "Allow universe maintenance through the Windows py launcher.",
+)
