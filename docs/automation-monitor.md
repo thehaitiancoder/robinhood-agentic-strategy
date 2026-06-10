@@ -72,41 +72,37 @@ Codex manual documents custom cron cadence but does not document a minimum
 interval. Until retested, use the half-hour entry plus in-thread +15 recheck
 design for practical 15-minute market coverage.
 
-Observed late-start behavior: on 2026-06-10, after the market-slot prompts had
-been edited after their scheduled times, `06-00-pt-rh-mkt` launched again at
-about 13:00 PT beside the close automation. The run obeyed the cutoff and
-placed no orders, but it created a confusing extra thread. To contain this,
-every market-hours prompt must begin with a hard local-Pacific time gate before
-reading docs or calling Robinhood. The valid window is the entry slot through
-25 minutes after the slot, never at or after 13:00 PT. Outside that window,
-write only a concise late-start skip to automation memory if possible and stop.
+Observed scheduler time-base correction: on 2026-06-10, the app treated
+automation RRULE `BYHOUR` values as local Pacific wall-clock hours after the
+automation prompts were updated. The old UTC-encoded values caused `06:00` to
+fire at about `13:00 PT` and `09:00` to fire at about `16:00 PT`. The actual
+active automation files must therefore use Pacific-local `BYHOUR` values, not
+UTC offsets.
 
-The automation scheduler currently stores and honors the RRULE `BYHOUR` values
-as UTC, even though the UI displays local time. Do not configure these as
-Pacific-local `BYHOUR=6,7,8,9,10,11,12,13`; that caused late-night Pacific
-runs around 11:00 PM, 11:30 PM, and midnight. Current intended UTC encodings
-for Pacific daylight time are:
+Current intended local encodings are:
 
 - market slots:
-  - 06:00 PT: `BYHOUR=13;BYMINUTE=0`
-  - 06:30 PT: `BYHOUR=13;BYMINUTE=30`
-  - 07:00 PT: `BYHOUR=14;BYMINUTE=0`
-  - 07:30 PT: `BYHOUR=14;BYMINUTE=30`
-  - 08:00 PT: `BYHOUR=15;BYMINUTE=0`
-  - 08:30 PT: `BYHOUR=15;BYMINUTE=30`
-  - 09:00 PT: `BYHOUR=16;BYMINUTE=0`
-  - 09:30 PT: `BYHOUR=16;BYMINUTE=30`
-  - 10:00 PT: `BYHOUR=17;BYMINUTE=0`
-  - 10:30 PT: `BYHOUR=17;BYMINUTE=30`
-  - 11:00 PT: `BYHOUR=18;BYMINUTE=0`
-  - 11:30 PT: `BYHOUR=18;BYMINUTE=30`
-  - 12:00 PT: `BYHOUR=19;BYMINUTE=0`
-  - 12:30 PT: `BYHOUR=19;BYMINUTE=30`
-- 1 PM close check: `BYHOUR=20;BYMINUTE=0`
+  - 06:00 PT: `BYHOUR=6;BYMINUTE=0`
+  - 06:30 PT: `BYHOUR=6;BYMINUTE=30`
+  - 07:00 PT: `BYHOUR=7;BYMINUTE=0`
+  - 07:30 PT: `BYHOUR=7;BYMINUTE=30`
+  - 08:00 PT: `BYHOUR=8;BYMINUTE=0`
+  - 08:30 PT: `BYHOUR=8;BYMINUTE=30`
+  - 09:00 PT: `BYHOUR=9;BYMINUTE=0`
+  - 09:30 PT: `BYHOUR=9;BYMINUTE=30`
+  - 10:00 PT: `BYHOUR=10;BYMINUTE=0`
+  - 10:30 PT: `BYHOUR=10;BYMINUTE=30`
+  - 11:00 PT: `BYHOUR=11;BYMINUTE=0`
+  - 11:30 PT: `BYHOUR=11;BYMINUTE=30`
+  - 12:00 PT: `BYHOUR=12;BYMINUTE=0`
+  - 12:30 PT: `BYHOUR=12;BYMINUTE=30`
+- 1 PM close check: `BYHOUR=13;BYMINUTE=0`
 
-If Pacific standard time is in effect and the scheduler still uses UTC fields,
-adjust these UTC hours by one hour so the displayed next-run times remain
-inside 6:00 AM through 1:00 PM Pacific.
+Every market-hours prompt must still begin with a hard local-Pacific time gate
+before reading docs or calling Robinhood. The valid window is the entry slot
+through 25 minutes after the slot, never at or after 13:00 PT. Outside that
+window, write only a concise late-start skip to automation memory if possible
+and stop.
 
 Thread titles:
 
