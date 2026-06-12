@@ -13,10 +13,13 @@ Priority order:
    run.
 3. Quote all owned positions.
 4. Generate full-position sell candidates at or above 10% return.
-5. Review due double-downs.
-6. Enter emergency cash mode if double-down cash is short.
-7. Open or reopen new positions only if there are no due double-downs.
-8. Report decisions. Do not write local audit/cache files during market-hours
+5. After a confirmed profitable sell fill, immediately attempt the base
+   tracking reopen for that same symbol if fast blockers pass.
+6. Review due double-downs.
+7. Enter emergency cash mode if double-down cash is short.
+8. Open or reopen new positions only if there are no due double-downs, except
+   for the immediate post-sell tracking reopen above.
+9. Report decisions. Do not write local audit/cache files during market-hours
    execution unless the user explicitly asks, except for updating confirmed
    filled sells and confirmed reopen fills in `data/private/sold-today.md`
    after execution is done.
@@ -43,6 +46,12 @@ Run a tight monitor loop over owned positions:
 - Quote owned symbols in batches.
 - Calculate sell return using bid-side pricing when available.
 - Surface any `sell_ready` positions immediately.
+- After a profitable sell is confirmed filled by a market-hours automation,
+  immediately reopen the same symbol as a base tracking lot if the fast
+  blockers pass: current buying power and 10% cash buffer, known due or
+  cash-short DDs from this run, active same-symbol buy order,
+  halted/restricted broker state, and normal base-lot sizing. Do not run a
+  broad DD scan between the sell fill and this tracking reopen.
 - After sell orders from the run are placed and confirmed filled, append only
   sell time and symbol to `data/private/sold-today.md` for symbols still
   waiting for reopen.

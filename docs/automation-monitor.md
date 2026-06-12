@@ -159,15 +159,29 @@ The market-hours half-hour entry automations run during regular market hours
 and check in this order:
 
 1. sell targets at or above 10% return
-2. due double-downs
-3. emergency green-sell candidates if double-down cash is short
-4. deployable idle cash for new openings
-5. routine queued orders, open positions, and stale-data status
+2. immediate base tracking reopen after a confirmed profitable sell fill, if
+   the fast blockers pass
+3. due double-downs
+4. emergency green-sell candidates if double-down cash is short
+5. deployable idle cash for new openings
+6. routine queued orders, open positions, and stale-data status
 
 The user has standing-authorized the market monitor to place qualifying strategy
 sell and double-down orders directly, subject to broker tool review and
 placement constraints. Speed is priority number one for executable sell and
 double-down candidates.
+
+Post-sell tracking reopen exception: after a qualifying profitable sell order
+is confirmed filled during a market-hours automation run, immediately reopen
+that same symbol as a base tracking lot when the fast blockers pass. This
+reopen is pre-authorized and must not wait for user confirmation. Do not run a
+broad DD scan between the sell fill and this tracking reopen; only check the
+fast blockers already known or immediately checkable: current buying power and
+10% cash buffer, known due or cash-short DDs from this run, active buy order for
+the same symbol, halted/restricted broker state, and normal base-lot sizing. If
+the reopen is placed and later confirmed filled, remove the symbol from
+`data/private/sold-today.md` if present. If blocked or unsafe, leave or add the
+symbol in `sold-today.md` for later reopening.
 
 Execution rules:
 
@@ -231,6 +245,10 @@ Execution rules:
   filled, append only the sell time and symbol to that file for symbols that
   still need reopen. After reopen buy orders are confirmed filled, remove those
   symbols from the file.
+- For the post-sell tracking reopen exception, do not append a sold symbol to
+  `sold-today.md` if the immediate tracking reopen has already been confirmed
+  filled. If the immediate reopen is blocked, append or leave that symbol in
+  `sold-today.md` for later reopening.
 - Do not place real orders from the fast read-only scripts, and do not place
   orders in parallel. Use the broker review/place workflow for the single
   qualifying candidate.
@@ -264,7 +282,9 @@ An incomplete DD scan is not routine no-action; it is a blocked scan and must
 email.
 
 New-opening buys remain report-only in automation runs unless the user
-explicitly authorizes new openings in that run.
+explicitly authorizes new openings in that run. The only standing reopen
+exception is the immediate base tracking reopen after a confirmed profitable
+sell fill during a market-hours automation run.
 
 ## 1 PM Close Reconciliation
 
@@ -335,7 +355,8 @@ market-hours sell or double-down order.
 
 The market-hours automation must not place real orders unless the active broker
 tool workflow allows it. The market monitor has standing user authorization for
-qualifying sell and double-down orders, so it should not wait for chat
+qualifying sell orders, double-down orders, and immediate base tracking reopens
+after confirmed profitable sell fills, so it should not wait for chat
 confirmation when the broker review is clean. It must still obey broker/tool
 blocks and must not claim an order was placed unless the broker placement call
 actually succeeded.

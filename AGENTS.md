@@ -138,6 +138,18 @@ double-down orders are executed or blocked, including blocked DD scans. They do
 not place new-opening buys unless the user explicitly authorizes openings in
 that run.
 
+Post-sell tracking reopen exception: after a qualifying profitable sell order
+is confirmed filled during a market-hours automation run, the automation is
+pre-authorized to immediately reopen the same symbol as a base tracking lot
+without waiting for user confirmation. Do not run a broad DD scan between the
+sell fill and this tracking reopen. Only apply the fast blockers already known
+or immediately checkable: current buying power and 10% cash buffer, known due
+or cash-short DDs from this run, active buy order for the same symbol,
+halted/restricted broker state, and normal base-lot sizing. If the tracking
+reopen is placed and later confirmed filled, remove that symbol from
+`data/private/sold-today.md` if present. If it is blocked or would break the
+cash buffer, leave or add the symbol in `sold-today.md` for later reopening.
+
 Every market-hours automation prompt must start with a hard time gate before
 reading docs or calling Robinhood. If a fixed-slot run starts outside its
 slot-valid window, or at/after 13:00 Pacific, it must write only a concise
@@ -199,6 +211,11 @@ original rules, and make rule violations visible before money is put at risk.
   requires it, and place immediately if still qualified and not blocked. The
   1:00 PM Pacific close automation is post-market only and must not place
   orders.
+- After a market-hours profitable sell is confirmed filled, immediately reopen
+  that same symbol as a base tracking lot when the fast blockers pass. Do not
+  delay this tracking reopen for a broad DD scan or local persistence. This is
+  the only standing automation exception to the rule that reopens need explicit
+  user authorization.
 - If a full owned-position scan is incomplete, verify the top downside holdings
   directly before declaring no DD. A current `<= -10%` broker-backed return is
   a mandatory DD verification trigger, not automatic buy authority; reconstruct
@@ -215,8 +232,9 @@ original rules, and make rule violations visible before money is put at risk.
   dollar estimates only for cash, concentration, and affordability checks.
 - Do not place real orders unless the active broker tool workflow allows it,
   including any runtime review requirement. The market-hours monitor has
-  standing user authorization for qualifying sell and double-down orders, so it
-  should not wait for chat confirmation when the broker review is clean. The
+  standing user authorization for qualifying sell orders, double-down orders,
+  and immediate base tracking reopens after confirmed profitable sell fills, so
+  it should not wait for chat confirmation when the broker review is clean. The
   1:00 PM Pacific close automation must not place orders.
 - Do not place orders for halted/paused/frozen symbols. A halt is a temporary
   broker/market block; re-quote and re-evaluate only after trading resumes.
@@ -314,6 +332,10 @@ During regular market hours, run the decision loop in this order:
    a read-only speed screen, but any candidate still needs normal
    single-symbol confirmation before execution.
 5. Identify full-position sells at or above 10% combined return.
+   After a profitable sell is confirmed filled, immediately attempt the
+   pre-authorized base tracking reopen for that same symbol when the fast
+   blockers pass. Do this before any broad DD scan, and do not delay it for
+   local persistence.
 6. Identify due double-downs. If the full basket scan is incomplete, directly
    verify the top downside holdings and any currently exposed `<= -10%` owned
    position with no active buy order before declaring that no DD is due.
@@ -322,8 +344,9 @@ During regular market hours, run the decision loop in this order:
    positions from the eligible universe.
 9. Report all candidates, actions, blocks, and stale data.
 10. After sell execution is complete and sold orders are confirmed filled,
-    append the filled symbols to `data/private/sold-today.md`; after confirmed
-    reopen fills, remove those symbols from the file.
+    append only symbols that still need reopen to
+    `data/private/sold-today.md`; after confirmed reopen fills, remove those
+    symbols from the file.
 11. After all executable work is done, update the top-10 buy and sell shortlist
     files from the just-seen positions and quotes. Write other local audit or
     cache data only when the user explicitly requested persistence in that run.

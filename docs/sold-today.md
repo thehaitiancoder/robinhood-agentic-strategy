@@ -35,9 +35,12 @@ write this file while an executable sell or double-down candidate is waiting.
 After the sell workflow is done for the current run:
 
 1. Confirm each sell order reached `filled` state in Robinhood.
-2. Append the filled sell symbols to `data/private/sold-today.md` as pending
-   reopens.
-3. Then continue with any non-urgent cleanup such as shortlist updates.
+2. If a market-hours automation immediately reopens the sold symbol as a base
+   tracking lot and the reopen buy is confirmed filled, do not append that
+   symbol as pending.
+3. Append only the filled sell symbols that still need reopen to
+   `data/private/sold-today.md` as pending reopens.
+4. Then continue with any non-urgent cleanup such as shortlist updates.
 
 If a run places multiple sells, append them together after the sell execution
 batch is complete. If a later run sells another symbol, append that symbol after
@@ -93,3 +96,9 @@ python -m agentic_strategy.sold_today --symbol UCTT --sold-at 2026-06-10T14:29:0
 
 If cash is needed for double-downs or the 10% buffer, leave the symbol in the
 sold-today pending reopen queue for later user-directed reopening.
+
+The market-hours automation has one standing exception to the user-directed
+reopen flow: after a profitable sell fills, it may immediately reopen that same
+symbol as a base tracking lot without waiting for user confirmation when the
+fast blockers pass. It should not run a broad DD scan before that tracking
+reopen.
