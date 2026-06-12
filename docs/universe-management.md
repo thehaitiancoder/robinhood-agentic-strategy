@@ -74,6 +74,32 @@ Ignored expansion artifacts may exist locally under:
 - `data/runtime/universe-expansion.validations.csv`
 - `data/runtime/universe-expansion.rejections.csv`
 
+As of the 2026-06-11 exchange-listed expansion, the remaining Nasdaq Trader
+candidate list was filtered against the committed universe and validated again
+through Robinhood. This run added another 1,000 active/tradable/fractional
+symbols without placing orders.
+
+Expansion summary:
+
+- 2,762 fresh candidates remained after excluding all existing universe rows.
+- 1,740 candidates were checked before the 1,000-symbol target was reached.
+- 1,000 symbols validated as active/tradable/fractional on Robinhood.
+- 733 candidates were rejected or not found during the validation pass.
+- Accepted symbols came from the next priority buckets: 618 Nasdaq Capital
+  Market common stocks and 382 NYSE common stocks.
+- `KALV` is retained in the universe but marked `tradable=false` and
+  `fractional_eligible=false` after Robinhood showed a marketwide trading halt
+  on 2026-06-11. Revalidate it after trading resumes before re-enabling.
+- Committed universe size after the expansion: 4,013 rows, including 4,000
+  rows initially validated as active/tradable/fractional and 14 retained
+  blocked/non-fractional rows after the KALV halt block.
+
+Ignored expansion artifacts may exist locally under:
+
+- `data/runtime/universe-expansion-2026-06-11-candidates.csv`
+- `data/runtime/universe-expansion-2026-06-11.validations.csv`
+- `data/runtime/universe-expansion-2026-06-11.rejections.csv`
+
 ## Validation CSV
 
 The merge utility expects the same columns as the canonical universe:
