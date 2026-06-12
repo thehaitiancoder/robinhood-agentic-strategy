@@ -1093,7 +1093,7 @@ CRL,Charles River Laboratories International,stock,true,true,true,robinhood_vali
 CRM,Salesforce.Com Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CRMD,CorMedix Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 CRML,Critical Metals Corp. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
-CRMT,America's Car-Mart Inc Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
+CRMT,America's Car-Mart Inc Common Stock,stock,true,false,true,robinhood_validated,2026-06-12
 CRNC,Cerence Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 CRNT,Ceragon Networks Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 CRNX,"Crinetics Pharmaceuticals, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10

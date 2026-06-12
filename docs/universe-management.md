@@ -90,9 +90,12 @@ Expansion summary:
 - `KALV` is retained in the universe but marked `tradable=false` and
   `fractional_eligible=false` after Robinhood showed a marketwide trading halt
   on 2026-06-11. Revalidate it after trading resumes before re-enabling.
+- `CRMT` is retained as active/tradable but marked
+  `fractional_eligible=false` after Robinhood rejected a 2026-06-11 sold-list
+  reopen with `You cannot open new fractional positions on this stock.`
 - Committed universe size after the expansion: 4,013 rows, including 4,000
-  rows initially validated as active/tradable/fractional and 14 retained
-  blocked/non-fractional rows after the KALV halt block.
+  rows initially validated as active/tradable/fractional and 15 retained
+  blocked/non-fractional rows after the KALV and CRMT blocks.
 
 Ignored expansion artifacts may exist locally under:
 
