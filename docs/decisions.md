@@ -92,6 +92,22 @@ positions first, even if they have not reached the full 10% profit target.
 Rejected ranking factors for this rule: largest market value, distance from 10%,
 and oldest position.
 
+## DD Cash Buffer
+
+Decision: the 10% cash floor is reserved for double-downs. It blocks openings
+and reopens, but a due exact-share DD should use actual broker buying power and
+must not be blocked merely because buying power would drop below the floor.
+
+Reason: the buffer exists so DDs can be executed during drawdowns. Treating the
+buffer as untouchable for DD defeats its purpose and causes the automation to
+skip the very orders the reserve was meant to fund.
+
+Operational implication: if a DD is due, check actual broker buying power,
+concentration, tradability, halt status, and broker review. If actual buying
+power cannot cover all due DDs, execute affordable DDs in priority order and
+enter emergency green cash mode for the rest. Openings and reopens remain
+blocked until the 10% floor is safe again.
+
 ## Taxes And Wash Sales
 
 Decision: do not apply wash-sale cooldowns, tax-aware reopening blocks, or

@@ -15,7 +15,8 @@ Priority order:
 4. Generate full-position sell candidates at or above 10% return.
 5. After a confirmed profitable sell fill, immediately attempt the base
    tracking reopen for that same symbol if fast blockers pass.
-6. Review due double-downs.
+6. Review due double-downs. The 10% cash floor is DD reserve, not a DD blocker;
+   use actual broker buying power for DD affordability.
 7. Enter emergency cash mode if double-down cash is short.
 8. Open or reopen new positions only if there are no due double-downs, except
    for the immediate post-sell tracking reopen above.

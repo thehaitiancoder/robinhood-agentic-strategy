@@ -78,6 +78,13 @@ The user may use short commands. Treat them as exact workflow requests:
 
 - `STRAT CHECK`: run the full priority loop.
 - `SELL CHECK`: find 10% sell targets first.
+- `SELL AUTO UNTIL CLOSE` or `SAUCE`: manual chat trigger for a sell-only loop
+  through 12:59 PM Pacific. This is pre-authorized to place qualifying
+  full-position market sells without another user confirmation after a clean
+  broker review. Process one candidate at a time: scan, refresh/review the
+  candidate, sell immediately if bid-side return is still at least 10% and the
+  broker shows no halt/restriction/block, then resume scanning until 12:59 PT.
+  It authorizes sells only; it does not authorize DDs, openings, or reopens.
 - `DD CHECK`: find due double-downs.
 - `CASH CHECK`: check deployable cash after all higher-priority obligations.
 - `SYNC STATE`: refresh Robinhood and update post-market cache/audit files.
@@ -192,7 +199,9 @@ original rules, and make rule violations visible before money is put at risk.
 
 - Sell monitoring has priority over buying. A 10% profit window can be brief.
 - Double-down obligations have priority over opening or reopening positions.
-- Maintain a 10% cash buffer.
+- Maintain a 10% cash buffer for openings and reopens. That buffer is reserved
+  for double-down obligations, so a due DD must not be blocked merely because
+  executing it would move buying power below the 10% floor.
 - Keep each single position under 10% of total portfolio value.
 - Do not apply a share-price cap to new openings; available deployable cash is
   the opening constraint.
@@ -201,6 +210,10 @@ original rules, and make rule violations visible before money is put at risk.
   use actual fill prices and actual dollars invested.
 - Strategy stock orders use immediate market execution; do not design GTC limit
   target exits or a mixed market/limit executor.
+- `SELL AUTO UNTIL CLOSE` / `SAUCE` is a manual chat pre-authorization for
+  full-position 10% profit sells only. During that trigger, do not stop for
+  another user confirmation once broker review is clean; place the qualifying
+  sell immediately and keep scanning until 12:59 PM Pacific.
 - Opening or reopening stocks at or above `$1.00` uses dollar-based fractional
   sizing. Sub-dollar penny stocks use whole-share quantity sizing and should
   not be bought fractionally.
@@ -230,6 +243,10 @@ original rules, and make rule violations visible before money is put at risk.
   amount. For every DD review or placement, pass the broker `quantity` equal to
   `next_lot_shares` (the prior lot's filled share count multiplied by 2). Use
   dollar estimates only for cash, concentration, and affordability checks.
+- For DD affordability, use actual broker buying power, not disposable cash
+  after the 10% floor. The cash floor blocks new openings and reopens, but it is
+  explicitly reserved to fund DDs. If due DD cost exceeds actual buying power,
+  process affordable DDs first and then enter emergency green cash mode.
 - Do not place real orders unless the active broker tool workflow allows it,
   including any runtime review requirement. The market-hours monitor has
   standing user authorization for qualifying sell orders, double-down orders,
@@ -339,7 +356,8 @@ During regular market hours, run the decision loop in this order:
 6. Identify due double-downs. If the full basket scan is incomplete, directly
    verify the top downside holdings and any currently exposed `<= -10%` owned
    position with no active buy order before declaring that no DD is due.
-7. If double-down cash is short, identify green positions to liquidate.
+7. If double-down cash is short against actual broker buying power, identify
+   green positions to liquidate.
 8. Only if no double-down is due and the cash buffer is safe, open or reopen
    positions from the eligible universe.
 9. Report all candidates, actions, blocks, and stale data.

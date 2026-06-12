@@ -8,7 +8,10 @@ exhaustion.
 
 These conditions must block the proposed action:
 
-- Cash buffer would fall below 10%.
+- Cash buffer would fall below 10% for a new opening, sold-symbol reopen, or
+  post-sell tracking reopen. This is not a DD blocker; the 10% floor is
+  reserved to fund due double-downs.
+- Due DD cost exceeds actual broker buying power.
 - Single position would exceed 10% of portfolio value.
 - Any owned symbol is due for double-down and the proposed action is a new open
   or reopen.

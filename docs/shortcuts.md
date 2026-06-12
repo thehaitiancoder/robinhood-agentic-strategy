@@ -6,6 +6,7 @@ Use these short commands when asking any future agent to run the strategy.
 | --- | --- |
 | `STRAT CHECK` | Run the full priority loop: sync, sells, double-downs, cash, openings. |
 | `SELL CHECK` | Check top sell shortlist first, then refresh full positions/quotes for 10% sell targets. |
+| `SELL AUTO UNTIL CLOSE` / `SAUCE` | Manual chat trigger: run a sell-only loop until 12:59 PM Pacific and place qualifying 10% full-position sells immediately after clean broker review. |
 | `DD CHECK` | Check top buy/DD shortlist first, then refresh full positions/quotes for due double-downs. |
 | `CASH CHECK` | Check deployable cash after buffer, queued orders, and obligations. |
 | `SYNC STATE` | Refresh Robinhood and update post-market cache/audit files. |
@@ -41,6 +42,16 @@ For `SELL CHECK` and `DD CHECK`, read
 `data/private/top-10-sell-candidates.md` and
 `data/private/top-10-buy-candidates.md` first if they exist. Quote those
 symbols first, then continue the full broker scan if no candidate qualifies.
+
+`SELL AUTO UNTIL CLOSE`, also known as `SAUCE`, is different from `SELL CHECK`.
+It is a manual chat trigger with standing user authorization to sell. When the
+user invokes it during regular market hours, scan for 10% full-position sell
+targets, refresh/review one candidate through the broker workflow, and if the
+review is clean and bid-side return is still at least 10%, place the market
+sell immediately without asking for another confirmation. Then resume scanning
+for the next sell target until 12:59 PM Pacific. This trigger authorizes sells
+only; it does not authorize double-downs, openings, reopens, or post-close
+orders. Do not delay a qualifying sell for local file writes.
 
 For every qualifying DD, review/place the broker order with `quantity` equal to
 the exact `next_lot_shares` value. Do not convert DDs into rounded

@@ -107,6 +107,27 @@ return_pct = ((bid_price * quantity) - invested_cost) / invested_cost
 Use bid-side pricing for sell decisions when available. Last trade can overstate
 the executable return for thin or volatile names.
 
+## Manual Sell-Auto Trigger
+
+`SELL AUTO UNTIL CLOSE`, abbreviated `SAUCE`, is a manual chat trigger for an
+active sell-only loop. It is pre-authorized to place qualifying full-position
+10% profit sells after a clean broker review without asking the user for another
+confirmation.
+
+When the user invokes `SAUCE` during regular market hours:
+
+1. Scan current live broker positions and quotes for sell targets.
+2. For each candidate, refresh/review the sell through the broker workflow.
+3. If the broker review is clean, the symbol is not halted or restricted, the
+   full sellable quantity is available, and bid-side return is still at least
+   10%, place the full-position market sell immediately.
+4. Resume scanning for the next candidate.
+5. Continue until 12:59 PM Pacific, then stop before the regular market close.
+
+`SAUCE` authorizes sells only. It does not authorize double-downs, openings,
+reopens, emergency green sells, or after-hours orders. Do not delay a qualifying
+sell for local ledger, shortlist, or sold-today writes.
+
 ## Execution And Sizing Rule
 
 Strategy orders use immediate market execution when criteria are met. This
@@ -158,7 +179,7 @@ lot_n_shares = lot_(n-1)_shares * 2
 Double-down broker orders must be reviewed and placed with `quantity` equal to
 `lot_n_shares`. Do not submit a DD as a rounded `dollar_amount`, even when the
 stock is priced at or above `$1.00`; use the estimated dollar value only to
-check buying power, cash buffer, and concentration risk.
+check actual buying power and concentration risk.
 
 During live market checks, a full basket scan is preferred. If the monitor
 cannot exhaustively scan every live position, it must still validate the top
@@ -196,20 +217,23 @@ or cash rules prevent another double-down.
 
 ## Cash Priority
 
-Disposable cash is not simply buying power. It must account for the cash buffer
-and known double-down obligations.
+For openings and reopens, disposable cash is not simply buying power. It must
+account for the cash buffer and known double-down obligations.
 
 ```text
 cash_floor = portfolio_value * 0.10
 disposable_cash = buying_power - cash_floor
 ```
 
-If any double-down is due, disposable cash is reserved for double-downs first.
-New positions are paused.
+The cash floor is a reserve for double-downs. It blocks new openings, sold-symbol
+reopens, and post-sell tracking reopens, but it must not block a due DD merely
+because executing the DD would move buying power below the floor. For DD
+affordability, use actual broker buying power plus concentration and broker
+review checks. If any double-down is due, new positions are paused.
 
 ## Emergency Cash Mode
 
-If a double-down is due and there is not enough disposable cash:
+If a double-down is due and there is not enough actual broker buying power:
 
 1. Pause all new opens and reopens.
 2. Identify positions with positive return below 10%.

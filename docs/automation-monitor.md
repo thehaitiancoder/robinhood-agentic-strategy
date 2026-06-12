@@ -171,6 +171,13 @@ sell and double-down orders directly, subject to broker tool review and
 placement constraints. Speed is priority number one for executable sell and
 double-down candidates.
 
+DD cash-buffer rule: the 10% cash floor is reserved for double-downs. It blocks
+new openings, sold-symbol reopens, and post-sell tracking reopens, but it must
+not block a due exact-share DD merely because buying power would fall below the
+floor. For DD affordability, use actual broker buying power, concentration, and
+broker review checks. If due DD cost exceeds actual buying power, place
+affordable DDs first and enter emergency green cash mode for the rest.
+
 Post-sell tracking reopen exception: after a qualifying profitable sell order
 is confirmed filled during a market-hours automation run, immediately reopen
 that same symbol as a base tracking lot when the fast blockers pass. This
