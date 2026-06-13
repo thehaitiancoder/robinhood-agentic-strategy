@@ -1,4 +1,4 @@
-import path from "node:path";
+import fs from "node:fs";
 
 import {
   RobinhoodFastClient,
@@ -15,7 +15,7 @@ function usage() {
   node scripts/rh_fast.mjs quotes SYMBOL... [--file path] [--output path]
   node scripts/rh_fast.mjs orders --account <account> [--state queued] [--all] [--since ISO] [--output path]
   node scripts/rh_fast.mjs positions --account <account> [--with-quotes] [--output path] [--summary-output path]
-  node scripts/rh_fast.mjs open-plan --account <account> [--limit 100] [--universe data/universe.csv] [--output path]
+  node scripts/rh_fast.mjs open-plan --account <account> [--limit 100] [--universe data/universe.csv] [--symbol-policy data/symbol-policy.csv] [--output path]
   node scripts/rh_fast.mjs watch --account <account> [--mode both|sell|dd] [--output path]
 
 All commands are read-only. Set RH_ACCOUNT_NUMBER instead of --account if preferred.`);
@@ -73,6 +73,14 @@ function text(value) {
 
 function symbolOf(row) {
   return text(row.symbol).toUpperCase();
+}
+
+function boolField(value, fallback = true) {
+  const normalized = text(value).toLowerCase();
+  if (!normalized) {
+    return fallback;
+  }
+  return ["1", "true", "yes", "y"].includes(normalized);
 }
 
 function decimal(value) {
@@ -215,17 +223,35 @@ function summarizePositions(positions, quotes) {
     .sort((left, right) => symbolOf(left).localeCompare(symbolOf(right)));
 }
 
-function selectOpenPlan(universePath, positions, orders, limit) {
+function readSymbolPolicies(policyPath) {
+  if (!policyPath || !fs.existsSync(policyPath)) {
+    return new Map();
+  }
+  return new Map(
+    readCsv(policyPath)
+      .map((row) => [symbolOf(row), row])
+      .filter(([symbol]) => symbol),
+  );
+}
+
+function openAllowed(row, policies) {
+  const policy = policies.get(symbolOf(row));
+  return !policy || boolField(policy.allow_open, true);
+}
+
+function selectOpenPlan(universePath, positions, orders, limit, policyPath) {
   const blocked = new Set([
     ...positions.map(symbolOf).filter(Boolean),
     ...activeOrderRows(orders).map(symbolOf).filter(Boolean),
   ]);
+  const policies = readSymbolPolicies(policyPath);
   const rows = readCsv(universePath);
   return rows
     .filter((row) => row.active === "true")
     .filter((row) => row.tradable === "true")
     .filter((row) => row.fractional_eligible === "true")
     .filter((row) => !blocked.has(symbolOf(row)))
+    .filter((row) => openAllowed(row, policies))
     .slice(0, limit)
     .map((row) => ({
       symbol: symbolOf(row),
@@ -305,10 +331,11 @@ async function commandOpenPlan(args) {
   const account = accountNumber(options);
   const limit = numberOption(options, "limit", 100);
   const universe = options.universe || "data/universe.csv";
+  const symbolPolicy = options["symbol-policy"] || "data/symbol-policy.csv";
   const client = new RobinhoodFastClient({ clientName: "codex-rh-fast-open-plan" });
   const { rows: positions } = await fetchPositions(client, account);
   const { rows: orders } = await fetchOrders(client, account, {});
-  const plan = selectOpenPlan(universe, positions, orders, limit);
+  const plan = selectOpenPlan(universe, positions, orders, limit, symbolPolicy);
   const output = options.output || "data/runtime/rh-fast-open-plan.csv";
   writeCsv(output, plan, ["symbol", "name", "source", "updated_at"]);
   console.log(

@@ -79,8 +79,8 @@ sell or double-down is waiting.
 
 `REOPEN SOLD` reads that list, refreshes Robinhood, skips symbols already held
 or covered by active buy orders, then reopens eligible symbols only if there
-are no due double-downs and the 10% cash buffer remains safe. Broker state is
-still the source of truth.
+are no due double-downs, symbol policy permits reopen, and the 15% cash buffer
+remains safe. Broker state is still the source of truth.
 
 ## Fast MCP Rule
 

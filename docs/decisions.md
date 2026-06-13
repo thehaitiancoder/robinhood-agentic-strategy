@@ -9,7 +9,7 @@ Decision: there is no share-price cap for opening positions.
 
 Reason: stocks priced at `$1.00` or higher can use fractional dollar sizing, so
 there is no share-price cap for openings. The real cap is available deployable
-cash after preserving the 10% cash buffer and satisfying any higher-priority
+cash after preserving the 15% cash buffer and satisfying any higher-priority
 double-down obligations.
 
 Operational implication: if roughly 5,000 Robinhood-tradable stocks are eligible,
@@ -33,6 +33,22 @@ Operational workflow:
 - Delisted, inactive, or non-tradable symbols are marked inactive/non-tradable
   rather than silently deleted.
 - The trading engine only opens positions from this local validated universe.
+
+## Symbol Policy Overlay
+
+Decision: keep strategy filters in `data/symbol-policy.csv` instead of changing
+the broker-truth universe fields.
+
+Reason: the user wants filtered stocks to remain in the universe so they do not
+need to be re-filtered later, while automation still needs a clear way to avoid
+future buys.
+
+Current policy: symbols with six valid months and average monthly intraday range
+below 10% are filtered. Already-owned names are phased out with `no_reopen`;
+unowned names use `no_new_open`. For this policy, target sells and double-downs
+remain allowed while the symbol is owned. Historical range data is Yahoo-first;
+if Yahoo fetching fails for a symbol, the weekly refresh uses Robinhood
+historical bars for that symbol before marking it failed.
 
 ## Exact Lot Ladder
 
@@ -94,7 +110,7 @@ and oldest position.
 
 ## DD Cash Buffer
 
-Decision: the 10% cash floor is reserved for double-downs. It blocks openings
+Decision: the 15% cash floor is reserved for double-downs. It blocks openings
 and reopens, but a due exact-share DD should use actual broker buying power and
 must not be blocked merely because buying power would drop below the floor.
 
@@ -106,7 +122,7 @@ Operational implication: if a DD is due, check actual broker buying power,
 concentration, tradability, halt status, and broker review. If actual buying
 power cannot cover all due DDs, execute affordable DDs in priority order and
 enter emergency green cash mode for the rest. Openings and reopens remain
-blocked until the 10% floor is safe again.
+blocked until the 15% floor is safe again.
 
 ## Taxes And Wash Sales
 

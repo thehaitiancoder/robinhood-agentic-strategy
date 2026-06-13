@@ -10,7 +10,7 @@ ZERO = Decimal("0")
 
 @dataclass(frozen=True)
 class StrategyConfig:
-    cash_buffer_pct: Decimal = Decimal("0.10")
+    cash_buffer_pct: Decimal = Decimal("0.15")
     max_single_position_pct: Decimal = Decimal("0.10")
     profit_take_pct: Decimal = Decimal("0.10")
     emergency_sell_min_return_pct: Decimal = Decimal("0.00")

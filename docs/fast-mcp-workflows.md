@@ -99,11 +99,14 @@ Default outputs:
 
 Compare live positions and active orders against `data/universe.csv` and produce
 eligible opening candidates. This uses live Robinhood broker state, not the
-local ledger.
+local ledger. It also applies `data/symbol-policy.csv` by default when the file
+exists.
 
 ```powershell
 node scripts/rh_fast.mjs open-plan --account $env:RH_ACCOUNT_NUMBER --limit 100
 ```
+
+Use `--symbol-policy <path>` to point at a different policy file.
 
 Default output:
 

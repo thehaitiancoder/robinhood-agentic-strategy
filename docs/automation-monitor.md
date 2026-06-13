@@ -33,6 +33,7 @@ Automation ids:
   - `12-15-pt-rh-mkt`
   - `12-45-pt-rh-mkt`
 - `robinhood-strategy-1-pm-close-check`
+- `weekly-rh-symbol-policy-refresh`
 - `robinhood-strategy-market-monitor` is a paused legacy combined monitor.
 
 Visible automation names:
@@ -40,6 +41,7 @@ Visible automation names:
 - Market-hours entry slots use `HH:mm PT - RH MKT`, for example
   `09:00 PT - RH MKT`.
 - `13:00 PT - RH CLOSE`
+- `Weekly RH Symbol Policy Refresh`
 - The paused legacy combined monitor is named `RH MKT 30m PAUSED`.
 
 These names are static scheduler labels. They cannot include the current run
@@ -64,6 +66,7 @@ Schedule:
   recheck. Example: `10:30 PT - RH MKT` performs the 10:30 check, then covers
   the 10:45 recheck inside the same thread.
 - `robinhood-strategy-1-pm-close-check`: weekdays at exactly 1:00 PM Pacific.
+- `weekly-rh-symbol-policy-refresh`: Sundays at 8:00 AM Pacific.
 
 Observed scheduler limitation: on 2026-06-10 the newly-created standalone
 quarter-hour jobs `10-45-pt-rh-mkt` and `11-15-pt-rh-mkt` did not run, while
@@ -97,6 +100,7 @@ Current intended local encodings are:
   - 12:00 PT: `BYHOUR=12;BYMINUTE=0`
   - 12:30 PT: `BYHOUR=12;BYMINUTE=30`
 - 1 PM close check: `BYHOUR=13;BYMINUTE=0`
+- weekly symbol policy refresh: `BYDAY=SU;BYHOUR=8;BYMINUTE=0`
 
 Every market-hours prompt must still begin with a hard local-Pacific time gate
 before reading docs or calling Robinhood. The valid window is the entry slot
@@ -171,7 +175,7 @@ sell and double-down orders directly, subject to broker tool review and
 placement constraints. Speed is priority number one for executable sell and
 double-down candidates.
 
-DD cash-buffer rule: the 10% cash floor is reserved for double-downs. It blocks
+DD cash-buffer rule: the 15% cash floor is reserved for double-downs. It blocks
 new openings, sold-symbol reopens, and post-sell tracking reopens, but it must
 not block a due exact-share DD merely because buying power would fall below the
 floor. For DD affordability, use actual broker buying power, concentration, and
@@ -184,11 +188,13 @@ that same symbol as a base tracking lot when the fast blockers pass. This
 reopen is pre-authorized and must not wait for user confirmation. Do not run a
 broad DD scan between the sell fill and this tracking reopen; only check the
 fast blockers already known or immediately checkable: current buying power and
-10% cash buffer, known due or cash-short DDs from this run, active buy order for
-the same symbol, halted/restricted broker state, and normal base-lot sizing. If
-the reopen is placed and later confirmed filled, remove the symbol from
-`data/private/sold-today.md` if present. If blocked or unsafe, leave or add the
-symbol in `sold-today.md` for later reopening.
+15% cash buffer, symbol policy permits reopen, known due or cash-short DDs from
+this run, active buy order for the same symbol, halted/restricted broker state,
+and normal base-lot sizing. If the reopen is placed and later confirmed filled,
+remove the symbol from `data/private/sold-today.md` if present. If policy blocks
+reopen, do not add the symbol to `sold-today.md`. If another blocker or the cash
+buffer blocks reopen, leave or add the symbol in `sold-today.md` for later
+reopening.
 
 Execution rules:
 
@@ -254,14 +260,16 @@ Execution rules:
   symbols from the file.
 - For the post-sell tracking reopen exception, do not append a sold symbol to
   `sold-today.md` if the immediate tracking reopen has already been confirmed
-  filled. If the immediate reopen is blocked, append or leave that symbol in
+  filled. If symbol policy blocks reopen, do not append it. If the immediate
+  reopen is blocked for another reason, append or leave that symbol in
   `sold-today.md` for later reopening.
 - Do not place real orders from the fast read-only scripts, and do not place
   orders in parallel. Use the broker review/place workflow for the single
   qualifying candidate.
 - For new openings, compare `data/universe.csv` against live Robinhood
   positions and active orders. Do not use the local ledger as the owned-symbol
-  source during market hours.
+  source during market hours. Apply `data/symbol-policy.csv` before selecting
+  opening candidates.
 - After all executable sell/DD work and full owned-position checks are complete,
   update `data/private/top-10-buy-candidates.md` and
   `data/private/top-10-sell-candidates.md` from the latest positions and quotes
@@ -337,6 +345,43 @@ The close automation does not email routine no-action summaries by default. It
 emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
 fails, local ledger/cache update fails, DD scan coverage is blocked, or a
 high-priority next-session candidate is detected after the market has closed.
+
+## Weekly Symbol Policy Refresh
+
+`weekly-rh-symbol-policy-refresh` runs Sunday morning off-market. It is a
+policy maintenance job only.
+
+It should:
+
+- start by confirming it is weekend/off-market in Pacific time
+- read `AGENTS.md`, `docs/automation-monitor.md`, and `docs/symbol-policy.md`
+- run `node scripts/weekly_symbol_policy_refresh.mjs --run --account 878067701`
+- run `python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv`
+- report the summary path, metrics path, policy row counts, newly filtered
+  symbols, restored symbols, owned `no_reopen` count, and unowned `no_new_open`
+  count
+
+The refresh script uses Yahoo Finance as the primary historical source. If
+Yahoo fetching fails for a symbol, it must fetch Robinhood historical daily bars
+for that symbol before marking the symbol failed.
+
+It must not:
+
+- call broker order review or placement tools
+- place, prepare, or suggest buy, sell, reopen, double-down, or emergency cash
+  orders
+- touch `data/private/sold-today.md`
+- update `data/private/top-10-buy-candidates.md` or
+  `data/private/top-10-sell-candidates.md`
+- write `data/private/order-ledger.csv`
+- regenerate `data/private/current-symbols.json`, `data/private/close-summary.md`,
+  or deprecated `data/private/LIVE_STATE.md`
+
+The refresh script replaces only auto-managed policy rows identified by the
+weekly/yahoo intraday-range evidence and normal generated permissions. Manual
+policy rows are preserved. If fewer than 95% of universe symbols are
+successfully analyzed, the script writes audit artifacts but must not replace
+`data/symbol-policy.csv`.
 
 ## Live Source Of Truth
 

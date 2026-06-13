@@ -8,6 +8,8 @@ repo and refresh live broker state from Robinhood before trading.
 Expected local files:
 
 - `universe.csv`: canonical Robinhood-validated symbols and metadata.
+- `symbol-policy.csv`: committed non-private strategy filters layered over the
+  universe for opens and reopens.
 - `private/current-symbols.json`: ignored post-market broker-derived symbol
   cache for planning and universe exclusion.
 - `private/close-summary.md`: ignored post-market close summary.
@@ -22,6 +24,10 @@ Expected local files:
 - `quotes/`: cached quote snapshots for backtesting and debugging.
 - `private/`: ignored local-only files.
 - `runtime/`: ignored generated state.
+
+The weekly policy refresh writes its metrics, policy diffs, backups, summaries,
+and resumable state under `runtime/weekly-symbol-policy-refresh/` and
+`runtime/symbol-policy-backups/`.
 
 Minimum `universe.csv` columns:
 

@@ -5,8 +5,14 @@ import json
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
+from .symbol_policy import (
+    DEFAULT_SYMBOL_POLICY_CSV,
+    SymbolPolicy,
+    is_open_allowed,
+    read_symbol_policy_csv,
+)
 from .universe import UniverseRecord, read_universe_csv
 
 
@@ -76,6 +82,7 @@ def select_open_symbols(
     current_symbols: dict[str, Any],
     *,
     limit: int,
+    symbol_policies: Mapping[str, SymbolPolicy] | None = None,
 ) -> list[str]:
     blocked = {symbol.upper() for symbol in current_symbols.get("blocked_open_symbols", [])}
     selected: list[str] = []
@@ -86,6 +93,8 @@ def select_open_symbols(
         if symbol in blocked:
             continue
         if not record.active or not record.tradable or not record.fractional_eligible:
+            continue
+        if not is_open_allowed(symbol, symbol_policies):
             continue
         selected.append(symbol)
     return selected
@@ -102,6 +111,7 @@ def write_current_symbols(
     generated_at: str | None = None,
     universe: list[UniverseRecord] | None = None,
     open_limit: int = 0,
+    symbol_policies: Mapping[str, SymbolPolicy] | None = None,
 ) -> dict[str, Any]:
     state = build_current_symbols(
         portfolio_payload=portfolio_payload,
@@ -111,7 +121,12 @@ def write_current_symbols(
         generated_at=generated_at,
     )
     if universe is not None and open_limit > 0:
-        state["open_candidates"] = select_open_symbols(universe, state, limit=open_limit)
+        state["open_candidates"] = select_open_symbols(
+            universe,
+            state,
+            limit=open_limit,
+            symbol_policies=symbol_policies,
+        )
 
     output_path = Path(output_json)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -176,6 +191,11 @@ def main() -> int:
     parser.add_argument("--generated-at")
     parser.add_argument("--universe", help="Optional universe CSV for selecting open candidates.")
     parser.add_argument(
+        "--symbol-policy",
+        default=str(DEFAULT_SYMBOL_POLICY_CSV),
+        help="Optional symbol policy CSV. Defaults to data/symbol-policy.csv when present.",
+    )
+    parser.add_argument(
         "--open-limit",
         type=int,
         default=0,
@@ -193,6 +213,7 @@ def main() -> int:
         generated_at=args.generated_at,
         universe=read_universe_csv(args.universe) if args.universe else None,
         open_limit=args.open_limit,
+        symbol_policies=read_symbol_policy_csv(args.symbol_policy) if args.symbol_policy else None,
     )
     print(args.output_json)
     if args.summary_md:

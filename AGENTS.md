@@ -125,6 +125,11 @@ The recurring Codex automations are:
   fire.
 - `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific
   post-market reconciliation and summary.
+- `weekly-rh-symbol-policy-refresh`: Sunday 8:00 AM Pacific read-only policy
+  refresh. It updates generated rows in `data/symbol-policy.csv` from
+  six-month historical intraday range data. It uses Yahoo Finance first and
+  falls back to Robinhood historical bars for any symbol where Yahoo fetching
+  fails. It must not place, review, prepare, or suggest orders.
 
 The legacy combined `robinhood-strategy-market-monitor` automation is paused
 because it created repeated threads named `RH MKT 30m` and dynamic thread-title
@@ -150,12 +155,14 @@ is confirmed filled during a market-hours automation run, the automation is
 pre-authorized to immediately reopen the same symbol as a base tracking lot
 without waiting for user confirmation. Do not run a broad DD scan between the
 sell fill and this tracking reopen. Only apply the fast blockers already known
-or immediately checkable: current buying power and 10% cash buffer, known due
-or cash-short DDs from this run, active buy order for the same symbol,
-halted/restricted broker state, and normal base-lot sizing. If the tracking
-reopen is placed and later confirmed filled, remove that symbol from
-`data/private/sold-today.md` if present. If it is blocked or would break the
-cash buffer, leave or add the symbol in `sold-today.md` for later reopening.
+or immediately checkable: current buying power and 15% cash buffer, symbol
+policy permits reopen, known due or cash-short DDs from this run, active buy
+order for the same symbol, halted/restricted broker state, and normal base-lot
+sizing. If the tracking reopen is placed and later confirmed filled, remove
+that symbol from `data/private/sold-today.md` if present. If policy blocks
+reopen, do not add the symbol to `sold-today.md`. If another blocker or the
+cash buffer blocks reopen, leave or add the symbol in `sold-today.md` for later
+reopening.
 
 Every market-hours automation prompt must start with a hard time gate before
 reading docs or calling Robinhood. If a fixed-slot run starts outside its
@@ -171,6 +178,16 @@ the audit ledger, update `data/private/current-symbols.json`, write
 `data/private/close-summary.md`, produce a close summary, and email if DD scan
 coverage is blocked for next-session review. This 1 PM run is explicitly
 authorized to update repo-local private state.
+
+`weekly-rh-symbol-policy-refresh` must run only as an off-market weekend policy
+maintenance job. It may run `scripts/weekly_symbol_policy_refresh.mjs` and
+`agentic_strategy.validate_symbol_policy`. It may fetch current Agentic owned
+symbols read-only for classifying generated policy rows, and it may fetch
+historical market data for universe symbols. Yahoo Finance is the primary
+historical source; if Yahoo fetching fails for a symbol, use Robinhood
+historical bars for that symbol before counting it as failed. It must not call
+broker order review/place tools, modify `sold-today.md`, update shortlists,
+write the ledger, or touch live trading state.
 
 The market automation names intentionally put the time at the front because the
 saved automation name is the reliable mobile chat-list label. Each market run
@@ -199,9 +216,9 @@ original rules, and make rule violations visible before money is put at risk.
 
 - Sell monitoring has priority over buying. A 10% profit window can be brief.
 - Double-down obligations have priority over opening or reopening positions.
-- Maintain a 10% cash buffer for openings and reopens. That buffer is reserved
+- Maintain a 15% cash buffer for openings and reopens. That buffer is reserved
   for double-down obligations, so a due DD must not be blocked merely because
-  executing it would move buying power below the 10% floor.
+  executing it would move buying power below the 15% floor.
 - Keep each single position under 10% of total portfolio value.
 - Do not apply a share-price cap to new openings; available deployable cash is
   the opening constraint.
@@ -217,6 +234,11 @@ original rules, and make rule violations visible before money is put at risk.
 - Opening or reopening stocks at or above `$1.00` uses dollar-based fractional
   sizing. Sub-dollar penny stocks use whole-share quantity sizing and should
   not be bought fractionally.
+- Apply `data/symbol-policy.csv` before new openings and reopens. A symbol with
+  `allow_open=false` must not be opened as a new position. A symbol with
+  `allow_reopen=false` must not be reopened after a sell and should not be
+  appended to `sold-today.md` as a pending reopen. Keep filtered symbols in
+  `data/universe.csv`; the policy overlay controls strategy eligibility.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
 - For market-hours automation sell and double-down checks, process one
@@ -225,10 +247,10 @@ original rules, and make rule violations visible before money is put at risk.
   1:00 PM Pacific close automation is post-market only and must not place
   orders.
 - After a market-hours profitable sell is confirmed filled, immediately reopen
-  that same symbol as a base tracking lot when the fast blockers pass. Do not
-  delay this tracking reopen for a broad DD scan or local persistence. This is
-  the only standing automation exception to the rule that reopens need explicit
-  user authorization.
+  that same symbol as a base tracking lot when the fast blockers pass and
+  symbol policy permits reopen. Do not delay this tracking reopen for a broad
+  DD scan or local persistence. This is the only standing automation exception
+  to the rule that reopens need explicit user authorization.
 - If a full owned-position scan is incomplete, verify the top downside holdings
   directly before declaring no DD. A current `<= -10%` broker-backed return is
   a mandatory DD verification trigger, not automatic buy authority; reconstruct
@@ -244,7 +266,7 @@ original rules, and make rule violations visible before money is put at risk.
   `next_lot_shares` (the prior lot's filled share count multiplied by 2). Use
   dollar estimates only for cash, concentration, and affordability checks.
 - For DD affordability, use actual broker buying power, not disposable cash
-  after the 10% floor. The cash floor blocks new openings and reopens, but it is
+  after the 15% floor. The cash floor blocks new openings and reopens, but it is
   explicitly reserved to fund DDs. If due DD cost exceeds actual buying power,
   process affordable DDs first and then enter emergency green cash mode.
 - Do not place real orders unless the active broker tool workflow allows it,
@@ -292,6 +314,10 @@ requests and the 1 PM close automation:
   `data/private/current-symbols.json` and `data/private/close-summary.md` from
   fresh broker payloads. This gives agents a compact post-market cache and a
   fast universe exclusion set for planning; refresh Robinhood before trading.
+- `agentic_strategy.symbol_policy`: reads committed strategy filters from
+  `data/symbol-policy.csv`. These filters block new opens and reopens without
+  changing broker-truth universe fields and without blocking target sells or
+  double-down checks unless a future policy explicitly says so.
 - `agentic_strategy.shortlists`: writes
   `data/private/top-10-buy-candidates.md` and
   `data/private/top-10-sell-candidates.md` from fresh broker positions and
@@ -308,6 +334,12 @@ requests and the 1 PM close automation:
 - `scripts/rh_fast.mjs`: read-only fast commands for quotes, orders, positions,
   open planning, and sell/DD watch screens. These scripts must not place
   orders.
+- `scripts/weekly_symbol_policy_refresh.mjs`: weekend read-only historical
+  range refresh for generated `data/symbol-policy.csv` rows. It fetches Yahoo
+  historical data first and falls back to Robinhood historical bars when Yahoo
+  fails for a symbol. It writes metrics, diffs, backups, and summaries under
+  `data/runtime/` and only replaces the committed policy file after safety
+  validation passes.
 - `scripts/bulk_validate_robinhood_universe.mjs`: read-only universe
   tradability validator built on the shared fast MCP client.
 
@@ -351,20 +383,20 @@ During regular market hours, run the decision loop in this order:
 5. Identify full-position sells at or above 10% combined return.
    After a profitable sell is confirmed filled, immediately attempt the
    pre-authorized base tracking reopen for that same symbol when the fast
-   blockers pass. Do this before any broad DD scan, and do not delay it for
-   local persistence.
+   blockers pass and symbol policy permits reopen. Do this before any broad DD
+   scan, and do not delay it for local persistence.
 6. Identify due double-downs. If the full basket scan is incomplete, directly
    verify the top downside holdings and any currently exposed `<= -10%` owned
    position with no active buy order before declaring that no DD is due.
 7. If double-down cash is short against actual broker buying power, identify
    green positions to liquidate.
 8. Only if no double-down is due and the cash buffer is safe, open or reopen
-   positions from the eligible universe.
+   positions from the eligible universe after applying `data/symbol-policy.csv`.
 9. Report all candidates, actions, blocks, and stale data.
 10. After sell execution is complete and sold orders are confirmed filled,
-    append only symbols that still need reopen to
-    `data/private/sold-today.md`; after confirmed reopen fills, remove those
-    symbols from the file.
+    append only symbols that still need reopen and are allowed to reopen by
+    policy to `data/private/sold-today.md`; after confirmed reopen fills,
+    remove those symbols from the file.
 11. After all executable work is done, update the top-10 buy and sell shortlist
     files from the just-seen positions and quotes. Write other local audit or
     cache data only when the user explicitly requested persistence in that run.

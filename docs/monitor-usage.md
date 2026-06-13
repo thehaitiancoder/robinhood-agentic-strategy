@@ -12,7 +12,8 @@ PYTHONPATH=src python3 -m agentic_strategy.monitor \
   --positions examples/positions.csv \
   --quotes examples/quotes.csv \
   --universe examples/universe.csv \
-  --config-json config/strategy.example.json
+  --config-json config/strategy.example.json \
+  --symbol-policy data/symbol-policy.csv
 ```
 
 ## Run Tests
@@ -54,6 +55,9 @@ symbol,bid_price,ask_price,last_price,updated_at
 ```csv
 symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
 ```
+
+`symbol-policy.csv` is optional and defaults to `data/symbol-policy.csv` when
+present. It blocks new-open candidates when `allow_open=false`.
 
 ## Decision Actions
 

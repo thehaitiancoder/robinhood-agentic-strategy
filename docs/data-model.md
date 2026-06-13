@@ -93,7 +93,7 @@ target_sell_price = (invested_cost * 1.10) / quantity
 Cash floor:
 
 ```text
-cash_floor = portfolio_value * 0.10
+cash_floor = portfolio_value * 0.15
 ```
 
 Position concentration:

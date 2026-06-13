@@ -38,9 +38,10 @@ base increases by `$1`, then continues to `$3`, `$4`, and so on.
 Open or reopen only when:
 
 - No owned stock is due for double-down.
-- The 10% cash buffer remains intact after the order.
+- The 15% cash buffer remains intact after the order.
 - The position would remain below 10% of portfolio value.
 - The symbol is active, tradable, and eligible for the intended order.
+- The symbol policy allows the new open or reopen.
 - The symbol is not halted, paused, frozen, or otherwise blocked from current
   order execution.
 
@@ -72,10 +73,11 @@ confirmed filled, immediately reopen that same symbol as a base tracking lot if
 the fast blockers pass. This keeps a live marker on strong intraday runners and
 lets the strategy capture repeated sell cycles. Do not run a broad DD scan
 between the sell fill and this tracking reopen; only check current buying power
-and 10% cash buffer, known due or cash-short DDs from this run, active buy
-orders for the same symbol, halted/restricted broker state, and normal base-lot
-sizing. If the immediate reopen fills, do not keep the symbol in
-`sold-today.md`; if the reopen is blocked, leave or add it there for later.
+and 15% cash buffer, symbol policy, known due or cash-short DDs from this run,
+active buy orders for the same symbol, halted/restricted broker state, and
+normal base-lot sizing. If the immediate reopen fills, do not keep the symbol in
+`sold-today.md`. If policy blocks reopen, do not add it there. If another
+blocker prevents reopen, leave or add it there for later.
 
 The sold-today list exists so the user can later reopen recently closed symbols
 before buying unrelated new names. It should contain only symbols sold today
@@ -87,12 +89,14 @@ then apply the normal priority checks:
 - sell targets first
 - due double-downs before reopens
 - emergency cash needs before reopens
-- 10% cash buffer
+- 15% cash buffer
 - 10% single-position cap
 - active, tradable, eligible symbol
+- symbol policy allows reopen
 
-If cash is needed for double-downs or the buffer, leave the symbol in the
-sold-today pending reopen list for later user-directed reopening.
+If policy blocks reopen, do not keep the symbol in the sold-today queue. If cash
+is needed for double-downs or the buffer, leave the symbol in the sold-today
+pending reopen list for later user-directed reopening.
 
 ## Profit Sell Rule
 
@@ -221,7 +225,7 @@ For openings and reopens, disposable cash is not simply buying power. It must
 account for the cash buffer and known double-down obligations.
 
 ```text
-cash_floor = portfolio_value * 0.10
+cash_floor = portfolio_value * 0.15
 disposable_cash = buying_power - cash_floor
 ```
 

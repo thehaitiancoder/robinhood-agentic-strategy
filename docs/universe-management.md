@@ -21,6 +21,11 @@ When future agents receive symbols:
 Do not delete delisted or inactive symbols by default. Mark them inactive so the
 system has an audit trail and does not keep rediscovering the same dead ticker.
 
+Strategy filters live in `data/symbol-policy.csv`, not in the universe file.
+If a stock should remain known but no longer be opened or reopened, add or update
+its policy row instead of changing broker-truth fields such as `active`,
+`tradable`, or `fractional_eligible`. See `docs/symbol-policy.md`.
+
 ## Current Coverage
 
 As of the 2026-06-09 universe import, `data/universe.csv` contains the original

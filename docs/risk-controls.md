@@ -8,9 +8,10 @@ exhaustion.
 
 These conditions must block the proposed action:
 
-- Cash buffer would fall below 10% for a new opening, sold-symbol reopen, or
-  post-sell tracking reopen. This is not a DD blocker; the 10% floor is
+- Cash buffer would fall below 15% for a new opening, sold-symbol reopen, or
+  post-sell tracking reopen. This is not a DD blocker; the 15% floor is
   reserved to fund due double-downs.
+- Symbol policy blocks the proposed open or reopen.
 - Due DD cost exceeds actual broker buying power.
 - Single position would exceed 10% of portfolio value.
 - Any owned symbol is due for double-down and the proposed action is a new open
@@ -34,6 +35,7 @@ These should warn but not necessarily block:
 - The symbol had recent corporate action, reverse split, or delisting risk.
 - The symbol is thinly traded.
 - The post-market cache differs from broker-reported quantity.
+- The symbol policy has a future review date.
 
 ## Circuit Breakers
 

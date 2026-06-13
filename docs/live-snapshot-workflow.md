@@ -105,7 +105,8 @@ PYTHONPATH=src python3 -m agentic_strategy.monitor \
   --positions data/runtime/latest/positions.csv \
   --quotes data/runtime/latest/quotes.csv \
   --universe data/universe.csv \
-  --config-json config/strategy.example.json
+  --config-json config/strategy.example.json \
+  --symbol-policy data/symbol-policy.csv
 ```
 
 The monitor remains read-only. It emits decisions such as target sells,

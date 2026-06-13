@@ -7,8 +7,8 @@ finding unrelated new openings.
 
 It is not sell history and it is not an ownership source of truth. Before
 reopening any symbol from this file, refresh Robinhood positions, active
-orders, buying power, double-down obligations, tradability, and fractional
-eligibility.
+orders, buying power, double-down obligations, tradability, fractional
+eligibility, and symbol policy.
 
 ## Format
 
@@ -38,8 +38,8 @@ After the sell workflow is done for the current run:
 2. If a market-hours automation immediately reopens the sold symbol as a base
    tracking lot and the reopen buy is confirmed filled, do not append that
    symbol as pending.
-3. Append only the filled sell symbols that still need reopen to
-   `data/private/sold-today.md` as pending reopens.
+3. Append only the filled sell symbols that still need reopen and are allowed
+   to reopen by policy to `data/private/sold-today.md` as pending reopens.
 4. Then continue with any non-urgent cleanup such as shortlist updates.
 
 If a run places multiple sells, append them together after the sell execution
@@ -91,14 +91,15 @@ python -m agentic_strategy.sold_today --symbol UCTT --sold-at 2026-06-10T14:29:0
 2. Refresh Robinhood broker state.
 3. Skip symbols already held or already covered by active buy orders.
 4. Run the strategy priority checks first: sell targets, due double-downs,
-   emergency cash need, 10% cash buffer, and concentration cap.
+   emergency cash need, 15% cash buffer, symbol policy, and concentration cap.
 5. Reopen eligible symbols as base lots only if disposable cash remains.
 
-If cash is needed for double-downs or the 10% buffer, leave the symbol in the
+If policy blocks the reopen, do not keep the symbol in the sold-today queue. If
+cash is needed for double-downs or the 15% buffer, leave the symbol in the
 sold-today pending reopen queue for later user-directed reopening.
 
 The market-hours automation has one standing exception to the user-directed
 reopen flow: after a profitable sell fills, it may immediately reopen that same
 symbol as a base tracking lot without waiting for user confirmation when the
-fast blockers pass. It should not run a broad DD scan before that tracking
-reopen.
+fast blockers pass and symbol policy permits reopen. It should not run a broad
+DD scan before that tracking reopen.

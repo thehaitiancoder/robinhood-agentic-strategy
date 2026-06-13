@@ -11,9 +11,13 @@ from agentic_strategy import (
     evaluate_strategy,
 )
 from agentic_strategy.models import UniverseEntry
+from agentic_strategy.symbol_policy import SymbolPolicy
 
 
 class StrategyEngineTest(unittest.TestCase):
+    def test_default_cash_buffer_is_15_pct(self) -> None:
+        self.assertEqual(StrategyConfig().cash_buffer_pct, Decimal("0.15"))
+
     def test_sell_target_uses_bid_side_return(self) -> None:
         report = evaluate_strategy(
             portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
@@ -143,6 +147,74 @@ class StrategyEngineTest(unittest.TestCase):
 
         candidates = [decision.symbol for decision in report.decisions if decision.action == "new_open_candidate"]
         self.assertEqual(candidates, ["CHEAP", "HIGH"])
+
+    def test_symbol_policy_blocks_new_open_candidates_only(self) -> None:
+        report = evaluate_strategy(
+            portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
+            positions=[],
+            quotes=[
+                QuoteSnapshot(symbol="BLOCK", bid_price=Decimal("5"), ask_price=Decimal("5.10")),
+                QuoteSnapshot(symbol="OPEN", bid_price=Decimal("5"), ask_price=Decimal("5.10")),
+            ],
+            universe=[UniverseEntry(symbol="BLOCK"), UniverseEntry(symbol="OPEN")],
+            symbol_policies={
+                "BLOCK": SymbolPolicy(
+                    symbol="BLOCK",
+                    policy="no_new_open",
+                    allow_open=False,
+                    allow_reopen=False,
+                )
+            },
+        )
+
+        candidates = [decision.symbol for decision in report.decisions if decision.action == "new_open_candidate"]
+        self.assertEqual(candidates, ["OPEN"])
+
+    def test_symbol_policy_does_not_block_owned_sell_targets(self) -> None:
+        report = evaluate_strategy(
+            portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
+            positions=[PositionSnapshot(symbol="OWNED", quantity=Decimal("1"), invested_cost=Decimal("10"))],
+            quotes=[QuoteSnapshot(symbol="OWNED", bid_price=Decimal("11.05"), ask_price=Decimal("11.10"))],
+            universe=[UniverseEntry(symbol="OWNED")],
+            symbol_policies={
+                "OWNED": SymbolPolicy(
+                    symbol="OWNED",
+                    policy="no_reopen",
+                    allow_open=False,
+                    allow_reopen=False,
+                )
+            },
+        )
+
+        actions = [decision.action for decision in report.decisions]
+        self.assertIn("sell_target", actions)
+
+    def test_symbol_policy_does_not_block_owned_double_downs(self) -> None:
+        report = evaluate_strategy(
+            portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
+            positions=[
+                PositionSnapshot(
+                    symbol="OWNED",
+                    quantity=Decimal("1"),
+                    invested_cost=Decimal("10"),
+                    next_trigger_price=Decimal("8"),
+                    next_lot_shares=Decimal("2"),
+                )
+            ],
+            quotes=[QuoteSnapshot(symbol="OWNED", bid_price=Decimal("7.40"), ask_price=Decimal("7.50"))],
+            universe=[UniverseEntry(symbol="OWNED")],
+            symbol_policies={
+                "OWNED": SymbolPolicy(
+                    symbol="OWNED",
+                    policy="no_reopen",
+                    allow_open=False,
+                    allow_reopen=False,
+                )
+            },
+        )
+
+        actions = [decision.action for decision in report.decisions]
+        self.assertIn("double_down_ready", actions)
 
     def test_new_open_allows_sub_dollar_whole_share_without_fractional_eligibility(self) -> None:
         report = evaluate_strategy(

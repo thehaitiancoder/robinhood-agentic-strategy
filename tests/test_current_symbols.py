@@ -7,6 +7,7 @@ from agentic_strategy.current_symbols import (
     render_close_summary,
     select_open_symbols,
 )
+from agentic_strategy.symbol_policy import SymbolPolicy
 from agentic_strategy.universe import UniverseRecord
 
 
@@ -83,6 +84,27 @@ class CurrentSymbolsTest(unittest.TestCase):
         self.assertEqual(
             select_open_symbols(universe, current_symbols, limit=2),
             ["MSFT", "NVDA"],
+        )
+
+    def test_select_open_symbols_applies_symbol_policy(self) -> None:
+        current_symbols = {"blocked_open_symbols": []}
+        universe = [
+            UniverseRecord(symbol="AAA", active=True, tradable=True, fractional_eligible=True),
+            UniverseRecord(symbol="BBB", active=True, tradable=True, fractional_eligible=True),
+            UniverseRecord(symbol="CCC", active=True, tradable=True, fractional_eligible=True),
+        ]
+        policies = {
+            "BBB": SymbolPolicy(
+                symbol="BBB",
+                policy="no_new_open",
+                allow_open=False,
+                allow_reopen=False,
+            )
+        }
+
+        self.assertEqual(
+            select_open_symbols(universe, current_symbols, limit=3, symbol_policies=policies),
+            ["AAA", "CCC"],
         )
 
     def test_close_summary_labels_snapshot_as_post_market_cache(self) -> None:

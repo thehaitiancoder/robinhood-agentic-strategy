@@ -15,12 +15,14 @@ The rules file allows only the narrow command prefixes used by this project:
 
 - `node scripts/rh_fast.mjs ...`
 - `node scripts/bulk_validate_robinhood_universe.mjs`
+- `node scripts/weekly_symbol_policy_refresh.mjs ...`
 - `python -m agentic_strategy.sold_today ...`
 - `python -m agentic_strategy.shortlists ...`
 - `python -m agentic_strategy.current_symbols ...`
 - `python -m agentic_strategy.ledger ...`
 - `python -m agentic_strategy.broker_snapshot ...`
 - `python -m agentic_strategy.universe ...`
+- `python -m agentic_strategy.validate_symbol_policy ...`
 
 These rules are for command escalation outside the sandbox. They are not the
 filesystem permission source. Repo-local write access comes from
@@ -39,6 +41,7 @@ the strategy files that live inside the workspace:
 - `data/private/top-10-sell-candidates.md`
 - `data/private/latest/*`
 - `data/runtime/*`
+- `data/symbol-policy.csv`
 
 Do not add the automation memory directory as a second cwd. In Codex
 automations, multiple cwd entries launch multiple runnable workspaces and can

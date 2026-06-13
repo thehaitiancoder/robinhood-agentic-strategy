@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import Counter
 from decimal import Decimal
+from typing import Mapping
 
 from .ladder import lot_shares_for_target, sizing_mode_for_price
 from .models import (
@@ -14,6 +15,7 @@ from .models import (
     UniverseEntry,
     ZERO,
 )
+from .symbol_policy import SymbolPolicy, is_open_allowed
 
 
 def evaluate_strategy(
@@ -22,6 +24,7 @@ def evaluate_strategy(
     quotes: list[QuoteSnapshot],
     universe: list[UniverseEntry],
     config: StrategyConfig | None = None,
+    symbol_policies: Mapping[str, SymbolPolicy] | None = None,
 ) -> StrategyReport:
     """Evaluate the strategy from read-only snapshots.
 
@@ -191,6 +194,7 @@ def evaluate_strategy(
                 universe_by_symbol=universe_by_symbol,
                 config=cfg,
                 disposable_cash=disposable_cash,
+                symbol_policies=symbol_policies,
             )
         )
 
@@ -217,6 +221,7 @@ def _new_open_candidates(
     universe_by_symbol: dict[str, UniverseEntry],
     config: StrategyConfig,
     disposable_cash: Decimal,
+    symbol_policies: Mapping[str, SymbolPolicy] | None,
 ) -> list[Decision]:
     decisions: list[Decision] = []
     selected = 0
@@ -232,6 +237,8 @@ def _new_open_candidates(
         if not entry.active:
             continue
         if not entry.tradable:
+            continue
+        if not is_open_allowed(symbol, symbol_policies):
             continue
 
         quote = quote_by_symbol.get(symbol)

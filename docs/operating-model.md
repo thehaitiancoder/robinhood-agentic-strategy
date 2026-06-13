@@ -15,7 +15,7 @@ Priority order:
 4. Generate full-position sell candidates at or above 10% return.
 5. After a confirmed profitable sell fill, immediately attempt the base
    tracking reopen for that same symbol if fast blockers pass.
-6. Review due double-downs. The 10% cash floor is DD reserve, not a DD blocker;
+6. Review due double-downs. The 15% cash floor is DD reserve, not a DD blocker;
    use actual broker buying power for DD affordability.
 7. Enter emergency cash mode if double-down cash is short.
 8. Open or reopen new positions only if there are no due double-downs, except
@@ -49,17 +49,17 @@ Run a tight monitor loop over owned positions:
 - Surface any `sell_ready` positions immediately.
 - After a profitable sell is confirmed filled by a market-hours automation,
   immediately reopen the same symbol as a base tracking lot if the fast
-  blockers pass: current buying power and 10% cash buffer, known due or
-  cash-short DDs from this run, active same-symbol buy order,
-  halted/restricted broker state, and normal base-lot sizing. Do not run a
-  broad DD scan between the sell fill and this tracking reopen.
+  blockers pass: current buying power and 15% cash buffer, symbol policy allows
+  reopen, known due or cash-short DDs from this run, active same-symbol buy order,
+  halted/restricted broker state, and normal base-lot sizing. Do not run a broad
+  DD scan between the sell fill and this tracking reopen.
 - After sell orders from the run are placed and confirmed filled, append only
   sell time and symbol to `data/private/sold-today.md` for symbols still
-  waiting for reopen.
+  waiting for reopen and allowed to reopen by policy.
 - After reopen buys from the run are confirmed filled, remove those symbols
   from `data/private/sold-today.md`.
 - Check due double-downs after sell candidates.
-- Check new openings last.
+- Check new openings last, after applying `data/symbol-policy.csv`.
 
 The loop should degrade safely if quotes are stale, missing, or inconsistent.
 Stale data should block new buys and warn on sell decisions.
