@@ -119,8 +119,71 @@ class ShortlistsTest(unittest.TestCase):
             market_closed=True,
         )
 
-        self.assertIn("last/close because regular market is closed", markdown)
+        self.assertIn("official close/last because regular market is closed", markdown)
         self.assertIn("| 1 | DOWN | -20.0000% |", markdown)
+
+    def test_closed_market_buy_return_prefers_official_close_over_stale_last_trade(self) -> None:
+        candidates = build_return_candidates(
+            positions_payload={
+                "data": {"positions": [{"symbol": "MBAV", "quantity": "1", "average_buy_price": "10.81"}]}
+            },
+            quotes_payload={
+                "data": {
+                    "results": [
+                        {
+                            "quote": {
+                                "symbol": "MBAV",
+                                "ask_price": "11.00",
+                                "last_trade_price": "9.13",
+                                "last_non_reg_trade_price": "10.70",
+                            },
+                            "close": {"price": "9.75"},
+                        }
+                    ]
+                }
+            },
+        )
+        markdown = render_shortlist(
+            title="Top 10 Buy Candidates",
+            generated_at="2026-06-15T20:00:00Z",
+            candidates=top_buy_candidates(candidates, market_closed=True),
+            mode="buy",
+            market_closed=True,
+        )
+
+        self.assertIn("| 1 | MBAV | -9.8057% |", markdown)
+        self.assertIn("| 9.1300 | 10.7000 | 9.7500 |", markdown)
+
+    def test_closed_market_buy_return_falls_back_to_non_regular_before_last_trade(self) -> None:
+        candidates = build_return_candidates(
+            positions_payload={
+                "data": {"positions": [{"symbol": "MBAV", "quantity": "1", "average_buy_price": "10.81"}]}
+            },
+            quotes_payload={
+                "data": {
+                    "results": [
+                        {
+                            "quote": {
+                                "symbol": "MBAV",
+                                "ask_price": "11.00",
+                                "last_trade_price": "9.13",
+                                "last_non_reg_trade_price": "10.70",
+                            }
+                        }
+                    ]
+                }
+            },
+        )
+        markdown = render_shortlist(
+            title="Top 10 Buy Candidates",
+            generated_at="2026-06-15T20:00:00Z",
+            candidates=top_buy_candidates(candidates, market_closed=True),
+            mode="buy",
+            market_closed=True,
+        )
+
+        self.assertIn("| 1 | MBAV | -1.0176% |", markdown)
+        self.assertNotIn("-15.5412%", markdown)
 
     def test_writes_both_shortlist_documents(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

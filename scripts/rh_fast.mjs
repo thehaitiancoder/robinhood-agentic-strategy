@@ -90,6 +90,10 @@ function decimal(value) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function priceString(value) {
+  return value > 0 ? value.toFixed(6) : "";
+}
+
 function isRegularMarketOpenPacific(now = new Date()) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
@@ -114,14 +118,36 @@ function isRegularMarketOpenPacific(now = new Date()) {
 
 function priceFromQuote(row) {
   const quote = row.quote || row;
+  const close = row.close || quote.close || {};
+  const lastTrade = decimal(quote.last_trade_price);
+  const lastNonRegular = decimal(quote.last_non_reg_trade_price);
   return {
     symbol: symbolOf(quote),
     bid: decimal(quote.bid_price),
     ask: decimal(quote.ask_price),
-    last: decimal(quote.last_trade_price || quote.last_non_reg_trade_price),
+    last: lastTrade || lastNonRegular,
+    last_trade: lastTrade,
+    last_non_reg: lastNonRegular,
+    close: decimal(close.price || quote.adjusted_previous_close || quote.previous_close),
     updated_at: text(quote.venue_last_trade_time || quote.venue_last_non_reg_trade_time),
     raw: row,
   };
+}
+
+function closedMarketWatchPrice(quote) {
+  if (!quote) {
+    return { price: 0, basis: "missing_closed_market_watch_price" };
+  }
+  if (quote.close > 0) {
+    return { price: quote.close, basis: "official_close_when_market_closed" };
+  }
+  if (quote.last_non_reg > 0) {
+    return { price: quote.last_non_reg, basis: "last_non_reg_when_market_closed" };
+  }
+  if (quote.last_trade > 0) {
+    return { price: quote.last_trade, basis: "last_trade_fallback_when_market_closed" };
+  }
+  return { price: 0, basis: "missing_closed_market_watch_price" };
 }
 
 function positionRows(payload) {
@@ -229,26 +255,28 @@ function summarizePositions(positions, quotes, { marketClosed = false } = {}) {
       const averageBuyPrice = decimal(position.average_buy_price);
       const quote = quotesBySymbol.get(symbol);
       const markPrice = quote?.bid || quote?.last || 0;
-      const ddMarkPrice = marketClosed ? quote?.last || markPrice : markPrice;
-      const ddPriceBasis =
-        marketClosed && quote?.last
-          ? "last_when_market_closed"
-          : marketClosed
-            ? "market_hours_estimate_fallback_missing_last"
-            : "market_hours_estimate";
+      const ddPrice = marketClosed
+        ? closedMarketWatchPrice(quote)
+        : { price: markPrice, basis: "market_hours_estimate" };
+      const ddMarkPrice = ddPrice.price;
+      const ddPriceBasis = ddPrice.basis;
       const cost = quantity * averageBuyPrice;
       const value = quantity * markPrice;
       const ddValue = quantity * ddMarkPrice;
       const returnPct = cost > 0 ? ((value - cost) / cost) * 100 : 0;
-      const ddReturnPct = cost > 0 ? ((ddValue - cost) / cost) * 100 : 0;
+      const ddReturnPct = cost > 0 && ddMarkPrice > 0 ? ((ddValue - cost) / cost) * 100 : Number.NaN;
       return {
         symbol,
         quantity: String(position.quantity ?? ""),
         sellable_quantity: String(position.shares_available_for_sells ?? ""),
         average_buy_price: String(position.average_buy_price ?? ""),
-        bid_price: quote?.bid ? quote.bid.toFixed(6) : "",
-        last_price: quote?.last ? quote.last.toFixed(6) : "",
-        dd_mark_price: ddMarkPrice ? ddMarkPrice.toFixed(6) : "",
+        bid_price: priceString(quote?.bid || 0),
+        ask_price: priceString(quote?.ask || 0),
+        last_price: priceString(quote?.last || 0),
+        last_trade_price: priceString(quote?.last_trade || 0),
+        last_non_reg_price: priceString(quote?.last_non_reg || 0),
+        close_price: priceString(quote?.close || 0),
+        dd_mark_price: priceString(ddMarkPrice),
         dd_price_basis: ddPriceBasis,
         estimated_cost: cost ? cost.toFixed(6) : "",
         estimated_value: value ? value.toFixed(6) : "",
@@ -409,7 +437,7 @@ async function commandWatch(args) {
       regular_market_open: !marketClosed,
       sell_watch: "bid_price, falling back to last_trade_price",
       dd_watch: marketClosed
-        ? "last_trade_price because regular market is closed"
+        ? "official close because regular market is closed; falls back to last_non_reg_trade_price, then last_trade_price only when no close/non-regular price exists"
         : "unchanged market-hours estimate: bid_price, falling back to last_trade_price",
     },
     counts: {

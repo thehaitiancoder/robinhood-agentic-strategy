@@ -44,7 +44,9 @@ each such symbol, fetch the filled buy/order history needed to reconstruct the
 current lot state, calculate `next_lot_shares` and `next_trigger_price`,
 refresh the live quote, and if current ask price is at or below the trigger and
 cash/risk checks pass, review/place immediately with
-`quantity=next_lot_shares`. Do not stop after checking only recently doubled
+`quantity=next_lot_shares`. After placement, inspect the broker returned order
+price and immediately cancel an active DD order if that price is missing or
+above `next_trigger_price`. Do not stop after checking only recently doubled
 down symbols.
 
 If the monitor cannot complete full DD coverage and also cannot verify the
@@ -265,6 +267,11 @@ original rules, and make rule violations visible before money is put at risk.
   amount. For every DD review or placement, pass the broker `quantity` equal to
   `next_lot_shares` (the prior lot's filled share count multiplied by 2). Use
   dollar estimates only for cash, concentration, and affordability checks.
+- A DD is executable only when the fresh broker buy-side ask is at or below
+  `next_trigger_price`. After placing a DD, immediately compare the broker
+  returned `price` or `average_price` with `next_trigger_price`; if an active
+  order is missing a price or is above the trigger, cancel it immediately and
+  report the guard action.
 - For DD affordability, use actual broker buying power, not disposable cash
   after the 15% floor. The cash floor blocks new openings and reopens, but it is
   explicitly reserved to fund DDs. If due DD cost exceeds actual buying power,

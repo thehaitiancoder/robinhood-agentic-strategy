@@ -17,14 +17,19 @@ scan.
 
 ## Meaning
 
-- Top 10 buy candidates: owned positions with the worst ask-side return from
-  the last recorded quote. These are likely double-down watch symbols.
+- Top 10 buy candidates: owned positions with the worst buy-side return from
+  the last recorded quote. During market hours this is ask-side return; when
+  the regular market is closed, the speed hint uses official close first, then
+  non-regular/last price fallbacks. These are likely double-down watch symbols.
 - Top 10 sell candidates: owned positions with the best bid-side return from
   the last recorded quote. These are likely target-sell watch symbols.
 
 The DD decision still requires strategy ladder math and a fresh broker quote.
 If a DD qualifies, the broker review/place call must use exact
-`quantity=next_lot_shares`, not a rounded `dollar_amount`. The sell decision
+`quantity=next_lot_shares`, not a rounded `dollar_amount`. A DD may be placed
+only if the fresh broker ask is at or below `next_trigger_price`; after
+placement, immediately cancel an active DD order if the returned broker
+`price` or `average_price` is missing or above the trigger. The sell decision
 still requires bid-side 10% return math and a fresh broker quote.
 
 If a full owned-position scan is incomplete or tool payloads truncate, the top

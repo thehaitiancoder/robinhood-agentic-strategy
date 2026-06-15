@@ -185,6 +185,12 @@ Double-down broker orders must be reviewed and placed with `quantity` equal to
 stock is priced at or above `$1.00`; use the estimated dollar value only to
 check actual buying power and concentration risk.
 
+A DD order must pass the executable-price guard twice. Before placement, the
+fresh broker buy-side ask must be at or below `next_trigger_price`. After
+placement, compare the broker returned `price` or `average_price` with the same
+trigger; if an active order is missing that price or is above the trigger,
+cancel it immediately and report the guard action.
+
 During live market checks, a full basket scan is preferred. If the monitor
 cannot exhaustively scan every live position, it must still validate the top
 downside holdings directly before reporting that no double-down is due. Any
@@ -196,8 +202,9 @@ That `<= -10%` screen is not automatic buy authority. For each candidate, fetch
 the filled buy/order history needed to reconstruct current lot state, calculate
 the exact `next_lot_shares` and `next_trigger_price`, refresh the live quote,
 and buy only if current ask price is at or below the next trigger and cash,
-buffer, concentration, and broker checks pass. Do not stop after checking only
-symbols that already doubled down recently.
+buffer, concentration, broker checks, and the post-placement order-price guard
+pass. Do not stop after checking only symbols that already doubled down
+recently.
 
 If the monitor cannot exhaustively scan the basket and cannot verify those
 mandatory downside candidates, it must not call the result "no DD due." The

@@ -27,6 +27,8 @@ class ReturnCandidate:
     bid_price: Decimal | None
     ask_price: Decimal | None
     last_price: Decimal | None
+    last_non_reg_price: Decimal | None = None
+    close_price: Decimal | None = None
 
     @property
     def invested_cost(self) -> Decimal:
@@ -41,6 +43,10 @@ class ReturnCandidate:
         return self.ask_price if self.ask_price is not None else self.last_price
 
     def buy_price_for_shortlist(self, *, market_closed: bool = False) -> Decimal | None:
+        if market_closed and self.close_price is not None:
+            return self.close_price
+        if market_closed and self.last_non_reg_price is not None:
+            return self.last_non_reg_price
         if market_closed and self.last_price is not None:
             return self.last_price
         return self.buy_price
@@ -90,9 +96,11 @@ def build_return_candidates(
                 ask_price=_decimal_or_none(quote.get("ask_price")),
                 last_price=_decimal_or_none(
                     quote.get("last_trade_price")
-                    or quote.get("last_non_reg_trade_price")
                     or quote.get("last_price")
+                    or quote.get("last_non_reg_trade_price")
                 ),
+                last_non_reg_price=_decimal_or_none(quote.get("last_non_reg_trade_price")),
+                close_price=_close_price(quote),
             )
         )
     return sorted(candidates, key=lambda item: item.symbol)
@@ -168,7 +176,7 @@ def render_shortlist(
     market_closed: bool = False,
 ) -> str:
     price_side = (
-        "last/close because regular market is closed"
+        "official close/last because regular market is closed"
         if mode == "buy" and market_closed
         else "ask/buy-side"
         if mode == "buy"
@@ -183,11 +191,11 @@ def render_shortlist(
         "Update it only after the automation has finished its main execution work.",
         f"Ranking uses {price_side} return from the last recorded broker quote.",
         "",
-        "| Rank | Symbol | Return % | Quantity | Avg Buy | Bid | Ask | Last |",
-        "| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Rank | Symbol | Return % | Quantity | Avg Buy | Bid | Ask | Last | Non-Reg | Close |",
+        "| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     if not candidates:
-        lines.append("|  | None |  |  |  |  |  |  |")
+        lines.append("|  | None |  |  |  |  |  |  |  |  |")
     for index, candidate in enumerate(candidates, start=1):
         return_pct = (
             candidate.buy_return_pct_for_shortlist(market_closed=market_closed)
@@ -206,6 +214,8 @@ def render_shortlist(
                     _money(candidate.bid_price),
                     _money(candidate.ask_price),
                     _money(candidate.last_price),
+                    _money(candidate.last_non_reg_price),
+                    _money(candidate.close_price),
                 ]
             )
             + " |"
@@ -253,6 +263,8 @@ def _quotes_by_symbol(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
             if not isinstance(result, dict):
                 continue
             quote = result.get("quote") if isinstance(result.get("quote"), dict) else result
+            if isinstance(quote, dict) and isinstance(result.get("close"), dict):
+                quote = {**quote, "close": result["close"]}
             symbol = _symbol(quote)
             if symbol:
                 quotes[symbol] = quote
@@ -266,6 +278,15 @@ def _quotes_by_symbol(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
 def _data(payload: dict[str, Any]) -> dict[str, Any]:
     data = payload.get("data", payload)
     return data if isinstance(data, dict) else {}
+
+
+def _close_price(quote: dict[str, Any]) -> Decimal | None:
+    close = quote.get("close")
+    if isinstance(close, dict):
+        value = _decimal_or_none(close.get("price"))
+        if value is not None:
+            return value
+    return _decimal_or_none(quote.get("adjusted_previous_close") or quote.get("previous_close"))
 
 
 def _read_json(path: str | Path) -> dict[str, Any]:
