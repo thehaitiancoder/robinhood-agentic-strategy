@@ -246,6 +246,7 @@ HLXC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.3340
 HMN,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7400 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 HNNA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4731 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 HOMB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4359 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
+HSPT,broker_unavailable,false,false,true,true,Robinhood symbol lookup/tradability returned not_found after canceled reopen order 6a2f4ab0-b84d-4a84-8903-661c5f9abaad,manual_broker_check_2026-06-15,,2026-06-15
 HTO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5037 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 HVII,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.9165 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 HVMC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8462 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14

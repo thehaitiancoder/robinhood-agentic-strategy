@@ -1942,7 +1942,7 @@ HRZN,Horizon Technology Finance Corporation Common Stock,stock,true,true,true,ro
 HSAI,"Hesai Group American Depositary Share, each ADS represents one Class B ordinary share",stock,true,true,true,robinhood_validated,2026-06-10
 HSDT,Solana Company Class A Common Stock (DE),stock,true,true,true,robinhood_validated,2026-06-11
 HSIC,Henry Schein Inc,stock,true,true,true,robinhood_validated,2026-06-09
-HSPT,Horizon Space Acquisition II Corp. Ordinary share,stock,true,true,true,robinhood_validated,2026-06-10
+HSPT,Horizon Space Acquisition II Corp. Ordinary share,stock,false,false,false,robinhood_not_found,2026-06-15
 HST,"Host Hotels & Resorts, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 HSTM,HealthStream,stock,true,true,true,robinhood_validated,2026-06-09
 HSY,Hershey Foods,stock,true,true,true,robinhood_validated,2026-06-09

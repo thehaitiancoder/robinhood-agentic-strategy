@@ -9,6 +9,8 @@ import {
 } from "./rh_fast_mcp_client.mjs";
 
 const ACTIVE_ORDER_STATES = ["new", "queued", "unconfirmed", "confirmed", "partially_filled"];
+const MARKET_OPEN_MINUTE_PT = 6 * 60 + 30;
+const MARKET_CLOSE_MINUTE_PT = 13 * 60;
 
 function usage() {
   console.log(`Usage:
@@ -86,6 +88,28 @@ function boolField(value, fallback = true) {
 function decimal(value) {
   const parsed = Number.parseFloat(String(value ?? "").trim());
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function isRegularMarketOpenPacific(now = new Date()) {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      weekday: "short",
+      hour: "numeric",
+      minute: "numeric",
+      hourCycle: "h23",
+    })
+      .formatToParts(now)
+      .map((part) => [part.type, part.value]),
+  );
+  const weekday = parts.weekday;
+  const minuteOfDay = decimal(parts.hour) * 60 + decimal(parts.minute);
+  return (
+    weekday !== "Sat" &&
+    weekday !== "Sun" &&
+    minuteOfDay >= MARKET_OPEN_MINUTE_PT &&
+    minuteOfDay < MARKET_CLOSE_MINUTE_PT
+  );
 }
 
 function priceFromQuote(row) {
@@ -195,7 +219,7 @@ async function fetchOrders(client, account, options) {
   return { rows: allRows, payloads };
 }
 
-function summarizePositions(positions, quotes) {
+function summarizePositions(positions, quotes, { marketClosed = false } = {}) {
   const quotesBySymbol = new Map(quotes.map((quote) => [quote.symbol, quote]));
   return positions
     .filter((position) => symbolOf(position) && decimal(position.quantity) > 0)
@@ -205,9 +229,18 @@ function summarizePositions(positions, quotes) {
       const averageBuyPrice = decimal(position.average_buy_price);
       const quote = quotesBySymbol.get(symbol);
       const markPrice = quote?.bid || quote?.last || 0;
+      const ddMarkPrice = marketClosed ? quote?.last || markPrice : markPrice;
+      const ddPriceBasis =
+        marketClosed && quote?.last
+          ? "last_when_market_closed"
+          : marketClosed
+            ? "market_hours_estimate_fallback_missing_last"
+            : "market_hours_estimate";
       const cost = quantity * averageBuyPrice;
       const value = quantity * markPrice;
+      const ddValue = quantity * ddMarkPrice;
       const returnPct = cost > 0 ? ((value - cost) / cost) * 100 : 0;
+      const ddReturnPct = cost > 0 ? ((ddValue - cost) / cost) * 100 : 0;
       return {
         symbol,
         quantity: String(position.quantity ?? ""),
@@ -215,9 +248,12 @@ function summarizePositions(positions, quotes) {
         average_buy_price: String(position.average_buy_price ?? ""),
         bid_price: quote?.bid ? quote.bid.toFixed(6) : "",
         last_price: quote?.last ? quote.last.toFixed(6) : "",
+        dd_mark_price: ddMarkPrice ? ddMarkPrice.toFixed(6) : "",
+        dd_price_basis: ddPriceBasis,
         estimated_cost: cost ? cost.toFixed(6) : "",
         estimated_value: value ? value.toFixed(6) : "",
         estimated_return_pct: Number.isFinite(returnPct) ? returnPct.toFixed(4) : "",
+        estimated_dd_return_pct: Number.isFinite(ddReturnPct) ? ddReturnPct.toFixed(4) : "",
       };
     })
     .sort((left, right) => symbolOf(left).localeCompare(symbolOf(right)));
@@ -352,19 +388,30 @@ async function commandWatch(args) {
   const { options } = parseArgs(args);
   const account = accountNumber(options);
   const mode = options.mode || "both";
+  const marketClosed = !isRegularMarketOpenPacific();
   const client = new RobinhoodFastClient({ clientName: "codex-rh-fast-watch" });
   const { rows: positions } = await fetchPositions(client, account);
   const quotes = await quoteSymbols(client, positions.map(symbolOf).filter(Boolean));
-  const summary = summarizePositions(positions, quotes);
+  const summary = summarizePositions(positions, quotes, { marketClosed });
   const sellWatch = mode === "dd" ? [] : summary.filter((row) => decimal(row.estimated_return_pct) >= 10);
-  const ddWatch = mode === "sell" ? [] : summary.filter((row) => decimal(row.estimated_return_pct) <= -10);
+  const ddWatch =
+    mode === "sell" ? [] : summary.filter((row) => decimal(row.estimated_dd_return_pct) <= -10);
   sellWatch.sort((left, right) => decimal(right.estimated_return_pct) - decimal(left.estimated_return_pct));
-  ddWatch.sort((left, right) => decimal(left.estimated_return_pct) - decimal(right.estimated_return_pct));
+  ddWatch.sort(
+    (left, right) => decimal(left.estimated_dd_return_pct) - decimal(right.estimated_dd_return_pct),
+  );
   const output = options.output || "data/runtime/rh-fast-watch.json";
   writeJson(output, {
     generated_at: new Date().toISOString(),
     warning:
       "Read-only speed scan. Confirm sell targets and double-down ladder state with broker review before placing any order.",
+    price_basis: {
+      regular_market_open: !marketClosed,
+      sell_watch: "bid_price, falling back to last_trade_price",
+      dd_watch: marketClosed
+        ? "last_trade_price because regular market is closed"
+        : "unchanged market-hours estimate: bid_price, falling back to last_trade_price",
+    },
     counts: {
       positions: positions.length,
       quotes: quotes.length,

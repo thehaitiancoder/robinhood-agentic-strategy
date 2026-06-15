@@ -39,6 +39,47 @@ class ShortlistsTest(unittest.TestCase):
         self.assertEqual([item.symbol for item in top_buy_candidates(candidates)], ["DOWN", "FLAT", "UP"])
         self.assertEqual([item.symbol for item in top_sell_candidates(candidates)], ["UP", "FLAT", "DOWN"])
 
+    def test_closed_market_buy_ranking_uses_last_price(self) -> None:
+        candidates = build_return_candidates(
+            positions_payload={
+                "data": {
+                    "positions": [
+                        {"symbol": "ASKDOWN", "quantity": "1", "average_buy_price": "10"},
+                        {"symbol": "LASTDOWN", "quantity": "1", "average_buy_price": "10"},
+                    ]
+                }
+            },
+            quotes_payload={
+                "data": {
+                    "results": [
+                        {
+                            "quote": {
+                                "symbol": "ASKDOWN",
+                                "ask_price": "8.00",
+                                "last_trade_price": "11.00",
+                            }
+                        },
+                        {
+                            "quote": {
+                                "symbol": "LASTDOWN",
+                                "ask_price": "9.00",
+                                "last_trade_price": "7.00",
+                            }
+                        },
+                    ]
+                }
+            },
+        )
+
+        self.assertEqual(
+            [item.symbol for item in top_buy_candidates(candidates, market_closed=False)],
+            ["ASKDOWN", "LASTDOWN"],
+        )
+        self.assertEqual(
+            [item.symbol for item in top_buy_candidates(candidates, market_closed=True)],
+            ["LASTDOWN", "ASKDOWN"],
+        )
+
     def test_renders_speed_hint_and_expected_title(self) -> None:
         candidates = build_return_candidates(
             positions_payload={
@@ -56,6 +97,30 @@ class ShortlistsTest(unittest.TestCase):
         self.assertIn("# Top 10 Sell Candidates", markdown)
         self.assertIn("Use this file as a speed hint only", markdown)
         self.assertIn("| 1 | UP | 10.0000% |", markdown)
+
+    def test_renders_closed_market_buy_basis_and_return(self) -> None:
+        candidates = build_return_candidates(
+            positions_payload={
+                "data": {"positions": [{"symbol": "DOWN", "quantity": "1", "average_buy_price": "10"}]}
+            },
+            quotes_payload={
+                "data": {
+                    "results": [
+                        {"quote": {"symbol": "DOWN", "ask_price": "11", "last_trade_price": "8"}}
+                    ]
+                }
+            },
+        )
+        markdown = render_shortlist(
+            title="Top 10 Buy Candidates",
+            generated_at="2026-06-09T20:00:00Z",
+            candidates=top_buy_candidates(candidates, market_closed=True),
+            mode="buy",
+            market_closed=True,
+        )
+
+        self.assertIn("last/close because regular market is closed", markdown)
+        self.assertIn("| 1 | DOWN | -20.0000% |", markdown)
 
     def test_writes_both_shortlist_documents(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -81,6 +146,7 @@ class ShortlistsTest(unittest.TestCase):
                 buy_output=buy_path,
                 sell_output=sell_path,
                 generated_at="2026-06-09T17:00:00Z",
+                market_closed=False,
             )
 
             self.assertIn("# Top 10 Buy Candidates", buy_path.read_text())

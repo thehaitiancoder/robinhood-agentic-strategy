@@ -8,11 +8,15 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
+from .sold_today import _as_pt as _as_pacific_time
+
 
 DEFAULT_BUY_MD = Path("data/private/top-10-buy-candidates.md")
 DEFAULT_SELL_MD = Path("data/private/top-10-sell-candidates.md")
 
 ZERO = Decimal("0")
+MARKET_OPEN_MINUTE_PT = 6 * 60 + 30
+MARKET_CLOSE_MINUTE_PT = 13 * 60
 
 
 @dataclass(frozen=True)
@@ -36,6 +40,11 @@ class ReturnCandidate:
     def buy_price(self) -> Decimal | None:
         return self.ask_price if self.ask_price is not None else self.last_price
 
+    def buy_price_for_shortlist(self, *, market_closed: bool = False) -> Decimal | None:
+        if market_closed and self.last_price is not None:
+            return self.last_price
+        return self.buy_price
+
     @property
     def sell_return_pct(self) -> Decimal | None:
         if self.sell_price is None or self.invested_cost == ZERO:
@@ -44,9 +53,13 @@ class ReturnCandidate:
 
     @property
     def buy_return_pct(self) -> Decimal | None:
-        if self.buy_price is None or self.invested_cost == ZERO:
+        return self.buy_return_pct_for_shortlist()
+
+    def buy_return_pct_for_shortlist(self, *, market_closed: bool = False) -> Decimal | None:
+        buy_price = self.buy_price_for_shortlist(market_closed=market_closed)
+        if buy_price is None or self.invested_cost == ZERO:
             return None
-        return ((self.buy_price * self.quantity) - self.invested_cost) / self.invested_cost
+        return ((buy_price * self.quantity) - self.invested_cost) / self.invested_cost
 
 
 def build_return_candidates(
@@ -85,9 +98,18 @@ def build_return_candidates(
     return sorted(candidates, key=lambda item: item.symbol)
 
 
-def top_buy_candidates(candidates: list[ReturnCandidate], *, limit: int = 10) -> list[ReturnCandidate]:
-    ranked = [candidate for candidate in candidates if candidate.buy_return_pct is not None]
-    return sorted(ranked, key=lambda item: (item.buy_return_pct, item.symbol))[:limit]
+def top_buy_candidates(
+    candidates: list[ReturnCandidate], *, limit: int = 10, market_closed: bool = False
+) -> list[ReturnCandidate]:
+    ranked = [
+        candidate
+        for candidate in candidates
+        if candidate.buy_return_pct_for_shortlist(market_closed=market_closed) is not None
+    ]
+    return sorted(
+        ranked,
+        key=lambda item: (item.buy_return_pct_for_shortlist(market_closed=market_closed), item.symbol),
+    )[:limit]
 
 
 def top_sell_candidates(candidates: list[ReturnCandidate], *, limit: int = 10) -> list[ReturnCandidate]:
@@ -103,8 +125,10 @@ def write_shortlists(
     sell_output: str | Path = DEFAULT_SELL_MD,
     generated_at: str | None = None,
     limit: int = 10,
+    market_closed: bool | None = None,
 ) -> tuple[Path, Path]:
     generated = generated_at or _now_utc()
+    buy_market_closed = _resolve_market_closed(market_closed)
     candidates = build_return_candidates(
         positions_payload=positions_payload,
         quotes_payload=quotes_payload,
@@ -117,8 +141,9 @@ def write_shortlists(
         render_shortlist(
             title="Top 10 Buy Candidates",
             generated_at=generated,
-            candidates=top_buy_candidates(candidates, limit=limit),
+            candidates=top_buy_candidates(candidates, limit=limit, market_closed=buy_market_closed),
             mode="buy",
+            market_closed=buy_market_closed,
         ),
         encoding="utf-8",
     )
@@ -140,8 +165,15 @@ def render_shortlist(
     generated_at: str,
     candidates: list[ReturnCandidate],
     mode: str,
+    market_closed: bool = False,
 ) -> str:
-    price_side = "ask/buy-side" if mode == "buy" else "bid/sell-side"
+    price_side = (
+        "last/close because regular market is closed"
+        if mode == "buy" and market_closed
+        else "ask/buy-side"
+        if mode == "buy"
+        else "bid/sell-side"
+    )
     lines = [
         f"# {title}",
         "",
@@ -157,7 +189,11 @@ def render_shortlist(
     if not candidates:
         lines.append("|  | None |  |  |  |  |  |  |")
     for index, candidate in enumerate(candidates, start=1):
-        return_pct = candidate.buy_return_pct if mode == "buy" else candidate.sell_return_pct
+        return_pct = (
+            candidate.buy_return_pct_for_shortlist(market_closed=market_closed)
+            if mode == "buy"
+            else candidate.sell_return_pct
+        )
         lines.append(
             "| "
             + " | ".join(
@@ -274,6 +310,22 @@ def _text(value: Any) -> str:
 
 def _now_utc() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _resolve_market_closed(market_closed: bool | None) -> bool:
+    if market_closed is not None:
+        return market_closed
+    return not _is_regular_market_open_pacific()
+
+
+def _is_regular_market_open_pacific(now: datetime | None = None) -> bool:
+    pt_now = _as_pacific_time(now or datetime.now(timezone.utc))
+    minute_of_day = pt_now.hour * 60 + pt_now.minute
+    return (
+        pt_now.weekday() < 5
+        and minute_of_day >= MARKET_OPEN_MINUTE_PT
+        and minute_of_day < MARKET_CLOSE_MINUTE_PT
+    )
 
 
 if __name__ == "__main__":
