@@ -264,6 +264,10 @@ original rules, and make rule violations visible before money is put at risk.
 ## Non-Negotiable Rules
 
 - Sell monitoring has priority over buying. A 10% profit window can be brief.
+- Sell priority must not starve double-downs. After a market-hours run places
+  and confirms or blocks the current sell batch, it must proceed to due DD
+  verification before starting another broad sell batch or skipping to the +15
+  recheck. Remaining sell-watch names are not a valid reason to skip DDs.
 - Double-down obligations have priority over opening or reopening positions.
 - Maintain a 15% cash buffer for openings and reopens. That buffer is reserved
   for double-down obligations, so a due DD must not be blocked merely because
@@ -475,6 +479,14 @@ During regular market hours, run the decision loop in this order:
 11. After all executable work is done, update the top-10 buy and sell shortlist
     files from the just-seen positions and quotes. Write other local audit or
     cache data only when the user explicitly requested persistence in that run.
+
+Do not interpret step 5 as an endless sell loop. Once the current sell batch has
+been placed and either filled, blocked, canceled, rejected, or left as a known
+active broker order, continue to step 6 using fresh buying power. A DD may be
+blocked by insufficient actual buying power, broker/tool restrictions, a halt,
+same-symbol active buy/order conflict, missing lot-history proof, concentration
+risk, or the market close, but not merely because a refreshed watch still shows
+more possible sell candidates.
 
 ## Implementation Standard
 

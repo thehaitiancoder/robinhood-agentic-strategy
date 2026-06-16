@@ -111,6 +111,13 @@ return_pct = ((bid_price * quantity) - invested_cost) / invested_cost
 Use bid-side pricing for sell decisions when available. Last trade can overstate
 the executable return for thin or volatile names.
 
+During a market-hours automation run, sell priority must not become an endless
+sell loop. After the current sell batch has been placed and each attempted sell
+is filled, blocked, canceled, rejected, or left as a known active broker order,
+the run must check due double-downs with fresh buying power before starting
+another broad sell batch or waiting for the +15 recheck. A refreshed watch that
+still shows sell candidates is not a valid reason to skip DDs.
+
 ## Manual Sell-Auto Trigger
 
 `SELL AUTO UNTIL CLOSE`, abbreviated `SAUCE`, is a manual chat trigger for an

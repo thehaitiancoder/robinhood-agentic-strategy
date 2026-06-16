@@ -209,6 +209,12 @@ sell and double-down orders directly, subject to broker tool review and
 placement constraints. Speed is priority number one for executable sell and
 double-down candidates.
 
+Sell priority is an order-of-operations rule, not permission to starve DDs. Once
+the current sell batch has been placed and each attempted sell is filled,
+blocked, canceled, rejected, or left as a known active broker order, the run
+must move to due DD verification using fresh buying power. A refreshed watch
+showing more possible sell candidates is not a valid reason to skip DDs.
+
 DD cash-buffer rule: the 15% cash floor is reserved for double-downs. It blocks
 new openings, sold-symbol reopens, and post-sell tracking reopens, but it must
 not block a due exact-share DD merely because buying power would fall below the
@@ -247,6 +253,12 @@ Execution rules:
 - Fast read-only scripts from `docs/fast-mcp-workflows.md` may be used to speed
   broad quotes, positions, orders, and watch scans when available.
 - Process one executable sell or double-down candidate at a time.
+- Do not start a second broad sell batch before checking DDs merely because the
+  refreshed watch still has sell-watch names. After the current sell batch is
+  resolved or blocked, move to due DD verification. DDs may be skipped only for
+  insufficient actual buying power, broker/tool blockers, halted symbols,
+  active same-symbol/order conflicts, missing lot-history proof, concentration
+  risk, or the market close.
 - Refresh the quote immediately before order review.
 - If the broker tool requires review, run the review immediately.
 - If the review has no blocking alerts and the refreshed price still qualifies,
