@@ -33,7 +33,13 @@ Automation ids:
   - `12-15-pt-rh-mkt`
   - `12-45-pt-rh-mkt`
 - `robinhood-strategy-1-pm-close-check`
+- After-hours trade slots:
+  - `14-00-pt-rh-ah`
+  - `15-00-pt-rh-ah`
+  - `16-00-pt-rh-ah`
+- `17-00-pt-rh-daily-summary`
 - `weekly-rh-symbol-policy-refresh`
+- `monthly-rh-universe-discovery`
 - `robinhood-strategy-market-monitor` is a paused legacy combined monitor.
 
 Visible automation names:
@@ -41,7 +47,11 @@ Visible automation names:
 - Market-hours entry slots use `HH:mm PT - RH MKT`, for example
   `09:00 PT - RH MKT`.
 - `13:00 PT - RH CLOSE`
+- After-hours slots use `HH:mm PT - RH AH`, for example
+  `14:00 PT - RH AH`.
+- `17:00 PT - RH DAILY`
 - `Weekly RH Symbol Policy Refresh`
+- `Monthly RH Universe Discovery`
 - The paused legacy combined monitor is named `RH MKT 30m PAUSED`.
 
 These names are static scheduler labels. They cannot include the current run
@@ -66,7 +76,12 @@ Schedule:
   recheck. Example: `10:30 PT - RH MKT` performs the 10:30 check, then covers
   the 10:45 recheck inside the same thread.
 - `robinhood-strategy-1-pm-close-check`: weekdays at exactly 1:00 PM Pacific.
+- After-hours trade automations: weekdays at 2:00 PM, 3:00 PM, and 4:00 PM
+  Pacific.
+- `17-00-pt-rh-daily-summary`: every day at exactly 5:00 PM Pacific.
 - `weekly-rh-symbol-policy-refresh`: Sundays at 8:00 AM Pacific.
+- `monthly-rh-universe-discovery`: first Saturday of each month at exactly
+  8:00 AM Pacific.
 
 Observed scheduler limitation: on 2026-06-10 the newly-created standalone
 quarter-hour jobs `10-45-pt-rh-mkt` and `11-15-pt-rh-mkt` did not run, while
@@ -100,7 +115,13 @@ Current intended local encodings are:
   - 12:00 PT: `BYHOUR=12;BYMINUTE=0`
   - 12:30 PT: `BYHOUR=12;BYMINUTE=30`
 - 1 PM close check: `BYHOUR=13;BYMINUTE=0`
+- after-hours trade slots:
+  - 14:00 PT: `BYHOUR=14;BYMINUTE=0`
+  - 15:00 PT: `BYHOUR=15;BYMINUTE=0`
+  - 16:00 PT: `BYHOUR=16;BYMINUTE=0`
+- daily summary: `BYHOUR=17;BYMINUTE=0`
 - weekly symbol policy refresh: `BYDAY=SU;BYHOUR=8;BYMINUTE=0`
+- monthly universe discovery: `BYDAY=1SA;BYHOUR=8;BYMINUTE=0`
 
 Every market-hours prompt must still begin with a hard local-Pacific time gate
 before reading docs or calling Robinhood. The valid window is the entry slot
@@ -122,6 +143,14 @@ Thread titles:
   only and must not delay sell or double-down execution.
 - The 1 PM close automation name is `13:00 PT - RH CLOSE`; its first visible
   response should start with `MM-DD 13:00 PT - RH CLOSE`.
+- After-hours automation names start with the slot time, for example
+  `14:00 PT - RH AH`. The first visible response should start with
+  `MM-DD HH:mm PT - RH AH`.
+- The daily summary automation name is `17:00 PT - RH DAILY`; its first visible
+  response should start with `MM-DD 17:00 PT - RH DAILY`.
+- The monthly universe discovery automation name is
+  `Monthly RH Universe Discovery`; its first visible response should start with
+  `MM-DD 08:00 PT - RH UNIVERSE`.
 - Do not reactivate the paused combined `RH MKT 30m` automation unless the
   fixed time-slot automations are removed; otherwise duplicate runs or
   indistinguishable chat titles can return.
@@ -230,20 +259,23 @@ Execution rules:
   state no longer blocks DD/opening decisions. A still-confirmed, queued, new,
   unconfirmed, or partially-filled order remains active and blocks another buy
   for the same symbol.
-- For double-downs, review and place the order with the broker `quantity` set
-  to the exact `next_lot_shares` value from the ladder. Do not place DDs with a
-  rounded `dollar_amount`; dollar values are estimates for cash and risk checks
-  only.
+- For double-downs, review and place share-quantity orders. If one DD lot is
+  due, use that lot's exact share count. If multiple DD lots are due for the
+  same symbol at the current ask, combine those due lot shares into one broker
+  order. Do not place DDs with a rounded `dollar_amount`; dollar values are
+  estimates for cash and risk checks only. If Robinhood rejects the fractional
+  DD quantity, retry the integer part only when it is at least 1 share.
 - If the full live position basket cannot be exhaustively scanned, the monitor
   must still validate the top downside holdings directly before reporting no
   DD. Any owned symbol shown by the top downside shortlist, a partial broker or
   fast scan, or other current broker-backed evidence at `<= -10%` return and
   with no active buy order is a mandatory DD verification candidate. Fetch the
   filled buy/order history needed to reconstruct current lot state, calculate
-  `next_lot_shares` and `next_trigger_price`, refresh the live quote, and if
-  current ask price is at or below the trigger and cash/risk checks pass,
-  review/place immediately with `quantity=next_lot_shares`. Do not stop after
-  checking only a recent-DD subset.
+  every same-symbol due lot whose trigger is at or above the current ask,
+  refresh the live quote, and if current ask price is at or below the deepest
+  included trigger and cash/risk checks pass, review/place one combined order
+  with `quantity` equal to the sum of due lot shares. Do not stop after checking
+  only a recent-DD subset.
 - If full DD coverage remains incomplete because the fast path is blocked,
   broker payloads are too large or truncated, workspace permissions prevent
   required state reads/writes, or order history needed for lot reconstruction
@@ -296,6 +328,33 @@ It does not email routine no-action checks or `OPEN CASH AVAILABLE` by default.
 An incomplete DD scan is not routine no-action; it is a blocked scan and must
 email.
 
+## After-Hours Trading
+
+The after-hours trade slots run at `14:00`, `15:00`, and `16:00` Pacific on
+weekdays. They are separate from the `13:00 PT - RH CLOSE` reconciliation. The
+close reconciliation remains persistence-only and must not place orders.
+
+After-hours execution scope is intentionally narrow:
+
+- Use only live after-hours bid/ask prices for executable decisions. Do not use
+  official close as the buy/sell execution price.
+- For DDs, reconstruct the current lot ladder from broker filled orders. If the
+  live after-hours ask is at or below the deepest due trigger, place only the
+  integer part of the combined due quantity as an after-hours limit buy. Leave
+  fractional leftovers unplaced and report them.
+- For sells, use live after-hours bid as the sell-side executable price. If the
+  integer sellable quantity is at least 1 share and bid-side return is at least
+  10%, place that integer quantity as an after-hours limit sell. If the
+  whole-share sell is confirmed filled and a fractional remainder is still
+  sellable, queue the remainder as a regular-hours market sell.
+- Do not place new openings, reopens, emergency-cash sells, or fractional
+  after-hours orders from these jobs.
+- Stop new broker reviews and placements at or after 17:00 Pacific, the end of
+  the standard Robinhood after-hours window.
+- If Robinhood returns a broker alert on review, do not place that order unless
+  the alert is explicitly allowed by the automation prompt or the user has
+  provided a direct override in the same run.
+
 New-opening buys remain report-only in automation runs unless the user
 explicitly authorizes new openings in that run. The only standing reopen
 exception is the immediate base tracking reopen after a confirmed profitable
@@ -346,6 +405,30 @@ emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
 fails, local ledger/cache update fails, DD scan coverage is blocked, or a
 high-priority next-session candidate is detected after the market has closed.
 
+## Daily Summary
+
+`17-00-pt-rh-daily-summary` runs every day at exactly 5:00 PM Pacific. It is a
+read-only performance report and must never place, review, cancel, prepare, or
+suggest orders.
+
+It should:
+
+- fetch the Agentic account portfolio with
+  `node scripts/rh_fast.mjs portfolio --account 878067701 --output data/runtime/daily-summary-portfolio.json`
+- fetch positions with quotes with
+  `node scripts/rh_fast.mjs positions --account 878067701 --with-quotes --output data/runtime/daily-summary-positions-quotes.json --summary-output data/runtime/daily-summary-positions.csv`
+- fetch all equity orders with
+  `node scripts/rh_fast.mjs orders --account 878067701 --all --output data/runtime/daily-summary-orders-all.json`
+- generate `data/private/daily-summary.md`,
+  `data/private/daily-summary.json`, and
+  `data/private/daily-return-cycles.csv` with
+  `python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json`
+
+The report should highlight portfolio paper gain, portfolio paper loss, net
+paper P/L, realized trading-day profit by Pacific hour, sell-cycle hold time
+from first buy to sell, account value, cash, buying power, and any uncosted
+sold quantity caused by incomplete order history.
+
 ## Weekly Symbol Policy Refresh
 
 `weekly-rh-symbol-policy-refresh` runs Sunday morning off-market. It is a
@@ -382,6 +465,45 @@ weekly/yahoo intraday-range evidence and normal generated permissions. Manual
 policy rows are preserved. If fewer than 95% of universe symbols are
 successfully analyzed, the script writes audit artifacts but must not replace
 `data/symbol-policy.csv`.
+
+## Monthly Universe Discovery
+
+`monthly-rh-universe-discovery` runs on the first Saturday of each month at
+8:00 AM Pacific. It is a read-only universe and policy maintenance job only.
+
+It should:
+
+- start by confirming it is the first Saturday of the month, off-market, and
+  at or after 8:00 AM Pacific
+- read `AGENTS.md`, `docs/automation-monitor.md`, `docs/universe-management.md`,
+  and `docs/symbol-policy.md`
+- run `node scripts/monthly_universe_discovery.mjs --run --account 878067701`
+- if accepted symbols were merged, run
+  `node scripts/weekly_symbol_policy_refresh.mjs --run --account 878067701`
+- run `python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv`
+- report candidate count, accepted count, rejected count, universe rows before
+  and after, active/tradable/fractional universe count, policy row counts, and
+  the summary artifact paths
+
+The discovery script fetches Nasdaq Trader `nasdaqlisted.txt` and
+`otherlisted.txt`, filters likely common-stock candidates not already in
+`data/universe.csv`, validates candidates through Robinhood tradability, and
+merges only active/tradable/fractional results. It preserves raw source files,
+candidate rows, local filter rejections, broker validation rows, broker
+rejections, and summaries under
+`data/runtime/monthly-universe-discovery/<date>/`.
+
+It must not:
+
+- call broker order review or placement tools
+- place, prepare, cancel, or suggest buy, sell, reopen, double-down, or
+  emergency cash orders
+- touch `data/private/sold-today.md`
+- update `data/private/top-10-buy-candidates.md` or
+  `data/private/top-10-sell-candidates.md`
+- write `data/private/order-ledger.csv`
+- regenerate `data/private/current-symbols.json`, `data/private/close-summary.md`,
+  or deprecated `data/private/LIVE_STATE.md`
 
 ## Live Source Of Truth
 

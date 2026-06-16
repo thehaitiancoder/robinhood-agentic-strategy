@@ -180,14 +180,22 @@ The next lot buys:
 lot_n_shares = lot_(n-1)_shares * 2
 ```
 
-Double-down broker orders must be reviewed and placed with `quantity` equal to
-`lot_n_shares`. Do not submit a DD as a rounded `dollar_amount`, even when the
-stock is priced at or above `$1.00`; use the estimated dollar value only to
-check actual buying power and concentration risk.
+Double-down broker orders must be reviewed and placed with share quantity, not
+rounded `dollar_amount`. When only one DD lot is due, use `quantity=lot_n_shares`.
+When more than one DD lot is due for the same symbol at the current ask,
+combine those due lots into one broker order with `quantity` equal to the sum of
+the due lot shares. Use the estimated dollar value only to check actual buying
+power and concentration risk.
+
+If Robinhood rejects the fractional DD quantity, retry the same DD with only the
+integer part of the combined quantity when that integer part is at least 1
+share. Do not round up or convert the DD to a dollar order; if the integer part
+is zero, report the DD as broker-blocked.
 
 A DD order must pass the executable-price guard twice. Before placement, the
-fresh broker buy-side ask must be at or below `next_trigger_price`. After
-placement, compare the broker returned `price` or `average_price` with the same
+fresh broker buy-side ask must be at or below every included lot trigger. For a
+combined DD order, the guard trigger is the deepest included trigger. After
+placement, compare the broker returned `price` or `average_price` with the guard
 trigger; if an active order is missing that price or is above the trigger,
 cancel it immediately and report the guard action.
 
@@ -200,11 +208,11 @@ order is a mandatory DD verification candidate.
 
 That `<= -10%` screen is not automatic buy authority. For each candidate, fetch
 the filled buy/order history needed to reconstruct current lot state, calculate
-the exact `next_lot_shares` and `next_trigger_price`, refresh the live quote,
-and buy only if current ask price is at or below the next trigger and cash,
-buffer, concentration, broker checks, and the post-placement order-price guard
-pass. Do not stop after checking only symbols that already doubled down
-recently.
+all same-symbol DD lots whose triggers are at or above the current ask, refresh
+the live quote, and buy the combined due-lot quantity only if current ask price
+is at or below the deepest included trigger and cash, buffer, concentration,
+broker checks, and the post-placement order-price guard pass. Do not stop after
+checking only symbols that already doubled down recently.
 
 If the monitor cannot exhaustively scan the basket and cannot verify those
 mandatory downside candidates, it must not call the result "no DD due." The

@@ -41,12 +41,14 @@ double-down is due. Any owned symbol exposed by the top downside shortlist, a
 partial broker/fast scan, or other current broker-backed evidence at `<= -10%`
 return with no active buy order is a mandatory DD verification candidate. For
 each such symbol, fetch the filled buy/order history needed to reconstruct the
-current lot state, calculate `next_lot_shares` and `next_trigger_price`,
-refresh the live quote, and if current ask price is at or below the trigger and
-cash/risk checks pass, review/place immediately with
-`quantity=next_lot_shares`. After placement, inspect the broker returned order
-price and immediately cancel an active DD order if that price is missing or
-above `next_trigger_price`. Do not stop after checking only recently doubled
+current lot state, calculate every same-symbol DD lot whose trigger is at or
+above the current ask, refresh the live quote, and if current ask price is at or
+below the deepest included trigger and cash/risk checks pass, review/place one
+combined order with `quantity` equal to the sum of those due lot shares. After
+placement, inspect the broker returned order price and immediately cancel an
+active DD order if that price is missing or above the deepest included trigger.
+If Robinhood rejects the fractional DD quantity, retry the integer part only
+when it is at least 1 share. Do not stop after checking only recently doubled
 down symbols.
 
 If the monitor cannot complete full DD coverage and also cannot verify the
@@ -127,11 +129,27 @@ The recurring Codex automations are:
   fire.
 - `robinhood-strategy-1-pm-close-check`: weekday exact 1:00 PM Pacific
   post-market reconciliation and summary.
+- After-hours trade automations: weekday checks at 2:00 PM, 3:00 PM, and
+  4:00 PM Pacific. Their ids are `14-00-pt-rh-ah`, `15-00-pt-rh-ah`, and
+  `16-00-pt-rh-ah`; their visible names start with `HH:mm PT - RH AH`.
+  These slots use after-hours bid/ask prices only for execution decisions and
+  are pre-authorized only for whole-share after-hours limit orders plus regular
+  market queued fractional sell leftovers after a confirmed whole-share sell.
+- `17-00-pt-rh-daily-summary`: daily exact 5:00 PM Pacific read-only strategy
+  performance summary. It must not place, review, prepare, cancel, or suggest
+  orders.
 - `weekly-rh-symbol-policy-refresh`: Sunday 8:00 AM Pacific read-only policy
   refresh. It updates generated rows in `data/symbol-policy.csv` from
   six-month historical intraday range data. It uses Yahoo Finance first and
   falls back to Robinhood historical bars for any symbol where Yahoo fetching
   fails. It must not place, review, prepare, or suggest orders.
+- `monthly-rh-universe-discovery`: first Saturday of each month at 8:00 AM
+  Pacific read-only universe discovery. It fetches current Nasdaq Trader symbol
+  directories, validates new common-stock candidates through Robinhood
+  tradability, merges only active/tradable/fractional symbols into
+  `data/universe.csv`, preserves rejected evidence under `data/runtime/`, and
+  refreshes generated symbol policy rows. It must not place, review, prepare,
+  cancel, or suggest orders.
 
 The legacy combined `robinhood-strategy-market-monitor` automation is paused
 because it created repeated threads named `RH MKT 30m` and dynamic thread-title
@@ -151,6 +169,26 @@ allows placement. They email `rdgustave@gmail.com` after urgent sell or
 double-down orders are executed or blocked, including blocked DD scans. They do
 not place new-opening buys unless the user explicitly authorizes openings in
 that run.
+
+The after-hours trade automations are separate from the 1 PM close
+reconciliation. They must first check Pacific time and run only during their
+scheduled after-hours window, never at or after 5:00 PM Pacific. They may place
+qualifying whole-share DD limit buys when the live after-hours ask is at or
+below the deepest due trigger. They may place qualifying whole-share profit
+sell limit orders when the live after-hours bid gives at least a 10% return.
+For a sell with fractional shares remaining, after the whole-share after-hours
+sell is confirmed filled, they may queue only the fractional leftover as a
+regular-hours market sell. They must not use official close as the execution
+price, must not place fractional after-hours orders, must not place new
+openings or tracking reopens, and must not reactivate the 1 PM close lane as a
+trading job.
+
+The 5 PM daily summary automation is read-only reporting. It may fetch
+portfolio, positions with quotes, and all equity order history for the Agentic
+account, then write `data/private/daily-summary.md`,
+`data/private/daily-summary.json`, and
+`data/private/daily-return-cycles.csv`. It must not review, place, cancel,
+prepare, or suggest orders.
 
 Post-sell tracking reopen exception: after a qualifying profitable sell order
 is confirmed filled during a market-hours automation run, the automation is
@@ -190,6 +228,15 @@ historical source; if Yahoo fetching fails for a symbol, use Robinhood
 historical bars for that symbol before counting it as failed. It must not call
 broker order review/place tools, modify `sold-today.md`, update shortlists,
 write the ledger, or touch live trading state.
+
+`monthly-rh-universe-discovery` must run only as an off-market first-Saturday
+maintenance job. It may run `scripts/monthly_universe_discovery.mjs`,
+`scripts/weekly_symbol_policy_refresh.mjs`, and
+`agentic_strategy.validate_symbol_policy`. Its Robinhood usage is limited to
+read-only tradability validation for candidate symbols and read-only historical
+data needed by the policy refresh. It must not call broker order review/place
+tools, modify `sold-today.md`, update shortlists, write the ledger, or touch
+live trading state.
 
 The market automation names intentionally put the time at the front because the
 saved automation name is the reliable mobile chat-list label. Each market run
@@ -248,6 +295,14 @@ original rules, and make rule violations visible before money is put at risk.
   requires it, and place immediately if still qualified and not blocked. The
   1:00 PM Pacific close automation is post-market only and must not place
   orders.
+- For after-hours automations, process one executable whole-share candidate at
+  a time. DD buys must be after-hours limit buys using the integer part only,
+  with the limit at or below both the live after-hours ask and the deepest due
+  trigger. Profit sells must be after-hours limit sells for the integer
+  sellable quantity, using live after-hours bid as the sell-side execution
+  price. If a whole-share sell fills and a fractional remainder is still
+  sellable, queue that remainder as a regular-hours market sell. Do not use
+  official close as an after-hours execution price.
 - After a market-hours profitable sell is confirmed filled, immediately reopen
   that same symbol as a base tracking lot when the fast blockers pass and
   symbol policy permits reopen. Do not delay this tracking reopen for a broad
@@ -256,22 +311,26 @@ original rules, and make rule violations visible before money is put at risk.
 - If a full owned-position scan is incomplete, verify the top downside holdings
   directly before declaring no DD. A current `<= -10%` broker-backed return is
   a mandatory DD verification trigger, not automatic buy authority; reconstruct
-  lot state and compare current ask to the exact next trigger first.
+  lot state, calculate all same-symbol due lots, and compare current ask to the
+  deepest included trigger first.
 - If DD coverage remains incomplete after that fallback, report `DD SCAN
   BLOCKED`, email the user, and do not present the run as a successful no-action
   scan.
 - Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
   lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
   lot's share count.
-- Double-down orders must follow the exact share ladder, not a rounded dollar
-  amount. For every DD review or placement, pass the broker `quantity` equal to
-  `next_lot_shares` (the prior lot's filled share count multiplied by 2). Use
-  dollar estimates only for cash, concentration, and affordability checks.
-- A DD is executable only when the fresh broker buy-side ask is at or below
-  `next_trigger_price`. After placing a DD, immediately compare the broker
-  returned `price` or `average_price` with `next_trigger_price`; if an active
-  order is missing a price or is above the trigger, cancel it immediately and
-  report the guard action.
+- Double-down orders must follow the share ladder, not a rounded dollar amount.
+  When multiple DD lots are due for the same symbol at the current ask, combine
+  them into one broker order with `quantity` equal to the sum of the due lot
+  shares. Use dollar estimates only for cash, concentration, and affordability
+  checks. If Robinhood rejects the fractional DD quantity, retry with only the
+  integer part of that same quantity when the integer part is at least 1 share;
+  otherwise report the DD as broker-blocked.
+- A DD is executable only when the fresh broker buy-side ask is at or below the
+  deepest included DD trigger. After placing a DD, immediately compare the
+  broker returned `price` or `average_price` with that deepest included trigger;
+  if an active order is missing a price or is above the trigger, cancel it
+  immediately and report the guard action.
 - For DD affordability, use actual broker buying power, not disposable cash
   after the 15% floor. The cash floor blocks new openings and reopens, but it is
   explicitly reserved to fund DDs. If due DD cost exceeds actual buying power,
@@ -339,14 +398,23 @@ requests and the 1 PM close automation:
 - `scripts/rh_fast_mcp_client.mjs`: shared read-only Robinhood MCP session
   helper for fast broad scans.
 - `scripts/rh_fast.mjs`: read-only fast commands for quotes, orders, positions,
-  open planning, and sell/DD watch screens. These scripts must not place
+  portfolio, open planning, and sell/DD watch screens. These scripts must not place
   orders.
+- `agentic_strategy.daily_summary`: writes the 5 PM read-only performance
+  report from fresh broker portfolio, position/quote, and order-history
+  payloads.
 - `scripts/weekly_symbol_policy_refresh.mjs`: weekend read-only historical
   range refresh for generated `data/symbol-policy.csv` rows. It fetches Yahoo
   historical data first and falls back to Robinhood historical bars when Yahoo
   fails for a symbol. It writes metrics, diffs, backups, and summaries under
   `data/runtime/` and only replaces the committed policy file after safety
   validation passes.
+- `scripts/monthly_universe_discovery.mjs`: first-Saturday read-only universe
+  discovery. It fetches Nasdaq Trader symbol directories, filters current
+  common-stock candidates not already in `data/universe.csv`, validates them
+  through Robinhood tradability, writes accepted and rejected evidence under
+  `data/runtime/monthly-universe-discovery/`, and merges only
+  active/tradable/fractional rows into `data/universe.csv`.
 - `scripts/bulk_validate_robinhood_universe.mjs`: read-only universe
   tradability validator built on the shared fast MCP client.
 

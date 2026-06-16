@@ -86,10 +86,10 @@ Sizing clarification:
 - Sub-dollar penny stocks should not be bought fractionally.
 - For sub-dollar stocks, use the whole-share quantity that fits within the
   target lot dollars, with a minimum of 1 whole share.
-- Double-downs always use exact share quantity sizing. The broker review and
-  placement must pass `quantity=next_lot_shares`, never a rounded
-  `dollar_amount`, because the strategy rule is to double the prior lot's
-  filled share count.
+- Double-downs always use share quantity sizing, never rounded `dollar_amount`.
+  If multiple same-symbol DD lots are due at the current ask, combine their
+  share counts into one order. If Robinhood rejects the fractional quantity,
+  retry the integer part only when it is at least 1 share.
 
 Operational implication: the user does not want to manually monitor orders. The
 intended production behavior is automatic market execution once strategy

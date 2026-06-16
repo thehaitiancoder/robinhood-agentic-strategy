@@ -15,6 +15,7 @@ The rules file allows only the narrow command prefixes used by this project:
 
 - `node scripts/rh_fast.mjs ...`
 - `node scripts/bulk_validate_robinhood_universe.mjs`
+- `node scripts/monthly_universe_discovery.mjs ...`
 - `node scripts/weekly_symbol_policy_refresh.mjs ...`
 - `python -m agentic_strategy.sold_today ...`
 - `python -m agentic_strategy.shortlists ...`
@@ -23,6 +24,8 @@ The rules file allows only the narrow command prefixes used by this project:
 - `python -m agentic_strategy.broker_snapshot ...`
 - `python -m agentic_strategy.universe ...`
 - `python -m agentic_strategy.validate_symbol_policy ...`
+- `python -m agentic_strategy.afterhours_scan ...`
+- `python -m agentic_strategy.daily_summary ...`
 
 These rules are for command escalation outside the sandbox. They are not the
 filesystem permission source. Repo-local write access comes from
@@ -39,8 +42,12 @@ the strategy files that live inside the workspace:
 - `data/private/close-summary.md`
 - `data/private/top-10-buy-candidates.md`
 - `data/private/top-10-sell-candidates.md`
+- `data/private/daily-summary.md`
+- `data/private/daily-summary.json`
+- `data/private/daily-return-cycles.csv`
 - `data/private/latest/*`
 - `data/runtime/*`
+- `data/universe.csv`
 - `data/symbol-policy.csv`
 
 Do not add the automation memory directory as a second cwd. In Codex

@@ -93,8 +93,9 @@ does not want to manually monitor orders.
 Opening and reopening sizing depends on price: stocks at or above `$1.00` use
 dollar-based fractional sizing, while sub-dollar stocks use whole-share
 quantity sizing. Double-down sizing is share based: every DD order must use the
-exact `next_lot_shares` quantity from the ladder so the new lot doubles the
-previous lot's filled share count.
+share ladder, and multiple same-symbol due DD lots should be combined into one
+order with quantity equal to the sum of due lot shares. If Robinhood rejects the
+fractional quantity, retry the integer part only when it is at least 1 share.
 
 Current live tools may require explicit confirmation for real order placement
 after review. Future code must obey active tool policy at runtime, but that

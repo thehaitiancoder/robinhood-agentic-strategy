@@ -108,6 +108,53 @@ Ignored expansion artifacts may exist locally under:
 - `data/runtime/universe-expansion-2026-06-11.validations.csv`
 - `data/runtime/universe-expansion-2026-06-11.rejections.csv`
 
+As of the 2026-06-15 final Nasdaq Trader sweep, the remaining exchange-listed
+common-stock candidates were validated through Robinhood and merged only when
+Robinhood reported them active, tradable, and fractionally tradable.
+
+Expansion summary:
+
+- 141 remaining Nasdaq Trader candidates were checked.
+- 72 symbols validated as active/tradable/fractional on Robinhood.
+- 69 symbols were rejected or not found and preserved as evidence.
+- Committed universe size after the expansion: 5,088 rows, including 5,072
+  active/tradable/fractional rows.
+
+Ignored expansion artifacts may exist locally under:
+
+- `data/runtime/universe-expansion-2026-06-15-candidates.csv`
+- `data/runtime/universe-expansion-2026-06-15.validations.csv`
+- `data/runtime/universe-expansion-2026-06-15.rejections.csv`
+
+## Monthly Discovery
+
+`monthly-rh-universe-discovery` runs the first Saturday of each month at
+8:00 AM Pacific. It is intended to catch new IPOs, listings that become newly
+fractional/tradable on Robinhood, ticker changes that appear in the current
+Nasdaq Trader directories, and stale rejected symbols whose broker status has
+changed.
+
+The automation runs:
+
+```powershell
+node scripts/monthly_universe_discovery.mjs --run --account 878067701
+```
+
+The script fetches current Nasdaq Trader `nasdaqlisted.txt` and
+`otherlisted.txt`, filters likely common-stock candidates not already in
+`data/universe.csv`, validates candidates through Robinhood
+`get_equity_tradability`, and merges only active/tradable/fractional rows into
+`data/universe.csv`. It writes raw source files, candidate rows, local filter
+rejections, broker validation rows, broker rejections, and summaries under:
+
+```text
+data/runtime/monthly-universe-discovery/<YYYY-MM-DD>/
+```
+
+After accepted rows are merged, the monthly automation should run the normal
+symbol-policy refresh so newly added names are filtered before the next market
+session.
+
 ## Validation CSV
 
 The merge utility expects the same columns as the canonical universe:

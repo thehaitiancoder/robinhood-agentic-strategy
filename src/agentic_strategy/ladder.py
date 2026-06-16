@@ -21,6 +21,13 @@ class LadderLot:
     sizing_mode: str
 
 
+@dataclass(frozen=True)
+class DueDoubleDownLot:
+    lot_index: int
+    trigger_price: Decimal
+    lot_shares: Decimal
+
+
 def drop_pct_for_next_lot(next_lot_index: int) -> Decimal:
     if next_lot_index < 2:
         raise ValueError("next_lot_index must be 2 or greater")
@@ -39,6 +46,56 @@ def next_trigger_price(previous_trigger_price: Decimal, next_lot_index: int) -> 
 
 def next_lot_shares(previous_lot_shares: Decimal) -> Decimal:
     return previous_lot_shares * LOT_SHARE_MULTIPLIER
+
+
+def due_double_down_lots(
+    *,
+    current_lot_index: int,
+    next_trigger: Decimal,
+    next_shares: Decimal,
+    buy_price: Decimal,
+    max_lot_index: int = 100,
+) -> list[DueDoubleDownLot]:
+    if current_lot_index < 1:
+        raise ValueError("current_lot_index must be positive")
+    if next_trigger <= 0:
+        raise ValueError("next_trigger must be positive")
+    if next_shares <= 0:
+        raise ValueError("next_shares must be positive")
+    if buy_price <= 0:
+        raise ValueError("buy_price must be positive")
+    if max_lot_index <= current_lot_index:
+        raise ValueError("max_lot_index must exceed current_lot_index")
+
+    lots: list[DueDoubleDownLot] = []
+    lot_index = current_lot_index + 1
+    trigger_price = next_trigger
+    lot_shares = next_shares
+
+    while lot_index <= max_lot_index and buy_price <= trigger_price:
+        lots.append(
+            DueDoubleDownLot(
+                lot_index=lot_index,
+                trigger_price=trigger_price,
+                lot_shares=lot_shares,
+            )
+        )
+        lot_index += 1
+        if lot_index <= max_lot_index:
+            trigger_price = next_trigger_price(trigger_price, lot_index)
+            lot_shares = next_lot_shares(lot_shares)
+
+    return lots
+
+
+def combined_due_lot_shares(lots: list[DueDoubleDownLot]) -> Decimal:
+    return sum((lot.lot_shares for lot in lots), Decimal("0"))
+
+
+def integer_part_quantity(quantity: Decimal) -> Decimal:
+    if quantity <= 0:
+        raise ValueError("quantity must be positive")
+    return quantity.to_integral_value(rounding=ROUND_FLOOR)
 
 
 def lot_shares_for_target(price: Decimal, target_usd: Decimal) -> Decimal:

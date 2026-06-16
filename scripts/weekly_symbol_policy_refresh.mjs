@@ -228,6 +228,7 @@ function loadOrCreateState(config, symbols) {
     const state = JSON.parse(fs.readFileSync(config.statePath, "utf8"));
     state.results = state.results || [];
     state.failures = state.failures || [];
+    state.universe_symbols = symbols.length;
     return state;
   }
   return {

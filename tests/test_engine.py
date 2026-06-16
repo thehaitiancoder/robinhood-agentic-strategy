@@ -61,6 +61,34 @@ class StrategyEngineTest(unittest.TestCase):
             "estimate_only_do_not_place_dd_by_dollar_amount",
         )
 
+    def test_due_double_down_combines_multiple_due_lots(self) -> None:
+        report = evaluate_strategy(
+            portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
+            positions=[
+                PositionSnapshot(
+                    symbol="DROP",
+                    quantity=Decimal("0.01"),
+                    invested_cost=Decimal("1"),
+                    current_lot_index=1,
+                    next_trigger_price=Decimal("90.00"),
+                    next_lot_shares=Decimal("0.02"),
+                )
+            ],
+            quotes=[QuoteSnapshot(symbol="DROP", bid_price=Decimal("69.50"), ask_price=Decimal("70.00"))],
+            universe=[],
+        )
+
+        double_down = next(decision for decision in report.decisions if decision.action == "double_down_ready")
+        self.assertEqual(double_down.metrics["due_lots"], "2,3,4")
+        self.assertEqual(double_down.metrics["combined_due_lot_count"], "3")
+        self.assertEqual(double_down.metrics["order_quantity"], "0.14")
+        self.assertEqual(double_down.metrics["integer_part_quantity"], "0")
+        self.assertEqual(
+            double_down.metrics["fractional_reject_fallback"],
+            "retry_integer_part_when_at_least_1_share",
+        )
+        self.assertEqual(double_down.metrics["price_guard_trigger"], "72.9000")
+
     def test_cash_short_double_down_surfaces_green_sells(self) -> None:
         report = evaluate_strategy(
             portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("101")),

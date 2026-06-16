@@ -9,6 +9,7 @@ prefix_rule(
     decision = "allow",
     justification = "Allow the repo fast Robinhood MCP scanner to reach the broker MCP endpoint and write data/runtime outputs.",
     match = [
+        "node scripts/rh_fast.mjs portfolio --account 878067701",
         "node scripts/rh_fast.mjs positions --account 878067701 --with-quotes",
         "node scripts/rh_fast.mjs watch --account 878067701 --mode both",
         "node scripts/rh_fast.mjs orders --account 878067701 --all",
@@ -28,6 +29,20 @@ prefix_rule(
     ],
     not_match = [
         "node scripts/rh_fast.mjs watch --account 878067701 --mode both",
+    ],
+)
+
+prefix_rule(
+    pattern = ["node", "scripts/monthly_universe_discovery.mjs"],
+    decision = "allow",
+    justification = "Allow the monthly universe discovery automation to fetch Nasdaq Trader symbol directories, validate candidates through Robinhood tradability, write data/runtime evidence, and merge eligible rows into data/universe.csv.",
+    match = [
+        "node scripts/monthly_universe_discovery.mjs --run --account 878067701",
+        "node scripts/monthly_universe_discovery.mjs --dry-run --candidate-limit 25",
+    ],
+    not_match = [
+        "node scripts/rh_fast.mjs watch --account 878067701 --mode both",
+        "node scripts/bulk_validate_robinhood_universe.mjs",
     ],
 )
 
@@ -146,6 +161,30 @@ prefix_rule(
     ],
 )
 
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.afterhours_scan"],
+    decision = "allow",
+    justification = "Allow after-hours Robinhood automations to classify whole-share DD and sell candidates from repo-local fast scan outputs.",
+    match = [
+        "python -m agentic_strategy.afterhours_scan --positions-json data/runtime/afterhours-positions-quotes.json --orders-json data/runtime/afterhours-orders-all.json --active-orders-json data/runtime/afterhours-active-orders.json --output data/runtime/afterhours-scan.json",
+    ],
+    not_match = [
+        "python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv",
+    ],
+)
+
+prefix_rule(
+    pattern = ["python", "-m", "agentic_strategy.daily_summary"],
+    decision = "allow",
+    justification = "Allow the 5 PM daily summary automation to write read-only performance reports under data/private.",
+    match = [
+        "python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json",
+    ],
+    not_match = [
+        "python -m agentic_strategy.afterhours_scan --positions-json data/runtime/afterhours-positions-quotes.json",
+    ],
+)
+
 # Windows launcher variants for agents that use py instead of python.
 prefix_rule(
     pattern = ["py", "-m", "agentic_strategy.sold_today"],
@@ -187,4 +226,16 @@ prefix_rule(
     pattern = ["py", "-m", "agentic_strategy.validate_symbol_policy"],
     decision = "allow",
     justification = "Allow symbol policy validation through the Windows py launcher.",
+)
+
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.afterhours_scan"],
+    decision = "allow",
+    justification = "Allow after-hours whole-share DD and sell candidate scanning through the Windows py launcher.",
+)
+
+prefix_rule(
+    pattern = ["py", "-m", "agentic_strategy.daily_summary"],
+    decision = "allow",
+    justification = "Allow daily summary report generation through the Windows py launcher.",
 )

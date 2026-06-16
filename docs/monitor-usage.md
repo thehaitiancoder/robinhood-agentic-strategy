@@ -77,6 +77,9 @@ present. It blocks new-open candidates when `allow_open=false`.
 `double_down_ready` metrics include:
 
 - `order_sizing`: `exact_share_quantity`
-- `order_quantity`: the exact broker `quantity` to review/place
+- `due_lots`: comma-separated due same-symbol ladder lots included in the order
+- `order_quantity`: the combined broker `quantity` to review/place
+- `integer_part_quantity`: fallback quantity to retry if Robinhood rejects the
+  fractional DD quantity and the value is at least 1 share
 - `order_amount_source`: `estimate_only_do_not_place_dd_by_dollar_amount`
 - `estimated_cost`: cash/risk estimate only, not the DD order input

@@ -15,6 +15,7 @@ const MARKET_CLOSE_MINUTE_PT = 13 * 60;
 function usage() {
   console.log(`Usage:
   node scripts/rh_fast.mjs quotes SYMBOL... [--file path] [--output path]
+  node scripts/rh_fast.mjs portfolio --account <account> [--output path]
   node scripts/rh_fast.mjs orders --account <account> [--state queued] [--all] [--since ISO] [--output path]
   node scripts/rh_fast.mjs positions --account <account> [--with-quotes] [--output path] [--summary-output path]
   node scripts/rh_fast.mjs open-plan --account <account> [--limit 100] [--universe data/universe.csv] [--symbol-policy data/symbol-policy.csv] [--output path]
@@ -338,6 +339,20 @@ async function commandQuotes(args) {
   console.log(JSON.stringify({ output, requested: symbols.length, returned: quotes.length }));
 }
 
+async function commandPortfolio(args) {
+  const { options } = parseArgs(args);
+  const account = accountNumber(options);
+  const client = new RobinhoodFastClient({ clientName: "codex-rh-fast-portfolio" });
+  const payload = await client.tool("get_portfolio", { account_number: account });
+  const output = options.output || "data/runtime/rh-fast-portfolio.json";
+  writeJson(output, {
+    generated_at: new Date().toISOString(),
+    portfolio: payload?.data || payload,
+    payload,
+  });
+  console.log(JSON.stringify({ output }));
+}
+
 async function commandPositions(args) {
   const { options } = parseArgs(args);
   const account = accountNumber(options);
@@ -467,6 +482,8 @@ async function main() {
   }
   if (command === "quotes") {
     await commandQuotes(args);
+  } else if (command === "portfolio") {
+    await commandPortfolio(args);
   } else if (command === "positions") {
     await commandPositions(args);
   } else if (command === "orders") {

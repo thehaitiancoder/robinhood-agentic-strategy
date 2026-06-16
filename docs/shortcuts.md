@@ -14,7 +14,7 @@ Use these short commands when asking any future agent to run the strategy.
 | `FILL CHECK` | Import order history and fills into the local ledger. |
 | `OPEN CASH` | Find eligible new openings after all higher-priority checks pass. |
 | `SELL REVIEW` | Review full-position sells for sell-ready symbols. |
-| `DD REVIEW` | Review due double-down orders using exact `next_lot_shares` quantity. |
+| `DD REVIEW` | Review due double-down orders using combined same-symbol due-lot share quantity. |
 | `SOLD TODAY` | Show or update `data/private/sold-today.md`, the daily sold-not-reopened queue. |
 | `REOPEN SOLD` | Reopen eligible names from today's pending-reopen list after live sell/DD/cash checks. |
 | `FAST QUOTES` | Use the fast read-only MCP script to quote many symbols in one session. |
@@ -53,16 +53,19 @@ for the next sell target until 12:59 PM Pacific. This trigger authorizes sells
 only; it does not authorize double-downs, openings, reopens, or post-close
 orders. Do not delay a qualifying sell for local file writes.
 
-For every qualifying DD, review/place the broker order with `quantity` equal to
-the exact `next_lot_shares` value. Do not convert DDs into rounded
-`dollar_amount` orders.
+For every qualifying DD, review/place a broker share-quantity order. If multiple
+DD lots are due for the same symbol at the current ask, combine those due lot
+shares into one order. Do not convert DDs into rounded `dollar_amount` orders.
+If Robinhood rejects a fractional DD quantity, retry the integer part only when
+it is at least 1 share.
 
 If a DD/full-position scan cannot exhaustively cover the live basket, directly
 verify the top downside holdings before saying no DD is due. Any broker-backed
 owned position shown at `<= -10%` return with no active buy order is a
 mandatory DD verification candidate. Reconstruct lot state from filled buys,
-refresh the quote, then place only if current ask is at or below the exact next
-trigger and all cash/risk checks pass.
+refresh the quote, calculate all same-symbol due lots, then place the combined
+due-lot quantity only if current ask is at or below the deepest included trigger
+and all cash/risk checks pass.
 
 If that verification cannot be completed, the shortcut result is
 `DD SCAN BLOCKED`, not "no DD due." Include the exact blocker and which symbols

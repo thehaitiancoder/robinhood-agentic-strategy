@@ -4,7 +4,14 @@ from collections import Counter
 from decimal import Decimal
 from typing import Mapping
 
-from .ladder import lot_shares_for_target, sizing_mode_for_price
+from .ladder import (
+    DueDoubleDownLot,
+    combined_due_lot_shares,
+    due_double_down_lots,
+    integer_part_quantity,
+    lot_shares_for_target,
+    sizing_mode_for_price,
+)
 from .models import (
     Decision,
     PortfolioSnapshot,
@@ -42,7 +49,9 @@ def evaluate_strategy(
         disposable_cash = ZERO
 
     decisions: list[Decision] = []
-    due_double_downs: list[tuple[PositionSnapshot, QuoteSnapshot, Decimal, Decimal]] = []
+    due_double_downs: list[
+        tuple[PositionSnapshot, QuoteSnapshot, Decimal, Decimal, list[DueDoubleDownLot]]
+    ] = []
     sell_ready_symbols: set[str] = set()
 
     for position in sorted(positions, key=lambda item: item.symbol):
@@ -101,12 +110,19 @@ def evaluate_strategy(
             and position.next_lot_shares is not None
             and buy_price <= position.next_trigger_price
         ):
-            estimated_cost = buy_price * position.next_lot_shares
-            due_double_downs.append((position, quote, buy_price, estimated_cost))
+            due_lots = due_double_down_lots(
+                current_lot_index=position.current_lot_index,
+                next_trigger=position.next_trigger_price,
+                next_shares=position.next_lot_shares,
+                buy_price=buy_price,
+            )
+            order_quantity = combined_due_lot_shares(due_lots)
+            estimated_cost = buy_price * order_quantity
+            due_double_downs.append((position, quote, buy_price, estimated_cost, due_lots))
 
-    due_symbols = {position.symbol.upper() for position, _, _, _ in due_double_downs}
+    due_symbols = {position.symbol.upper() for position, _, _, _, _ in due_double_downs}
     reserved_cash = ZERO
-    for position, quote, buy_price, estimated_cost in sorted(
+    for position, quote, buy_price, estimated_cost, due_lots in sorted(
         due_double_downs,
         key=lambda item: _trigger_urgency(item[2], item[0].next_trigger_price),
         reverse=True,
@@ -121,13 +137,20 @@ def evaluate_strategy(
             quote=quote,
             estimated_cost=estimated_cost,
         )
+        order_quantity = combined_due_lot_shares(due_lots)
+        guard_trigger = due_lots[-1].trigger_price
         metrics = {
             "buy_price": _money(buy_price),
             "trigger_price": _money(position.next_trigger_price),
+            "price_guard_trigger": _money(guard_trigger),
             "next_lot_shares": str(position.next_lot_shares),
+            "due_lots": ",".join(str(lot.lot_index) for lot in due_lots),
+            "combined_due_lot_count": str(len(due_lots)),
             "order_sizing": "exact_share_quantity",
-            "order_quantity": str(position.next_lot_shares),
+            "order_quantity": str(order_quantity),
             "order_amount_source": "estimate_only_do_not_place_dd_by_dollar_amount",
+            "fractional_reject_fallback": "retry_integer_part_when_at_least_1_share",
+            "integer_part_quantity": str(integer_part_quantity(order_quantity)),
             "estimated_cost": _money(estimated_cost),
             "post_trade_position_pct": _str_pct(concentration),
         }

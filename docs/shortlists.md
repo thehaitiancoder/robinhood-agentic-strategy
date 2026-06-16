@@ -25,19 +25,23 @@ scan.
   the last recorded quote. These are likely target-sell watch symbols.
 
 The DD decision still requires strategy ladder math and a fresh broker quote.
-If a DD qualifies, the broker review/place call must use exact
-`quantity=next_lot_shares`, not a rounded `dollar_amount`. A DD may be placed
-only if the fresh broker ask is at or below `next_trigger_price`; after
-placement, immediately cancel an active DD order if the returned broker
-`price` or `average_price` is missing or above the trigger. The sell decision
-still requires bid-side 10% return math and a fresh broker quote.
+If a DD qualifies, the broker review/place call must use share `quantity`, not a
+rounded `dollar_amount`. If multiple same-symbol DD lots are due at the current
+ask, combine those due lot shares into one order. A DD may be placed only if
+the fresh broker ask is at or below the deepest included trigger; after
+placement, immediately cancel an active DD order if the returned broker `price`
+or `average_price` is missing or above that trigger. If Robinhood rejects the
+fractional DD quantity, retry the integer part only when it is at least 1
+share. The sell decision still requires bid-side 10% return math and a fresh
+broker quote.
 
 If a full owned-position scan is incomplete or tool payloads truncate, the top
 buy/downside shortlist becomes mandatory DD verification input. Any shortlisted
 or partially scanned owned symbol shown at `<= -10%` return with no active buy
 order must be checked directly: fetch filled buys/orders, reconstruct the next
-lot, refresh the quote, and compare current ask against `next_trigger_price`.
-Only place if the exact ladder, cash, concentration, and broker checks pass.
+and any subsequent same-symbol due lots, refresh the quote, and compare current
+ask against the deepest included trigger. Only place if the exact ladder, cash,
+concentration, and broker checks pass.
 
 ## Timing
 

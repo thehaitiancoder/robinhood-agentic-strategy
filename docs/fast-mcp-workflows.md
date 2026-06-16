@@ -21,8 +21,8 @@ workflow one candidate at a time.
   still verify the top downside holdings directly before reporting no DD due.
   Any owned symbol surfaced at `<= -10%` return with no active buy order is a
   mandatory DD verification candidate: fetch filled buys/orders, reconstruct
-  the next lot, refresh the quote, and compare current ask to the exact next
-  trigger.
+  all same-symbol due lots, refresh the quote, and compare current ask to the
+  deepest included trigger.
 - If the fast path is blocked and no other path can verify the mandatory
   downside candidates, the correct result is `DD SCAN BLOCKED`; do not emit a
   routine no-action report.
@@ -60,6 +60,14 @@ Use `--file` for a CSV that has a `symbol` column:
 
 ```powershell
 node scripts/rh_fast.mjs quotes --file data/runtime/watchlist.csv
+```
+
+### FAST PORTFOLIO
+
+Fetch the Agentic account portfolio snapshot without writing private state:
+
+```powershell
+node scripts/rh_fast.mjs portfolio --account $env:RH_ACCOUNT_NUMBER --output data/runtime/rh-fast-portfolio.json
 ```
 
 ### FAST ORDERS
@@ -147,3 +155,26 @@ Default outputs:
 
 - `data/runtime/universe-expansion.validations.csv`
 - `data/runtime/universe-expansion.rejections.csv`
+
+### MONTHLY UNIVERSE DISCOVERY
+
+Fetch current Nasdaq Trader symbol directories, build common-stock candidates
+not already in `data/universe.csv`, validate them through Robinhood
+tradability, and merge only active/tradable/fractional results:
+
+```powershell
+node scripts/monthly_universe_discovery.mjs --run --account $env:RH_ACCOUNT_NUMBER
+```
+
+For a no-merge candidate smoke test:
+
+```powershell
+node scripts/monthly_universe_discovery.mjs --dry-run --candidate-limit 25
+```
+
+Default outputs:
+
+- `data/runtime/monthly-universe-discovery/<date>/candidates.csv`
+- `data/runtime/monthly-universe-discovery/<date>/validations.csv`
+- `data/runtime/monthly-universe-discovery/<date>/rejections.csv`
+- `data/runtime/monthly-universe-discovery/<date>/summary.md`
