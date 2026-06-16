@@ -121,7 +121,12 @@ Current intended local encodings are:
   - 16:00 PT: `BYHOUR=16;BYMINUTE=0`
 - daily summary: `BYHOUR=17;BYMINUTE=0`
 - weekly symbol policy refresh: `BYDAY=SU;BYHOUR=8;BYMINUTE=0`
-- monthly universe discovery: `BYDAY=1SA;BYHOUR=8;BYMINUTE=0`
+- monthly universe discovery: `BYDAY=1SA;BYHOUR=15;BYMINUTE=0`
+
+The monthly universe discovery automation is saved with `BYHOUR=15` because
+the scheduler displays `BYHOUR=8` as `01:00 PT` for that monthly cron. The
+prompt still hard-gates on first-Saturday 08:00 Pacific before any broker or
+network work.
 
 Every market-hours prompt must still begin with a hard local-Pacific time gate
 before reading docs or calling Robinhood. The valid window is the entry slot
