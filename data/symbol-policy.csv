@@ -33,6 +33,7 @@ ARDC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.6857
 ARI,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.4147 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 ARTNA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.7171 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 ASG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.9959 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
+ASRT,broker_unavailable,false,false,false,true,Robinhood tradability returned not_found and app shows stock not supported,manual_broker_check_2026-06-17,,2026-06-17
 ATII,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.4649 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 ATLO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7231 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 ATO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1441 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
@@ -390,7 +391,7 @@ KRSP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.32
 KTF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.1703 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 KVAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.1882 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 KVUE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.1583 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
-KW,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.2869 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
+KW,broker_unavailable,false,false,false,true,Robinhood tradability returned not_found and app shows stock not supported,manual_broker_check_2026-06-17,,2026-06-17
 KYN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8507 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 L,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.2063 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 LADR,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.6939 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14

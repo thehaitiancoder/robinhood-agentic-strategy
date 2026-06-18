@@ -394,7 +394,7 @@ ASPI,ASP Isotopes Inc. Common Stock,stock,true,true,true,robinhood_validated,202
 ASPN,"Aspen Aerogels, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
 ASPS,Altisource Portfolio Solutions S.A. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 ASR,"Grupo Aeroportuario del Sureste, S.A. de C.V. American Depositary Shares",stock,true,true,true,robinhood_validated,2026-06-11
-ASRT,"Assertio Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+ASRT,"Assertio Holdings, Inc. Common Stock",stock,false,false,false,broker_not_found,2026-06-17
 ASRV,AmeriServ Financial Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 ASST,"Strive, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 ASTC,Astrotech Corporation (DE) Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -2594,7 +2594,7 @@ KVAC,Keen Vision Acquisition Corporation Ordinary Shares,stock,true,true,true,ro
 KVHI,"KVH Industries, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 KVUE,"Kenvue, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 KVYO,"Klaviyo, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
-KW,Kennedy Wilson,stock,true,true,true,robinhood_validated,2026-06-09
+KW,Kennedy Wilson,stock,false,false,false,broker_not_found,2026-06-17
 KWR,Quaker Houghton,stock,true,true,true,robinhood_validated,2026-06-09
 KWY,Kingsway Corporation,stock,true,true,true,robinhood_validated,2026-06-15
 KYIV,Kyivstar Group Ltd. Common Shares,stock,true,true,true,robinhood_validated,2026-06-10
