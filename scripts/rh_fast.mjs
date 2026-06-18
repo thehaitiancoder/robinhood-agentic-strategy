@@ -16,7 +16,7 @@ function usage() {
   console.log(`Usage:
   node scripts/rh_fast.mjs quotes SYMBOL... [--file path] [--output path]
   node scripts/rh_fast.mjs portfolio --account <account> [--output path]
-  node scripts/rh_fast.mjs orders --account <account> [--state queued] [--all] [--since ISO] [--output path]
+  node scripts/rh_fast.mjs orders --account <account> [--symbol INLF] [--state queued] [--all] [--since ISO] [--output path]
   node scripts/rh_fast.mjs positions --account <account> [--with-quotes] [--output path] [--summary-output path]
   node scripts/rh_fast.mjs open-plan --account <account> [--limit 100] [--universe data/universe.csv] [--symbol-policy data/symbol-policy.csv] [--output path]
   node scripts/rh_fast.mjs watch --account <account> [--mode both|sell|dd] [--output path]
@@ -76,6 +76,17 @@ function text(value) {
 
 function symbolOf(row) {
   return text(row.symbol).toUpperCase();
+}
+
+function symbolOption(options, name) {
+  if (options[name] === undefined) {
+    return undefined;
+  }
+  const symbol = text(options[name]).toUpperCase();
+  if (!symbol || symbol === "TRUE") {
+    throw new Error(`--${name} requires a ticker`);
+  }
+  return symbol;
 }
 
 function boolField(value, fallback = true) {
@@ -234,8 +245,10 @@ async function fetchPositions(client, account) {
 }
 
 async function fetchOrders(client, account, options) {
+  const symbol = symbolOption(options, "symbol");
   const base = {
     account_number: account,
+    ...(symbol ? { symbol } : {}),
     ...(options.since ? { created_at_gte: options.since } : {}),
     ...(options["placed-agent"] ? { placed_agent: options["placed-agent"] } : {}),
   };

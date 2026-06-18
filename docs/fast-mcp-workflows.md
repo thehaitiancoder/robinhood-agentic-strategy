@@ -90,6 +90,12 @@ Fetch newest orders without active-state filtering:
 node scripts/rh_fast.mjs orders --account $env:RH_ACCOUNT_NUMBER --all
 ```
 
+Fetch one symbol's order history for targeted DD reconstruction:
+
+```powershell
+node scripts/rh_fast.mjs orders --account $env:RH_ACCOUNT_NUMBER --symbol INLF --all
+```
+
 ### FAST POSITIONS
 
 Fetch positions, optionally with quote-based return estimates:
