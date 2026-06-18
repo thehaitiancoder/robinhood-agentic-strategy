@@ -79,7 +79,8 @@ PYTHONPATH=src python3 -m unittest discover -s tests
   candidate selector.
 - `docs/shortlists.md`: previous-run top-10 buy/sell watchlists for faster
   market checks.
-- `docs/sold-today.md`: daily sold-not-reopened queue.
+- `docs/sold-today.md`: durable pending-reopen queue at the legacy
+  `sold-today.md` path.
 - `docs/fast-mcp-workflows.md`: read-only fast Robinhood MCP scripts for broad
   scans and planning.
 - `docs/live-state.md`: deprecated legacy live-state handoff workflow.

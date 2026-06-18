@@ -244,12 +244,18 @@ Execution rules:
   perform broker scans, order reviews, order placement, sold-today updates,
   shortlist updates, or other market-hour persistence from a late-started
   market slot.
-- On the first market-hours run of the Pacific trading day, reset
-  `data/private/sold-today.md`. If the helper sees a stale date, it resets the
-  file automatically.
+- Do not reset `data/private/sold-today.md` at the start of a new Pacific
+  trading day. The helper's legacy `--reset` action only initializes or
+  re-renders the durable pending-reopen queue and must preserve existing
+  pending entries.
 - Read `data/private/top-10-sell-candidates.md` and
   `data/private/top-10-buy-candidates.md` if present, then quote those symbols
-  first through Robinhood. These are speed hints only.
+  first through Robinhood. Use
+  `node scripts/rh_fast.mjs quotes --file data/private/top-10-sell-candidates.md`
+  and the matching buy-candidate file when the fast helper is available.
+  Review/place any qualifying shortlisted sell or DD immediately before
+  starting `FAST WATCH` or another broad owned-position scan. These files are
+  speed hints only, so refresh Robinhood before acting.
 - Fast read-only scripts from `docs/fast-mcp-workflows.md` may be used to speed
   broad quotes, positions, orders, and watch scans when available.
 - Process one executable sell or double-down candidate at a time.
@@ -304,9 +310,10 @@ Execution rules:
 - Do not write local ledger/state before execution.
 - Do not write `data/private/sold-today.md` while sell execution is still in
   progress. After all sell orders from the run are placed and confirmed
-  filled, append only the sell time and symbol to that file for symbols that
-  still need reopen. After reopen buy orders are confirmed filled, remove those
-  symbols from the file.
+  filled, append one pending-reopen row for each symbol that still needs
+  reopen, including the sold date/time and any known blocked-reopen reason.
+  After reopen buy orders are confirmed filled, remove those symbols from the
+  file.
 - For the post-sell tracking reopen exception, do not append a sold symbol to
   `sold-today.md` if the immediate tracking reopen has already been confirmed
   filled. If symbol policy blocks reopen, do not append it. If the immediate
@@ -535,7 +542,7 @@ execution unless the user explicitly asks for local persistence in that exact
 run. Updating the top-10 shortlist files at the end of a market-hours run is
 allowed as cleanup only after executable work is complete. Updating
 `data/private/sold-today.md` after confirmed sell fills or confirmed reopen
-fills is also allowed because it is the daily sold-not-reopened queue, but it
+fills is also allowed because it is the durable pending-reopen queue, but it
 must never delay a qualifying market-hours sell or double-down order. The 1 PM
 close automation is the standing exception and should update the audit ledger,
 `data/private/current-symbols.json`, `data/private/close-summary.md`, and both

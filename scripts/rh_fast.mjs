@@ -176,15 +176,38 @@ function readSymbols({ positional, options }) {
     }
   }
   if (options.file) {
-    const rows = readCsv(options.file);
-    for (const row of rows) {
-      const symbol = symbolOf(row);
-      if (symbol) {
-        symbols.add(symbol);
-      }
+    for (const symbol of readSymbolFile(options.file)) {
+      symbols.add(symbol);
     }
   }
   return [...symbols];
+}
+
+function readSymbolFile(filePath) {
+  const textValue = fs.readFileSync(filePath, "utf8");
+  if (textValue.includes("| Symbol |")) {
+    return readMarkdownSymbols(textValue);
+  }
+  return readCsv(filePath).map(symbolOf).filter(Boolean);
+}
+
+function readMarkdownSymbols(textValue) {
+  const symbols = [];
+  for (const rawLine of textValue.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line.startsWith("|") || line.includes("---") || line.includes("| Symbol |")) {
+      continue;
+    }
+    const cells = line
+      .slice(1, -1)
+      .split("|")
+      .map((cell) => cell.trim());
+    const symbol = text(cells[1]).toUpperCase();
+    if (symbol) {
+      symbols.push(symbol);
+    }
+  }
+  return symbols;
 }
 
 async function quoteSymbols(client, symbols) {

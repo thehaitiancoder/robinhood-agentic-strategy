@@ -13,6 +13,11 @@ DEFAULT_SOLD_TODAY_MD = Path("data/private/sold-today.md")
 class SoldTodayEntry:
     symbol: str
     sold_time: str
+    sold_date: str = ""
+    sell_order_id: str = ""
+    reason_reopen_blocked: str = ""
+    attempt_count: int = 0
+    last_attempt_at: str = ""
 
 
 @dataclass(frozen=True)
@@ -28,15 +33,9 @@ def reset_sold_today(
 ) -> Path:
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        render_sold_today(
-            SoldTodayDocument(
-                trading_date=trading_date or _today_pt(),
-                entries=(),
-            )
-        ),
-        encoding="utf-8",
-    )
+    date = trading_date or _today_pt()
+    document = read_sold_today(path) if path.exists() else SoldTodayDocument(date, ())
+    _write_document(path, SoldTodayDocument(trading_date=date, entries=document.entries))
     return path
 
 
@@ -46,6 +45,8 @@ def record_sold_symbols(
     output: str | Path = DEFAULT_SOLD_TODAY_MD,
     sold_at: datetime | None = None,
     trading_date: str | None = None,
+    sell_order_id: str = "",
+    reason_reopen_blocked: str = "",
 ) -> Path:
     if not symbols:
         raise ValueError("At least one sold symbol is required.")
@@ -54,13 +55,20 @@ def record_sold_symbols(
     date = trading_date or timestamp.date().isoformat()
     path = Path(output)
     document = read_sold_today(path) if path.exists() else SoldTodayDocument(date, ())
-    if document.trading_date != date:
-        document = SoldTodayDocument(date, ())
 
     sold_time = timestamp.strftime("%H:%M PT")
     sold_symbols = {_normalize_symbol(symbol) for symbol in symbols}
     entries = [entry for entry in document.entries if entry.symbol not in sold_symbols]
-    entries.extend(SoldTodayEntry(symbol=symbol, sold_time=sold_time) for symbol in sorted(sold_symbols))
+    entries.extend(
+        SoldTodayEntry(
+            symbol=symbol,
+            sold_date=date,
+            sold_time=sold_time,
+            sell_order_id=sell_order_id,
+            reason_reopen_blocked=reason_reopen_blocked,
+        )
+        for symbol in sorted(sold_symbols)
+    )
 
     _write_document(path, SoldTodayDocument(trading_date=date, entries=tuple(entries)))
     return path
@@ -78,8 +86,6 @@ def mark_reopened_symbols(
     date = trading_date or _today_pt()
     path = Path(output)
     document = read_sold_today(path) if path.exists() else SoldTodayDocument(date, ())
-    if document.trading_date != date:
-        document = SoldTodayDocument(date, ())
 
     reopened_symbols = {_normalize_symbol(symbol) for symbol in symbols}
     entries = tuple(entry for entry in document.entries if entry.symbol not in reopened_symbols)
@@ -102,37 +108,75 @@ def read_sold_today(path: str | Path = DEFAULT_SOLD_TODAY_MD) -> SoldTodayDocume
         if line.startswith("Date:"):
             trading_date = line.removeprefix("Date:").strip().removesuffix(" PT").strip()
             continue
+        if line.startswith("Updated:"):
+            trading_date = line.removeprefix("Updated:").strip().removesuffix(" PT").strip()
+            continue
         if not line or line.startswith("#"):
+            continue
+        if line.startswith("|"):
+            cells = [_unescape_md_cell(cell.strip()) for cell in line.strip("|").split("|")]
+            if not cells or cells[0].startswith("---") or "Symbol" in cells[:3]:
+                continue
+            if len(cells) >= 7:
+                entries.append(
+                    SoldTodayEntry(
+                        sold_date=cells[0],
+                        sold_time=cells[1],
+                        symbol=_normalize_symbol(cells[2]),
+                        sell_order_id=cells[3],
+                        reason_reopen_blocked=cells[4],
+                        attempt_count=_parse_attempt_count(cells[5]),
+                        last_attempt_at=cells[6],
+                    )
+                )
             continue
         parts = line.split()
         if len(parts) >= 3 and parts[1] == "PT":
-            entries.append(SoldTodayEntry(symbol=_normalize_symbol(parts[2]), sold_time=f"{parts[0]} PT"))
+            entries.append(
+                SoldTodayEntry(
+                    symbol=_normalize_symbol(parts[2]),
+                    sold_date=trading_date,
+                    sold_time=f"{parts[0]} PT",
+                )
+            )
 
     return SoldTodayDocument(trading_date=trading_date, entries=tuple(entries))
 
 
 def render_sold_today(document: SoldTodayDocument) -> str:
     lines = [
-        "# Sold Today Pending Reopen",
-        f"Date: {document.trading_date} PT",
+        "# Pending Reopen Queue",
+        f"Updated: {document.trading_date} PT",
         "",
+        "| Sold Date | Sold Time | Symbol | Sell Order ID | Reason Reopen Blocked | Attempt Count | Last Attempt At |",
+        "| --- | --- | --- | --- | --- | ---: | --- |",
     ]
-    lines.extend(f"{entry.sold_time} {entry.symbol}" for entry in document.entries)
+    lines.extend(_render_entry(entry) for entry in document.entries)
     return "\n".join(lines).rstrip() + "\n"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Reset or update the ignored daily sold-and-not-reopened queue."
+        description="Initialize or update the ignored durable pending-reopen queue."
     )
     parser.add_argument("--output", default=str(DEFAULT_SOLD_TODAY_MD))
-    parser.add_argument("--reset", action="store_true", help="Clear the list for the current Pacific trading date.")
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Initialize or re-render the queue for the current Pacific date without clearing pending entries.",
+    )
     parser.add_argument("--symbol", action="append", default=[], help="Filled sell symbol to mark pending reopen.")
     parser.add_argument(
         "--reopened-symbol",
         action="append",
         default=[],
         help="Filled reopen buy symbol to remove from the pending list.",
+    )
+    parser.add_argument("--sell-order-id", default="", help="Filled sell order id to store with new pending entries.")
+    parser.add_argument(
+        "--reason-reopen-blocked",
+        default="",
+        help="Why the immediate or later reopen is still pending.",
     )
     parser.add_argument("--sold-at", help="ISO timestamp for the sell time. Defaults to now in Pacific time.")
     parser.add_argument("--trading-date", help="YYYY-MM-DD Pacific trading date. Defaults from --sold-at or now.")
@@ -152,6 +196,8 @@ def main() -> int:
                 output=args.output,
                 sold_at=sold_at,
                 trading_date=args.trading_date,
+                sell_order_id=args.sell_order_id,
+                reason_reopen_blocked=args.reason_reopen_blocked,
             )
         )
         return 0
@@ -218,6 +264,35 @@ def _normalize_symbol(symbol: str) -> str:
     if not normalized:
         raise ValueError("Sold symbol cannot be blank.")
     return normalized
+
+
+def _render_entry(entry: SoldTodayEntry) -> str:
+    return " | ".join(
+        [
+            f"| {_escape_md_cell(entry.sold_date)}",
+            _escape_md_cell(entry.sold_time),
+            _escape_md_cell(entry.symbol),
+            _escape_md_cell(entry.sell_order_id),
+            _escape_md_cell(entry.reason_reopen_blocked),
+            str(entry.attempt_count),
+            f"{_escape_md_cell(entry.last_attempt_at)} |",
+        ]
+    )
+
+
+def _escape_md_cell(value: str) -> str:
+    return str(value or "").replace("\\", "\\\\").replace("|", "\\|")
+
+
+def _unescape_md_cell(value: str) -> str:
+    return value.replace("\\|", "|").replace("\\\\", "\\")
+
+
+def _parse_attempt_count(value: str) -> int:
+    try:
+        return int(value or "0")
+    except ValueError:
+        return 0
 
 
 if __name__ == "__main__":

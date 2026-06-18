@@ -1,9 +1,9 @@
-# Sold Today Pending Reopen
+# Pending Reopen Queue
 
-`data/private/sold-today.md` is a small ignored daily queue of symbols sold
-during the current Pacific trading day and not yet reopened. It exists only so
-the user can later ask an agent to reopen recently closed names instead of
-finding unrelated new openings.
+`data/private/sold-today.md` is the ignored durable queue of symbols sold for
+profit and not yet reopened as tracking lots. The filename is legacy
+compatibility; the file is no longer limited to the current day and must not be
+cleared just because a new Pacific trading day begins.
 
 It is not sell history and it is not an ownership source of truth. Before
 reopening any symbol from this file, refresh Robinhood positions, active
@@ -15,16 +15,18 @@ eligibility, and symbol policy.
 Keep the file simple:
 
 ```text
-# Sold Today Pending Reopen
-Date: 2026-06-10 PT
+# Pending Reopen Queue
+Updated: 2026-06-18 PT
 
-08:29 PT UCTT
+| Sold Date | Sold Time | Symbol | Sell Order ID | Reason Reopen Blocked | Attempt Count | Last Attempt At |
+| --- | --- | --- | --- | --- | ---: | --- |
+| 2026-06-15 | 08:29 PT | UCTT | 6a... | cash_buffer | 0 |  |
 ```
 
-One pending reopen per line. Use the sell fill time when known; otherwise use
-the time the sell order is confirmed filled. If that symbol is later reopened
-and the reopen buy is confirmed filled, remove it from this file. Do not add
-quantities, prices, return calculations, broker order ids, or notes here. Those
+One pending reopen per row. Use the sell fill date/time when known; otherwise
+use the time the sell order is confirmed filled. If that symbol is later
+reopened and the reopen buy is confirmed filled, remove it from this file.
+Prices, quantities, return calculations, and complete broker payloads still
 belong in broker history or the optional audit ledger.
 
 ## When To Write
@@ -51,11 +53,12 @@ After a reopen workflow is done:
 1. Confirm each reopen buy reached `filled` state in Robinhood.
 2. Remove those reopened symbols from `data/private/sold-today.md`.
 
-## Daily Reset
+## No Daily Reset
 
-At the beginning of each Pacific trading day, clear the list before market
-checks begin. The helper command also resets automatically if the date in the
-file is stale.
+Do not clear this queue at the beginning of a new Pacific trading day. Pending
+reopen obligations can span multiple days. The helper keeps the old `--reset`
+flag for compatibility with older automation prompts, but it now only
+initializes or re-renders the file and preserves every existing pending entry.
 
 ```powershell
 $env:PYTHONPATH = "src"

@@ -15,7 +15,7 @@ Expected local files:
 - `private/close-summary.md`: ignored post-market close summary.
 - `private/top-10-buy-candidates.md`: ignored previous-run DD/buy watchlist.
 - `private/top-10-sell-candidates.md`: ignored previous-run sell watchlist.
-- `private/sold-today.md`: ignored daily sold-not-reopened queue.
+- `private/sold-today.md`: ignored durable pending-reopen queue.
 - `private/order-ledger.csv`: ignored append-only audit ledger. It is not the
   market-hours ownership source.
 - `private/LIVE_STATE.md`: deprecated ignored legacy Markdown snapshot.
@@ -41,5 +41,5 @@ through Robinhood. Mark delisted or rejected symbols as `active=false` and/or
 
 See `docs/current-symbols.md` for the current post-market cache workflow,
 `docs/shortlists.md` for previous-run candidate shortcuts,
-`docs/sold-today.md` for the daily sold-not-reopened queue, and
+`docs/sold-today.md` for the durable pending-reopen queue, and
 `docs/order-ledger.md` for the local audit ledger workflow.

@@ -48,10 +48,15 @@ concentration, and broker checks pass.
 At the start of a market-hours run:
 
 1. Read both shortlist files if they exist.
-2. Quote those symbols first through Robinhood.
+2. Quote those symbols first through Robinhood. With the fast helper, use:
+   `node scripts/rh_fast.mjs quotes --file data/private/top-10-sell-candidates.md`
+   and `node scripts/rh_fast.mjs quotes --file data/private/top-10-buy-candidates.md`.
 3. If one qualifies for sell or DD, execute/review it immediately.
-4. If no shortlist symbol qualifies, continue the full owned-position scan.
-5. If that full scan cannot complete, do not stop after a recent-DD subset.
+4. Do not start `FAST WATCH`, `positions --with-quotes`, or another broad
+   owned-position scan until the shortlist quote/review step is complete and
+   no shortlisted symbol qualifies.
+5. If no shortlist symbol qualifies, continue the full owned-position scan.
+6. If that full scan cannot complete, do not stop after a recent-DD subset.
    Directly verify the top downside holdings and any exposed `<= -10%` owned
    positions with no active buy order before reporting no DD due.
 

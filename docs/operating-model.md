@@ -9,9 +9,11 @@ can disappear quickly.
 Priority order:
 
 1. Reconcile positions, orders, fills, buying power, and cash.
-2. Reset `data/private/sold-today.md` if this is the first Pacific trading-day
-   run.
-3. Quote all owned positions.
+2. Read the previous-run top-10 sell and buy shortlist files if present, then
+   quote those symbols first and review/place any qualifying shortlisted sell
+   or DD before starting a broad owned-position scan.
+3. Only after no shortlisted symbol qualifies, quote the remaining owned
+   positions.
 4. Generate full-position sell candidates at or above 10% return.
 5. After a confirmed profitable sell fill, immediately attempt the base
    tracking reopen for that same symbol if fast blockers pass.
@@ -32,7 +34,8 @@ Priority order:
 - Read Robinhood broker state directly for the plan.
 - Do not rebuild or consult the local audit ledger before market-hours
   execution.
-- Reset `data/private/sold-today.md` for the new Pacific trading day.
+- Do not reset `data/private/sold-today.md`; pending reopen obligations can
+  span multiple days.
 - Refresh the tradable universe if a source is available.
 - Mark symbols that are halted, delisted, non-tradable, or not fractional
   eligible.
@@ -44,6 +47,7 @@ Run a tight monitor loop over owned positions:
 
 - Read the previous-run top-10 buy and sell shortlist files if present.
 - Quote shortlist symbols first.
+- Review/place any qualifying shortlisted sell or DD before broad scanning.
 - Quote owned symbols in batches.
 - Calculate sell return using bid-side pricing when available.
 - Surface any `sell_ready` positions immediately.
@@ -54,8 +58,9 @@ Run a tight monitor loop over owned positions:
   halted/restricted broker state, and normal base-lot sizing. Do not run a broad
   DD scan between the sell fill and this tracking reopen.
 - After sell orders from the run are placed and confirmed filled, append only
-  sell time and symbol to `data/private/sold-today.md` for symbols still
-  waiting for reopen and allowed to reopen by policy.
+  pending-reopen rows to `data/private/sold-today.md` for symbols still
+  waiting for reopen and allowed to reopen by policy, including sell date/time
+  and any available blocker metadata.
 - After reopen buys from the run are confirmed filled, remove those symbols
   from `data/private/sold-today.md`.
 - Check due double-downs after sell candidates.
@@ -73,7 +78,7 @@ Stale data should block new buys and warn on sell decisions.
 - Generate `data/private/top-10-buy-candidates.md`.
 - Generate `data/private/top-10-sell-candidates.md`.
 - Reconcile `data/private/sold-today.md` against broker-filled sell orders and
-  any completed same-day reopens.
+  any completed reopens.
 - Treat `data/private/LIVE_STATE.md` as deprecated.
 - Recompute global base coverage.
 - Produce a daily report:

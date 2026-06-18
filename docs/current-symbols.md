@@ -13,7 +13,7 @@ reviewing, or cancelling real orders.
 - `data/private/close-summary.md`: human-readable post-market summary.
 - `data/private/top-10-buy-candidates.md`: previous-run downside shortlist.
 - `data/private/top-10-sell-candidates.md`: previous-run upside shortlist.
-- `data/private/sold-today.md`: daily sold-not-reopened queue; not ownership
+- `data/private/sold-today.md`: durable pending-reopen queue; not ownership
   state or sell history.
 - `data/private/order-ledger.csv`: append-only audit history, not ownership
   state.

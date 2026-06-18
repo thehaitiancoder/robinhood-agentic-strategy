@@ -17,7 +17,7 @@ from agentic_strategy.sold_today import (
 
 
 class SoldTodayTest(unittest.TestCase):
-    def test_reset_writes_empty_daily_document(self) -> None:
+    def test_reset_initializes_empty_pending_reopen_document(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "sold-today.md"
 
@@ -25,8 +25,28 @@ class SoldTodayTest(unittest.TestCase):
 
             self.assertEqual(
                 path.read_text(encoding="utf-8"),
-                "# Sold Today Pending Reopen\nDate: 2026-06-10 PT\n",
+                "\n".join(
+                    [
+                        "# Pending Reopen Queue",
+                        "Updated: 2026-06-10 PT",
+                        "",
+                        "| Sold Date | Sold Time | Symbol | Sell Order ID | Reason Reopen Blocked | Attempt Count | Last Attempt At |",
+                        "| --- | --- | --- | --- | --- | ---: | --- |",
+                        "",
+                    ]
+                ),
             )
+
+    def test_reset_preserves_existing_pending_entries(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "sold-today.md"
+            path.write_text("# Sold Today Pending Reopen\nDate: 2026-06-09 PT\n\n06:45 PT OLD\n", encoding="utf-8")
+
+            reset_sold_today(output=path, trading_date="2026-06-10")
+
+            document = read_sold_today(path)
+            self.assertEqual(document.trading_date, "2026-06-10")
+            self.assertEqual(document.entries, (SoldTodayEntry(symbol="OLD", sold_date="2026-06-09", sold_time="06:45 PT"),))
 
     def test_record_appends_symbols_with_pacific_time(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -37,10 +57,21 @@ class SoldTodayTest(unittest.TestCase):
 
             self.assertEqual(
                 path.read_text(encoding="utf-8"),
-                "# Sold Today Pending Reopen\nDate: 2026-06-10 PT\n\n07:51 PT CBRL\n07:51 PT TGTX\n",
+                "\n".join(
+                    [
+                        "# Pending Reopen Queue",
+                        "Updated: 2026-06-10 PT",
+                        "",
+                        "| Sold Date | Sold Time | Symbol | Sell Order ID | Reason Reopen Blocked | Attempt Count | Last Attempt At |",
+                        "| --- | --- | --- | --- | --- | ---: | --- |",
+                        "| 2026-06-10 | 07:51 PT | CBRL |  |  | 0 |  |",
+                        "| 2026-06-10 | 07:51 PT | TGTX |  |  | 0 |  |",
+                        "",
+                    ]
+                ),
             )
 
-    def test_record_resets_stale_date_before_appending(self) -> None:
+    def test_record_preserves_stale_pending_entries_before_appending(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "sold-today.md"
             path.write_text("# Sold Today Pending Reopen\nDate: 2026-06-09 PT\n\n06:45 PT OLD\n", encoding="utf-8")
@@ -51,9 +82,13 @@ class SoldTodayTest(unittest.TestCase):
                 sold_at=datetime(2026, 6, 10, 15, 29, tzinfo=timezone.utc),
             )
 
+            document = read_sold_today(path)
             self.assertEqual(
-                path.read_text(encoding="utf-8"),
-                "# Sold Today Pending Reopen\nDate: 2026-06-10 PT\n\n08:29 PT UCTT\n",
+                document.entries,
+                (
+                    SoldTodayEntry(symbol="OLD", sold_time="06:45 PT", sold_date="2026-06-09"),
+                    SoldTodayEntry(symbol="UCTT", sold_time="08:29 PT", sold_date="2026-06-10"),
+                ),
             )
 
     def test_record_replaces_existing_pending_symbol(self) -> None:
@@ -72,7 +107,17 @@ class SoldTodayTest(unittest.TestCase):
 
             self.assertEqual(
                 path.read_text(encoding="utf-8"),
-                "# Sold Today Pending Reopen\nDate: 2026-06-10 PT\n\n08:01 PT CBRL\n",
+                "\n".join(
+                    [
+                        "# Pending Reopen Queue",
+                        "Updated: 2026-06-10 PT",
+                        "",
+                        "| Sold Date | Sold Time | Symbol | Sell Order ID | Reason Reopen Blocked | Attempt Count | Last Attempt At |",
+                        "| --- | --- | --- | --- | --- | ---: | --- |",
+                        "| 2026-06-10 | 08:01 PT | CBRL |  |  | 0 |  |",
+                        "",
+                    ]
+                ),
             )
 
     def test_mark_reopened_removes_pending_symbols(self) -> None:
@@ -97,7 +142,17 @@ class SoldTodayTest(unittest.TestCase):
 
             self.assertEqual(
                 path.read_text(encoding="utf-8"),
-                "# Sold Today Pending Reopen\nDate: 2026-06-10 PT\n\n07:29 PT UCTT\n",
+                "\n".join(
+                    [
+                        "# Pending Reopen Queue",
+                        "Updated: 2026-06-10 PT",
+                        "",
+                        "| Sold Date | Sold Time | Symbol | Sell Order ID | Reason Reopen Blocked | Attempt Count | Last Attempt At |",
+                        "| --- | --- | --- | --- | --- | ---: | --- |",
+                        "| 2026-06-10 | 07:29 PT | UCTT |  |  | 0 |  |",
+                        "",
+                    ]
+                ),
             )
 
     def test_read_round_trips_rendered_document(self) -> None:
@@ -108,8 +163,16 @@ class SoldTodayTest(unittest.TestCase):
                     SoldTodayDocument(
                         trading_date="2026-06-10",
                         entries=(
-                            SoldTodayEntry(symbol="CBRL", sold_time="06:46 PT"),
-                            SoldTodayEntry(symbol="TGTX", sold_time="06:51 PT"),
+                            SoldTodayEntry(symbol="CBRL", sold_time="06:46 PT", sold_date="2026-06-10"),
+                            SoldTodayEntry(
+                                symbol="TGTX",
+                                sold_time="06:51 PT",
+                                sold_date="2026-06-10",
+                                sell_order_id="order-2",
+                                reason_reopen_blocked="cash buffer",
+                                attempt_count=2,
+                                last_attempt_at="2026-06-10T15:01:00Z",
+                            ),
                         ),
                     )
                 ),
@@ -122,8 +185,16 @@ class SoldTodayTest(unittest.TestCase):
             self.assertEqual(
                 document.entries,
                 (
-                    SoldTodayEntry(symbol="CBRL", sold_time="06:46 PT"),
-                    SoldTodayEntry(symbol="TGTX", sold_time="06:51 PT"),
+                    SoldTodayEntry(symbol="CBRL", sold_time="06:46 PT", sold_date="2026-06-10"),
+                    SoldTodayEntry(
+                        symbol="TGTX",
+                        sold_time="06:51 PT",
+                        sold_date="2026-06-10",
+                        sell_order_id="order-2",
+                        reason_reopen_blocked="cash buffer",
+                        attempt_count=2,
+                        last_attempt_at="2026-06-10T15:01:00Z",
+                    ),
                 ),
             )
 

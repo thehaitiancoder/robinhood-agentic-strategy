@@ -65,8 +65,10 @@ broker cost basis.
 
 When a profit sell fills, add the symbol to `data/private/sold-today.md` after
 the sell execution workflow is complete if the symbol has not been reopened.
-This file is reset at the beginning of each Pacific trading day and contains
-only sell time plus symbol.
+The filename is legacy; this is a durable pending-reopen queue and must not be
+reset at the beginning of a new Pacific trading day. It records the sold date,
+symbol, sell order id when known, blocked-reopen reason, attempt count, and
+last attempt timestamp when available.
 
 Market-hours automation exception: after a qualifying profitable sell order is
 confirmed filled, immediately reopen that same symbol as a base tracking lot if
@@ -79,10 +81,11 @@ normal base-lot sizing. If the immediate reopen fills, do not keep the symbol in
 `sold-today.md`. If policy blocks reopen, do not add it there. If another
 blocker prevents reopen, leave or add it there for later.
 
-The sold-today list exists so the user can later reopen recently closed symbols
-before buying unrelated new names. It should contain only symbols sold today
-that are still not reopened. When a reopen buy is confirmed filled, remove that
-symbol from the list. It is not a trading authority. `REOPEN SOLD` must refresh
+The sold-today queue exists so the user can later reopen closed symbols before
+buying unrelated new names. It should contain only sold symbols that are still
+not reopened, even if they were sold on prior days. When a reopen buy is
+confirmed filled, remove that symbol from the queue. It is not a trading
+authority. `REOPEN SOLD` must refresh
 Robinhood first, skip symbols already held or covered by active buy orders,
 then apply the normal priority checks:
 

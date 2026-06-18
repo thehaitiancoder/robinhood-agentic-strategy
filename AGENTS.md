@@ -67,14 +67,16 @@ DD or sell is likely to come from that set. They are not trading authority:
 refresh Robinhood before acting. Update the shortlist files only after the main
 automation work is complete and no executable order is waiting.
 
-`data/private/sold-today.md` is the ignored daily queue of symbols sold during
-the current Pacific trading day that have not yet been reopened. It is not a
-sell history and not an ownership source. Reset it at the beginning of each
-market day. During sell execution, do not write it while an executable sell or
-double-down is waiting. After the sell workflow is done and sold orders are
-confirmed filled, append only the sell time and symbol, one line per pending
-reopen. After a reopen buy is confirmed filled, remove that symbol from the
-file. See `docs/sold-today.md`.
+`data/private/sold-today.md` is the ignored durable pending-reopen queue for
+symbols sold for profit that have not yet been reopened as tracking lots. The
+legacy path is kept for compatibility, but the file is no longer a daily list
+and must not be reset at the beginning of a new market day. It is not sell
+history and not an ownership source. During sell execution, do not write it
+while an executable sell or double-down is waiting. After the sell workflow is
+done and sold orders are confirmed filled, append only symbols still needing
+reopen, including sell date/time and any available blocker metadata. After a
+reopen buy is confirmed filled, remove that symbol from the file. See
+`docs/sold-today.md`.
 
 ## User Shortcuts
 
@@ -97,10 +99,11 @@ The user may use short commands. Treat them as exact workflow requests:
 - `OPEN CASH`: find eligible new openings after higher-priority checks pass.
 - `SELL REVIEW`: review sell-ready full-position market sells.
 - `DD REVIEW`: review due double-down market buys.
-- `REOPEN SOLD`: read today's pending-reopen list, refresh Robinhood, and
+- `REOPEN SOLD`: read the durable pending-reopen queue, refresh Robinhood, and
   reopen eligible sold names only after sell/DD obligations and cash buffer
   checks.
-- `SOLD TODAY`: show or update the daily sold-not-reopened queue.
+- `SOLD TODAY`: show or update the durable pending-reopen queue at the legacy
+  `data/private/sold-today.md` path.
 - `FAST QUOTES`: use `scripts/rh_fast.mjs quotes` for read-only bulk quotes.
 - `FAST ORDERS`: use `scripts/rh_fast.mjs orders` for read-only order scans.
 - `FAST POSITIONS`: use `scripts/rh_fast.mjs positions` for read-only
@@ -393,9 +396,9 @@ requests and the 1 PM close automation:
   `data/private/top-10-sell-candidates.md` from fresh broker positions and
   quotes. These are previous-run speed hints to check first, then refresh after
   the main work is complete.
-- `agentic_strategy.sold_today`: resets, appends, or removes symbols from
-  `data/private/sold-today.md`, the daily queue for symbols sold today and not
-  yet reopened. Append only after sell execution is done and fills are
+- `agentic_strategy.sold_today`: initializes, appends, or removes symbols from
+  `data/private/sold-today.md`, the durable queue for symbols sold for profit
+  and not yet reopened. Append only after sell execution is done and fills are
   confirmed. Remove only after the reopen buy is confirmed filled.
 - `agentic_strategy.live_state`: deprecated legacy Markdown snapshot writer.
   Do not use `data/private/LIVE_STATE.md` as the trading handoff surface.
@@ -427,8 +430,8 @@ shortlist files, `sold-today.md`, legacy live-state snapshots, raw broker
 payloads, or full account numbers. For cross-computer work, clone/pull the
 committed repo and refresh live broker state from Robinhood on that machine.
 Only run local persistence commands when the user asks for them, during the
-1 PM close automation, after confirmed sells or confirmed reopens for the daily
-sold-today queue, or for end-of-run shortlist cleanup.
+1 PM close automation, after confirmed sells or confirmed reopens for the
+pending-reopen queue, or for end-of-run shortlist cleanup.
 
 Run it with:
 
@@ -452,31 +455,32 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 During regular market hours, run the decision loop in this order:
 
 1. Reconcile account, positions, orders, and fills from Robinhood.
-2. Reset `data/private/sold-today.md` if this is the first run of the Pacific
-   trading day.
-3. Read the previous-run top-10 buy/sell shortlist files if present, then quote
-   those symbols first.
-4. Quote the remaining owned positions in batches. `FAST WATCH` may be used as
+2. Read the previous-run top-10 sell and buy shortlist files if present, then
+   quote those symbols first through Robinhood. Review/place any qualifying
+   shortlisted sell or DD before starting a broad owned-position scan.
+3. Only after no shortlisted symbol qualifies, quote the remaining owned
+   positions in batches. `FAST WATCH` may be used as
    a read-only speed screen, but any candidate still needs normal
    single-symbol confirmation before execution.
-5. Identify full-position sells at or above 10% combined return.
+4. Identify full-position sells at or above 10% combined return.
    After a profitable sell is confirmed filled, immediately attempt the
    pre-authorized base tracking reopen for that same symbol when the fast
    blockers pass and symbol policy permits reopen. Do this before any broad DD
    scan, and do not delay it for local persistence.
-6. Identify due double-downs. If the full basket scan is incomplete, directly
+5. Identify due double-downs. If the full basket scan is incomplete, directly
    verify the top downside holdings and any currently exposed `<= -10%` owned
    position with no active buy order before declaring that no DD is due.
-7. If double-down cash is short against actual broker buying power, identify
+6. If double-down cash is short against actual broker buying power, identify
    green positions to liquidate.
-8. Only if no double-down is due and the cash buffer is safe, open or reopen
+7. Only if no double-down is due and the cash buffer is safe, open or reopen
    positions from the eligible universe after applying `data/symbol-policy.csv`.
-9. Report all candidates, actions, blocks, and stale data.
-10. After sell execution is complete and sold orders are confirmed filled,
+8. Report all candidates, actions, blocks, and stale data.
+9. After sell execution is complete and sold orders are confirmed filled,
     append only symbols that still need reopen and are allowed to reopen by
-    policy to `data/private/sold-today.md`; after confirmed reopen fills,
-    remove those symbols from the file.
-11. After all executable work is done, update the top-10 buy and sell shortlist
+    policy to `data/private/sold-today.md`, including sell date/time and
+    available blocker metadata; after confirmed reopen fills, remove those
+    symbols from the file.
+10. After all executable work is done, update the top-10 buy and sell shortlist
     files from the just-seen positions and quotes. Write other local audit or
     cache data only when the user explicitly requested persistence in that run.
 
