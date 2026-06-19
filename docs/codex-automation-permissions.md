@@ -45,6 +45,8 @@ the strategy files that live inside the workspace:
 - `data/private/daily-summary.md`
 - `data/private/daily-summary.json`
 - `data/private/daily-return-cycles.csv`
+- `data/private/performance-history.md`
+- `data/private/performance-history.csv`
 - `data/private/latest/*`
 - `data/runtime/*`
 - `data/universe.csv`

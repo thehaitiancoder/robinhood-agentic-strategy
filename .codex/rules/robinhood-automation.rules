@@ -63,11 +63,16 @@ prefix_rule(
 prefix_rule(
     pattern = ["Start-Sleep", "-Seconds"],
     decision = "allow",
-    justification = "Allow half-hour market automations to wait briefly for the in-thread +15 minute sell/DD recheck.",
+    justification = "Allow market and extended-hours automations to wait briefly for in-thread sell/DD rechecks.",
     match = [
         "Start-Sleep -Seconds 60",
         "Start-Sleep -Seconds 120",
         "Start-Sleep -Seconds 300",
+        "Start-Sleep -Seconds 600",
+        "Start-Sleep -Seconds 900",
+        "Start-Sleep -Seconds 1200",
+        "Start-Sleep -Seconds 1500",
+        "Start-Sleep -Seconds 1800",
     ],
     not_match = [
         "Start-Sleep -Milliseconds 500",
@@ -104,7 +109,7 @@ prefix_rule(
 prefix_rule(
     pattern = ["python", "-m", "agentic_strategy.current_symbols"],
     decision = "allow",
-    justification = "Allow the 1 PM close automation to refresh data/private/current-symbols.json and close-summary.md from broker payloads.",
+    justification = "Allow the 5 PM daily automation to refresh data/private/current-symbols.json and close-summary.md from broker payloads.",
     match = [
         "python -m agentic_strategy.current_symbols --account-key Agentic --portfolio-json data/private/latest/portfolio.json --positions-json data/private/latest/positions.json --orders-json data/private/latest/orders.json --output-json data/private/current-symbols.json --summary-md data/private/close-summary.md --universe data/universe.csv --open-limit 50",
     ],
@@ -116,7 +121,7 @@ prefix_rule(
 prefix_rule(
     pattern = ["python", "-m", "agentic_strategy.ledger"],
     decision = "allow",
-    justification = "Allow explicit sync or 1 PM close runs to append broker audit records to data/private/order-ledger.csv.",
+    justification = "Allow explicit sync or 5 PM daily runs to append broker audit records to data/private/order-ledger.csv.",
     match = [
         "python -m agentic_strategy.ledger --help",
     ],
@@ -164,9 +169,10 @@ prefix_rule(
 prefix_rule(
     pattern = ["python", "-m", "agentic_strategy.afterhours_scan"],
     decision = "allow",
-    justification = "Allow after-hours Robinhood automations to classify whole-share DD and sell candidates from repo-local fast scan outputs.",
+    justification = "Allow extended-hours Robinhood automations to classify whole-share DD and sell candidates from repo-local fast scan outputs.",
     match = [
         "python -m agentic_strategy.afterhours_scan --positions-json data/runtime/afterhours-positions-quotes.json --orders-json data/runtime/afterhours-orders-all.json --active-orders-json data/runtime/afterhours-active-orders.json --output data/runtime/afterhours-scan.json",
+        "python -m agentic_strategy.afterhours_scan --positions-json data/runtime/premarket-positions-quotes.json --orders-json data/runtime/premarket-orders-all.json --active-orders-json data/runtime/premarket-active-orders.json --output data/runtime/premarket-scan.json",
     ],
     not_match = [
         "python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv",
@@ -176,9 +182,9 @@ prefix_rule(
 prefix_rule(
     pattern = ["python", "-m", "agentic_strategy.daily_summary"],
     decision = "allow",
-    justification = "Allow the 5 PM daily summary automation to write read-only performance reports under data/private.",
+    justification = "Allow the 5 PM daily summary automation to write read-only performance reports and private history under data/private.",
     match = [
-        "python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json",
+        "python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json --history-csv data/private/performance-history.csv --history-md data/private/performance-history.md",
     ],
     not_match = [
         "python -m agentic_strategy.afterhours_scan --positions-json data/runtime/afterhours-positions-quotes.json",
@@ -201,7 +207,7 @@ prefix_rule(
 prefix_rule(
     pattern = ["py", "-m", "agentic_strategy.current_symbols"],
     decision = "allow",
-    justification = "Allow close-cache refresh through the Windows py launcher.",
+    justification = "Allow post-market cache refresh through the Windows py launcher.",
 )
 
 prefix_rule(
@@ -231,7 +237,7 @@ prefix_rule(
 prefix_rule(
     pattern = ["py", "-m", "agentic_strategy.afterhours_scan"],
     decision = "allow",
-    justification = "Allow after-hours whole-share DD and sell candidate scanning through the Windows py launcher.",
+    justification = "Allow extended-hours whole-share DD and sell candidate scanning through the Windows py launcher.",
 )
 
 prefix_rule(

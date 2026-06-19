@@ -953,7 +953,7 @@ CGO,Calamos Global Total Return Fund Common Stock,stock,true,true,true,robinhood
 CGON,"CG Oncology, Inc. Common stock",stock,true,true,true,robinhood_validated,2026-06-10
 CGTX,"Cognition Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CHA,Chagee Holdings Limited American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
-CHAI,"Core AI Holdings, Inc. Common Shares",stock,true,true,true,robinhood_validated,2026-06-10
+CHAI,"Core AI Holdings, Inc. Common Shares",stock,true,false,true,robinhood_validated,2026-06-18
 CHAR,Charlton Aria Acquisition Corporation Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 CHCI,"Comstock Holding Companies, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CHCO,City Holding,stock,true,true,true,robinhood_validated,2026-06-09

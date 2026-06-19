@@ -14,6 +14,33 @@ from typing import Any
 
 UTC = timezone.utc
 ZERO = Decimal("0")
+HISTORY_FIELDS = [
+    "report_date",
+    "generated_at",
+    "account_value",
+    "equity_value",
+    "cash",
+    "buying_power",
+    "long_market_value",
+    "gross_paper_gain",
+    "gross_paper_loss",
+    "net_paper_pl",
+    "positions_up",
+    "positions_down",
+    "positions_flat",
+    "realized_profit",
+    "sell_proceeds",
+    "sold_cost_basis",
+    "realized_return_pct",
+    "sell_count",
+    "costed_sell_count",
+    "winning_sells",
+    "losing_sells",
+    "uncosted_quantity",
+    "average_hold_minutes",
+    "median_hold_minutes",
+    "profit_by_hour",
+]
 
 
 @dataclass
@@ -106,6 +133,8 @@ def write_daily_summary(
     markdown_output: str | Path,
     cycles_csv: str | Path | None = None,
     json_output: str | Path | None = None,
+    history_csv: str | Path | None = None,
+    history_markdown: str | Path | None = None,
 ) -> None:
     markdown_path = Path(markdown_output)
     markdown_path.parent.mkdir(parents=True, exist_ok=True)
@@ -118,6 +147,10 @@ def write_daily_summary(
         output = Path(json_output)
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    if history_markdown and not history_csv:
+        raise ValueError("history_csv is required when history_markdown is provided")
+    if history_csv:
+        write_performance_history(summary=summary, history_csv=history_csv, history_markdown=history_markdown)
 
 
 def render_markdown(summary: dict[str, Any]) -> str:
@@ -213,16 +246,135 @@ def render_markdown(summary: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def write_performance_history(
+    *,
+    summary: dict[str, Any],
+    history_csv: str | Path,
+    history_markdown: str | Path | None = None,
+) -> None:
+    csv_path = Path(history_csv)
+    rows = _read_history_rows(csv_path)
+    rows_by_date = {row["report_date"]: row for row in rows if row.get("report_date")}
+    current_row = _history_row(summary)
+    rows_by_date[current_row["report_date"]] = current_row
+    sorted_rows = [rows_by_date[key] for key in sorted(rows_by_date)]
+    _write_history_csv(csv_path, sorted_rows)
+
+    if history_markdown:
+        markdown_path = Path(history_markdown)
+        markdown_path.parent.mkdir(parents=True, exist_ok=True)
+        markdown_path.write_text(render_performance_history(sorted_rows), encoding="utf-8")
+
+
+def render_performance_history(rows: list[dict[str, str]]) -> str:
+    lines = [
+        "# Robinhood Strategy Performance History",
+        "",
+        f"Generated: {datetime.now(UTC).isoformat()}",
+        "",
+    ]
+
+    if not rows:
+        lines.extend(["No daily summaries have been recorded yet.", ""])
+        return "\n".join(lines)
+
+    first = rows[0]
+    latest = rows[-1]
+    cumulative_realized = sum((_decimal(row.get("realized_profit")) for row in rows), ZERO)
+    account_change = _decimal(latest.get("account_value")) - _decimal(first.get("account_value"))
+
+    lines.extend(
+        [
+            "## Latest Snapshot",
+            "",
+            "| Metric | Value |",
+            "| --- | ---: |",
+            f"| Dates tracked | {len(rows)} |",
+            f"| Latest date | {latest.get('report_date', '')} |",
+            f"| Account value | {_money(latest.get('account_value'))} |",
+            f"| Cash | {_money(latest.get('cash'))} |",
+            f"| Buying power | {_money(latest.get('buying_power'))} |",
+            f"| Net paper P/L | {_money(latest.get('net_paper_pl'))} |",
+            f"| Realized profit latest day | {_money(latest.get('realized_profit'))} |",
+            f"| Cumulative realized profit tracked | {_money(cumulative_realized)} |",
+            f"| Account value change since first tracked day | {_money(account_change)} |",
+            f"| Latest profit by hour | {_format_history_profit_by_hour(latest.get('profit_by_hour', ''))} |",
+            "",
+            "## Daily Rows",
+            "",
+            "| Date | Account Value | Cash | Buying Power | Realized Profit | Net Paper P/L | Sells | Win/Loss | Avg Hold | Median Hold | Uncosted Qty |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
+
+    for row in rows:
+        average_hold = _duration(_optional_decimal(row.get("average_hold_minutes")))
+        median_hold = _duration(_optional_decimal(row.get("median_hold_minutes")))
+        win_loss = _history_win_loss(row)
+        lines.append(
+            f"| {row.get('report_date', '')} | {_money(row.get('account_value'))} | "
+            f"{_money(row.get('cash'))} | {_money(row.get('buying_power'))} | "
+            f"{_money(row.get('realized_profit'))} | {_money(row.get('net_paper_pl'))} | "
+            f"{row.get('sell_count', '')} | {win_loss} | "
+            f"{average_hold} | {median_hold} | {_num(row.get('uncosted_quantity'))} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Notes",
+            "",
+            "- This file is regenerated from `performance-history.csv`.",
+            "- One row is kept per Pacific trading date; reruns replace that date instead of appending duplicates.",
+            "- Values come from the 5 PM read-only daily summary job and Robinhood broker artifacts fetched during that run.",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build a daily Robinhood strategy performance summary.")
-    parser.add_argument("--portfolio-json", required=True)
-    parser.add_argument("--positions-json", required=True)
-    parser.add_argument("--orders-json", required=True)
-    parser.add_argument("--output-md", required=True)
+    parser.add_argument("--portfolio-json")
+    parser.add_argument("--positions-json")
+    parser.add_argument("--orders-json")
+    parser.add_argument("--output-md")
     parser.add_argument("--cycles-csv")
     parser.add_argument("--output-json")
+    parser.add_argument("--history-csv")
+    parser.add_argument("--history-md")
+    parser.add_argument("--summary-json-input", help="Existing daily-summary.json to seed/update history only.")
     parser.add_argument("--date", help="Pacific date YYYY-MM-DD. Defaults to today's PT date.")
     args = parser.parse_args()
+
+    if args.summary_json_input:
+        if not args.history_csv:
+            parser.error("--history-csv is required with --summary-json-input")
+        summary = _read_json(args.summary_json_input)
+        write_performance_history(
+            summary=summary,
+            history_csv=args.history_csv,
+            history_markdown=args.history_md,
+        )
+        print(
+            json.dumps(
+                {
+                    "summary_json_input": args.summary_json_input,
+                    "history_csv": args.history_csv,
+                    "history_md": args.history_md,
+                    "report_date": summary["report_date"],
+                }
+            )
+        )
+        return 0
+
+    for flag, value in (
+        ("--portfolio-json", args.portfolio_json),
+        ("--positions-json", args.positions_json),
+        ("--orders-json", args.orders_json),
+        ("--output-md", args.output_md),
+    ):
+        if not value:
+            parser.error(f"{flag} is required unless --summary-json-input is used")
 
     summary = build_daily_summary(
         portfolio_payload=_read_json(args.portfolio_json),
@@ -235,6 +387,8 @@ def main() -> int:
         markdown_output=args.output_md,
         cycles_csv=args.cycles_csv,
         json_output=args.output_json,
+        history_csv=args.history_csv,
+        history_markdown=args.history_md,
     )
     print(
         json.dumps(
@@ -242,6 +396,8 @@ def main() -> int:
                 "output_md": args.output_md,
                 "cycles_csv": args.cycles_csv,
                 "output_json": args.output_json,
+                "history_csv": args.history_csv,
+                "history_md": args.history_md,
                 "report_date": summary["report_date"],
                 "sell_count": summary["totals"]["sell_count"],
                 "realized_profit": str(summary["totals"]["realized_profit"]),
@@ -492,6 +648,91 @@ def _summary_json(summary: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _history_row(summary: dict[str, Any]) -> dict[str, str]:
+    portfolio = summary["portfolio"]
+    paper = summary["paper"]
+    totals = summary["totals"]
+    realized_return_pct = totals.get("realized_return_pct")
+    average_hold_minutes = totals.get("average_hold_minutes")
+    median_hold_minutes = totals.get("median_hold_minutes")
+    return {
+        "report_date": str(summary["report_date"]),
+        "generated_at": str(summary["generated_at"]),
+        "account_value": str(portfolio.get("total_value", ZERO)),
+        "equity_value": str(portfolio.get("equity_value", ZERO)),
+        "cash": str(portfolio.get("cash", ZERO)),
+        "buying_power": str(portfolio.get("buying_power", ZERO)),
+        "long_market_value": str(_paper_value(paper, "long_market_value")),
+        "gross_paper_gain": str(_paper_value(paper, "gross_paper_gain")),
+        "gross_paper_loss": str(_paper_value(paper, "gross_paper_loss")),
+        "net_paper_pl": str(_paper_value(paper, "net_paper_gain")),
+        "positions_up": str(_paper_value(paper, "positions_up")),
+        "positions_down": str(_paper_value(paper, "positions_down")),
+        "positions_flat": str(_paper_value(paper, "positions_flat")),
+        "realized_profit": str(totals.get("realized_profit", ZERO)),
+        "sell_proceeds": str(totals.get("sell_proceeds", ZERO)),
+        "sold_cost_basis": str(totals.get("sold_cost_basis", ZERO)),
+        "realized_return_pct": str(realized_return_pct) if realized_return_pct not in (None, "") else "",
+        "sell_count": str(totals.get("sell_count", 0)),
+        "costed_sell_count": str(totals.get("costed_sell_count", 0)),
+        "winning_sells": str(totals.get("winning_sells", 0)),
+        "losing_sells": str(totals.get("losing_sells", 0)),
+        "uncosted_quantity": str(totals.get("uncosted_quantity", ZERO)),
+        "average_hold_minutes": str(average_hold_minutes) if average_hold_minutes not in (None, "") else "",
+        "median_hold_minutes": str(median_hold_minutes) if median_hold_minutes not in (None, "") else "",
+        "profit_by_hour": _history_profit_by_hour(summary["hourly"]),
+    }
+
+
+def _paper_value(paper: PaperSummary | dict[str, Any], key: str) -> Any:
+    if isinstance(paper, PaperSummary):
+        return getattr(paper, key)
+    return paper.get(key, ZERO)
+
+
+def _history_profit_by_hour(hourly: dict[str, dict[str, Decimal | int]]) -> str:
+    return ";".join(f"{hour}={row['profit']}" for hour, row in sorted(hourly.items()))
+
+
+def _read_history_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        return [
+            {field: str(row.get(field, "")) for field in HISTORY_FIELDS}
+            for row in reader
+            if row.get("report_date")
+        ]
+
+
+def _write_history_csv(path: Path, rows: list[dict[str, str]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=HISTORY_FIELDS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({field: row.get(field, "") for field in HISTORY_FIELDS})
+
+
+def _format_history_profit_by_hour(value: str) -> str:
+    parts = []
+    for item in value.split(";"):
+        if not item or "=" not in item:
+            continue
+        hour, profit = item.split("=", 1)
+        parts.append(f"{hour} {_money(profit)}")
+    return ", ".join(parts)
+
+
+def _history_win_loss(row: dict[str, str]) -> str:
+    wins = row.get("winning_sells", "")
+    losses = row.get("losing_sells", "")
+    if not wins and not losses:
+        return "n/a"
+    return f"{wins}/{losses}"
+
+
 def _cycle_json(cycle: SellCycle) -> dict[str, str]:
     return {
         "order_id": cycle.order_id,
@@ -627,6 +868,12 @@ def _decimal(value: Any) -> Decimal:
     return Decimal(str(value))
 
 
+def _optional_decimal(value: Any) -> Decimal | None:
+    if value in (None, ""):
+        return None
+    return _decimal(value)
+
+
 def _symbol(row: dict[str, Any]) -> str:
     return str(row.get("symbol") or "").strip().upper()
 
@@ -658,6 +905,11 @@ def _duration(minutes: Decimal | None) -> str:
         return ""
     if minutes < Decimal("60"):
         return f"{minutes.quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)} min"
+    if minutes >= Decimal("1440"):
+        total_minutes = int(minutes.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+        days, remaining_minutes = divmod(total_minutes, 1440)
+        hours, minute_remainder = divmod(remaining_minutes, 60)
+        return f"{days}d {hours}h {minute_remainder}m"
     hours = minutes / Decimal("60")
     return f"{hours.quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)} hr"
 

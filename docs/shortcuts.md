@@ -34,7 +34,7 @@ During market hours, refresh Robinhood before any trading decision. Do not use
 `data/private/LIVE_STATE.md` as the source of truth for current ownership.
 
 For "open N" requests, compare `data/universe.csv` against live Robinhood
-positions and active orders. The 1 PM close automation writes
+positions and active orders. The 5 PM daily automation writes
 `data/private/current-symbols.json` for planning, but it is still a
 point-in-time cache.
 

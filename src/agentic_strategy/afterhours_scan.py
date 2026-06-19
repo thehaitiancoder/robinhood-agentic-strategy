@@ -177,7 +177,7 @@ def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Scan owned positions for after-hours whole-share DD and sell candidates."
+        description="Scan owned positions for extended-hours whole-share DD and sell candidates."
     )
     parser.add_argument(
         "--positions-json",

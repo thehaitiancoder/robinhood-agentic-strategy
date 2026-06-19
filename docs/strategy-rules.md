@@ -139,7 +139,7 @@ When the user invokes `SAUCE` during regular market hours:
 5. Continue until 12:59 PM Pacific, then stop before the regular market close.
 
 `SAUCE` authorizes sells only. It does not authorize double-downs, openings,
-reopens, emergency green sells, or after-hours orders. Do not delay a qualifying
+reopens, emergency green sells, or extended-hours orders. Do not delay a qualifying
 sell for local ledger, shortlist, or sold-today writes.
 
 ## Execution And Sizing Rule

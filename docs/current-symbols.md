@@ -32,8 +32,9 @@ When the user says "open 50", the fast selection rule is:
 5. Pick eligible active/tradable universe symbols not in the blocked set.
 
 During market hours, do that directly from live Robinhood responses. After
-close, the 1 PM automation writes `current-symbols.json` so agents can inspect
-the last broker-backed state quickly.
+extended-hours trading closes, the 5 PM daily automation writes
+`current-symbols.json` so agents can inspect the last broker-backed state
+quickly.
 
 ## Command
 

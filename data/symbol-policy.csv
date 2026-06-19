@@ -400,6 +400,7 @@ LAWR,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.00
 LCCC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6064 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 LEO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.4557 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 LFAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.3149 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
+LILAP,manual_trade_only,false,false,false,false,Robinhood inactive instrument; user must handle manually,manual,,2026-06-18
 LIN,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.7142 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 LKSP,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.4916 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 LNT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.2810 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
@@ -631,6 +632,7 @@ SGU,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.682
 SIMA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.6374 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 SLF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.1079 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 SMBC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0975 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
+SMNR,manual_trade_only,false,false,false,false,Robinhood close-only/unlisted; user must handle manually,manual,,2026-06-18
 SNA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.3708 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 SNFCA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9616 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14
 SO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.4057 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-14

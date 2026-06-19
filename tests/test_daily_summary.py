@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import csv
+import json
 from pathlib import Path
 
-from agentic_strategy.daily_summary import build_daily_summary, write_daily_summary
+from agentic_strategy.daily_summary import build_daily_summary, write_daily_summary, write_performance_history
 
 
 class DailySummaryTest(unittest.TestCase):
@@ -80,6 +82,75 @@ class DailySummaryTest(unittest.TestCase):
             self.assertIn("Paper P/L", (root / "daily-summary.md").read_text(encoding="utf-8"))
             self.assertIn("order_id", (root / "cycles.csv").read_text(encoding="utf-8"))
             self.assertIn('"report_date": "2026-06-15"', (root / "daily-summary.json").read_text(encoding="utf-8"))
+
+    def test_updates_performance_history_once_per_report_date(self) -> None:
+        first = build_daily_summary(
+            portfolio_payload={"portfolio": {"total_value": "1000", "cash": "200", "buying_power": "250"}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={"orders": []},
+            report_date="2026-06-15",
+        )
+        second = build_daily_summary(
+            portfolio_payload={"portfolio": {"total_value": "1100", "cash": "300", "buying_power": "350"}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={"orders": []},
+            report_date="2026-06-15",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            history_csv = root / "performance-history.csv"
+            history_md = root / "performance-history.md"
+
+            write_daily_summary(
+                summary=first,
+                markdown_output=root / "daily-summary.md",
+                history_csv=history_csv,
+                history_markdown=history_md,
+            )
+            write_daily_summary(
+                summary=second,
+                markdown_output=root / "daily-summary.md",
+                history_csv=history_csv,
+                history_markdown=history_md,
+            )
+
+            with history_csv.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["account_value"], "1100")
+            markdown = history_md.read_text(encoding="utf-8")
+            self.assertIn("Robinhood Strategy Performance History", markdown)
+            self.assertIn("2026-06-15", markdown)
+            self.assertIn("$1,100.00", markdown)
+
+    def test_performance_history_accepts_saved_summary_json_shape(self) -> None:
+        summary = build_daily_summary(
+            portfolio_payload={"portfolio": {"total_value": "1000", "cash": "200", "buying_power": "250"}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={"orders": []},
+            report_date="2026-06-15",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            json_path = root / "daily-summary.json"
+            history_csv = root / "performance-history.csv"
+            history_md = root / "performance-history.md"
+            write_daily_summary(summary=summary, markdown_output=root / "daily-summary.md", json_output=json_path)
+
+            write_performance_history(
+                summary=json.loads(json_path.read_text(encoding="utf-8")),
+                history_csv=history_csv,
+                history_markdown=history_md,
+            )
+
+            with history_csv.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+
+            self.assertEqual(rows[0]["report_date"], "2026-06-15")
+            self.assertIn("$1,000.00", history_md.read_text(encoding="utf-8"))
 
 
 def _order(order_id: str, symbol: str, side: str, quantity: str, price: str, timestamp: str) -> dict[str, object]:

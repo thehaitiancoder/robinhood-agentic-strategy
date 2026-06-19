@@ -2,8 +2,11 @@
 
 Automation ids:
 
+- Premarket trade slots:
+  - `04-00-pt-rh-pre`
+  - `05-00-pt-rh-pre`
+  - `06-00-pt-rh-pre`
 - Market-hours half-hour entry slots:
-  - `06-00-pt-rh-mkt`
   - `06-30-pt-rh-mkt`
   - `07-00-pt-rh-mkt`
   - `07-30-pt-rh-mkt`
@@ -32,8 +35,8 @@ Automation ids:
   - `11-45-pt-rh-mkt`
   - `12-15-pt-rh-mkt`
   - `12-45-pt-rh-mkt`
-- `robinhood-strategy-1-pm-close-check`
 - After-hours trade slots:
+  - `13-00-pt-rh-ah`
   - `14-00-pt-rh-ah`
   - `15-00-pt-rh-ah`
   - `16-00-pt-rh-ah`
@@ -44,11 +47,12 @@ Automation ids:
 
 Visible automation names:
 
+- Premarket trade slots use `HH:mm PT - RH PRE`, for example
+  `04:00 PT - RH PRE`.
 - Market-hours entry slots use `HH:mm PT - RH MKT`, for example
   `09:00 PT - RH MKT`.
-- `13:00 PT - RH CLOSE`
 - After-hours slots use `HH:mm PT - RH AH`, for example
-  `14:00 PT - RH AH`.
+  `13:00 PT - RH AH`.
 - `17:00 PT - RH DAILY`
 - `Weekly RH Symbol Policy Refresh`
 - `Monthly RH Universe Discovery`
@@ -61,23 +65,33 @@ visible mobile chat-list title starts with the entry time even when runtime
 thread renaming is unavailable. The +15 minute recheck happens inside the
 preceding half-hour thread.
 
-Purpose: run the strategy priority loop during regular market hours without the
-user needing to manually remember checks, execute qualifying sell and
-double-down orders quickly before the market closes, then run a 1:00 PM Pacific
-post-market reconciliation that updates local state.
+Purpose: run the strategy priority loop during premarket, regular market, and
+after-hours windows without the user needing to manually remember checks,
+execute qualifying sell and double-down orders quickly, then run a 5:00 PM
+Pacific daily reconciliation that updates local state and reports performance.
 
 Schedule:
 
-- Market-hours entry automations: weekdays every 30 minutes from 6:00 AM
+- Premarket trade automations: weekdays at 4:00 AM, 5:00 AM, and 6:00 AM
+  Pacific.
+- `04:00 PT - RH PRE` and `05:00 PT - RH PRE` perform their normal
+  extended-hours pass first. If no executable whole-share sell/DD remains and
+  the `:30` mark for that slot is still in the future, they wait in the same
+  thread and run one fast `+30` minute recheck. `06:00 PT - RH PRE` does not
+  run a `+30` recheck because it must finish before `06:30 PT - RH MKT`.
+- Market-hours entry automations: weekdays every 30 minutes from 6:30 AM
   through 12:30 PM Pacific.
 - Each entry automation performs its normal priority loop first. If no
   executable sell/DD remains and the +15 minute mark for that slot is still in
   the future, it waits in the same thread and runs a fast +15 minute sell/DD
   recheck. Example: `10:30 PT - RH MKT` performs the 10:30 check, then covers
   the 10:45 recheck inside the same thread.
-- `robinhood-strategy-1-pm-close-check`: weekdays at exactly 1:00 PM Pacific.
-- After-hours trade automations: weekdays at 2:00 PM, 3:00 PM, and 4:00 PM
-  Pacific.
+- After-hours trade automations: weekdays at 1:00 PM, 2:00 PM, 3:00 PM, and
+  4:00 PM Pacific.
+- Each after-hours trade automation performs its normal extended-hours pass
+  first. If no executable whole-share sell/DD remains and the `:30` mark for
+  that slot is still in the future, it waits in the same thread and runs one
+  fast `+30` minute recheck.
 - `17-00-pt-rh-daily-summary`: every day at exactly 5:00 PM Pacific.
 - `weekly-rh-symbol-policy-refresh`: Sundays at 8:00 AM Pacific.
 - `monthly-rh-universe-discovery`: first Saturday of each month at exactly
@@ -99,8 +113,11 @@ UTC offsets.
 
 Current intended local encodings are:
 
-- market slots:
+- premarket slots:
+  - 04:00 PT: `BYHOUR=4;BYMINUTE=0`
+  - 05:00 PT: `BYHOUR=5;BYMINUTE=0`
   - 06:00 PT: `BYHOUR=6;BYMINUTE=0`
+- market slots:
   - 06:30 PT: `BYHOUR=6;BYMINUTE=30`
   - 07:00 PT: `BYHOUR=7;BYMINUTE=0`
   - 07:30 PT: `BYHOUR=7;BYMINUTE=30`
@@ -114,8 +131,8 @@ Current intended local encodings are:
   - 11:30 PT: `BYHOUR=11;BYMINUTE=30`
   - 12:00 PT: `BYHOUR=12;BYMINUTE=0`
   - 12:30 PT: `BYHOUR=12;BYMINUTE=30`
-- 1 PM close check: `BYHOUR=13;BYMINUTE=0`
 - after-hours trade slots:
+  - 13:00 PT: `BYHOUR=13;BYMINUTE=0`
   - 14:00 PT: `BYHOUR=14;BYMINUTE=0`
   - 15:00 PT: `BYHOUR=15;BYMINUTE=0`
   - 16:00 PT: `BYHOUR=16;BYMINUTE=0`
@@ -134,6 +151,11 @@ through 25 minutes after the slot, never at or after 13:00 PT. Outside that
 window, write only a concise late-start skip to automation memory if possible
 and stop.
 
+Premarket prompts must also hard-gate before reading docs or calling Robinhood.
+The `06:00 PT - RH PRE` automation must stop new broker reviews/placements by
+06:25 PT and hard-stop all work before 06:30 PT, leaving a concise handoff if
+anything remains, so it cannot overlap the `06:30 PT - RH MKT` automation.
+
 Thread titles:
 
 - Market-hours automation names must start with the entry slot time, for example
@@ -146,10 +168,11 @@ Thread titles:
 - If the `set_thread_title` tool is available in a future automation run, it
   may rename the thread to `MM-DD HH:mm PT - RH MKT`, but this is best-effort
   only and must not delay sell or double-down execution.
-- The 1 PM close automation name is `13:00 PT - RH CLOSE`; its first visible
-  response should start with `MM-DD 13:00 PT - RH CLOSE`.
+- Premarket automation names start with the slot time, for example
+  `04:00 PT - RH PRE`. The first visible response should start with
+  `MM-DD HH:mm PT - RH PRE`.
 - After-hours automation names start with the slot time, for example
-  `14:00 PT - RH AH`. The first visible response should start with
+  `13:00 PT - RH AH`. The first visible response should start with
   `MM-DD HH:mm PT - RH AH`.
 - The daily summary automation name is `17:00 PT - RH DAILY`; its first visible
   response should start with `MM-DD 17:00 PT - RH DAILY`.
@@ -337,8 +360,9 @@ Execution rules:
   must execute qualifying sell/DD immediately and must not place new openings.
 - If the main scan finds or is processing an executable sell/DD candidate, do
   not wait for the +15 recheck. Execution remains priority one.
-- If the main scan or recheck would run into 1:00 PM PT, stop trading work and
-  leave post-market persistence to the close automation.
+- If the main scan or recheck would run into 1:00 PM PT, stop regular-hours
+  market work and leave extended-hours trading to the `13:00 PT - RH AH`
+  automation.
 
 It emails `rdgustave@gmail.com` only for urgent execution outcomes:
 
@@ -352,51 +376,80 @@ It does not email routine no-action checks or `OPEN CASH AVAILABLE` by default.
 An incomplete DD scan is not routine no-action; it is a blocked scan and must
 email.
 
+## Premarket Trading
+
+The premarket trade slots run at `04:00`, `05:00`, and `06:00` Pacific on
+weekdays. They use the same narrow extended-hours execution rules as the
+after-hours slots.
+
+The `06:00 PT - RH PRE` slot has an extra runtime boundary: stop new broker
+reviews and placements by `06:25` Pacific and hard-stop all work before
+`06:30` Pacific. If anything remains, leave a concise handoff instead of
+continuing into the `06:30 PT - RH MKT` automation.
+
+The `04:00 PT - RH PRE` and `05:00 PT - RH PRE` slots should cover most of the
+hour with one in-thread `+30` recheck. If the first pass finishes before
+`HH:30`, no executable whole-share sell/DD remains, and the next slot boundary
+is not at risk, stay in the same thread, wait until `HH:30`, rerun the fresh
+broker-backed scan/classifier, and execute any qualifying whole-share sell/DD
+immediately. Do not run this recheck in the `06:00 PT - RH PRE` slot.
+
 ## After-Hours Trading
 
-The after-hours trade slots run at `14:00`, `15:00`, and `16:00` Pacific on
-weekdays. They are separate from the `13:00 PT - RH CLOSE` reconciliation. The
-close reconciliation remains persistence-only and must not place orders.
+The after-hours trade slots run at `13:00`, `14:00`, `15:00`, and `16:00`
+Pacific on weekdays. `13:00 PT - RH AH` is a trading lane, not a close
+reconciliation lane.
 
-After-hours execution scope is intentionally narrow:
+Extended-hours execution scope is intentionally narrow:
 
-- Use only live after-hours bid/ask prices for executable decisions. Do not use
-  official close as the buy/sell execution price.
+- Use only live premarket/after-hours bid/ask prices for executable decisions.
+  Do not use official close as the buy/sell execution price.
 - For DDs, reconstruct the current lot ladder from broker filled orders. If the
-  live after-hours ask is at or below the deepest due trigger, place only the
-  integer part of the combined due quantity as an after-hours limit buy. Leave
-  fractional leftovers unplaced and report them.
-- For sells, use live after-hours bid as the sell-side executable price. If the
-  integer sellable quantity is at least 1 share and bid-side return is at least
-  10%, place that integer quantity as an after-hours limit sell. If the
-  whole-share sell is confirmed filled and a fractional remainder is still
+  live extended-hours ask is at or below the deepest due trigger, place only
+  the integer part of the combined due quantity as an extended-hours limit buy.
+  Leave fractional leftovers unplaced and report them.
+- For sells, use live extended-hours bid as the sell-side executable price. If
+  the integer sellable quantity is at least 1 share and bid-side return is at
+  least 10%, place that integer quantity as an extended-hours limit sell. If
+  the whole-share sell is confirmed filled and a fractional remainder is still
   sellable, queue the remainder as a regular-hours market sell.
 - Do not place new openings, reopens, emergency-cash sells, or fractional
-  after-hours orders from these jobs.
+  extended-hours orders from these jobs.
 - Stop new broker reviews and placements at or after 17:00 Pacific, the end of
-  the standard Robinhood after-hours window.
+  the standard Robinhood extended-hours window.
 - If Robinhood returns a broker alert on review, do not place that order unless
   the alert is explicitly allowed by the automation prompt or the user has
   provided a direct override in the same run.
+
+Each after-hours slot should cover most of the hour with one in-thread `+30`
+recheck. If the first pass finishes before `HH:30`, no executable whole-share
+sell/DD remains, and current time is still before `HH:30`, stay in the same
+thread, wait until `HH:30`, rerun the fresh broker-backed scan/classifier, and
+execute any qualifying whole-share sell/DD immediately. Do not run additional
+rechecks after the `+30` pass, and stop before the next slot boundary.
 
 New-opening buys remain report-only in automation runs unless the user
 explicitly authorizes new openings in that run. The only standing reopen
 exception is the immediate base tracking reopen after a confirmed profitable
 sell fill during a market-hours automation run.
 
-## 1 PM Close Reconciliation
+## Daily Summary
 
-`robinhood-strategy-1-pm-close-check` runs at exactly 1:00 PM Pacific. At that
-time regular market hours are closed, so this automation must not place buy
-orders, sell orders, double-down orders, emergency-cash sells, or new-opening
-orders.
+`17-00-pt-rh-daily-summary` runs every day at exactly 5:00 PM Pacific. It is a
+read-only performance report and the standing daily local persistence window.
+It must never place, review, cancel, prepare, or suggest orders.
 
-The 1 PM close automation is the standing daily local persistence window. It
-should:
+It should:
 
 - refresh Robinhood broker truth for the Agentic account
 - fetch portfolio, positions, open/recent orders, queued orders, filled orders,
   cancellations, rejections, buying power, and cash
+- fetch the Agentic account portfolio with
+  `node scripts/rh_fast.mjs portfolio --account 878067701 --output data/runtime/daily-summary-portfolio.json`
+- fetch positions with quotes with
+  `node scripts/rh_fast.mjs positions --account 878067701 --with-quotes --output data/runtime/daily-summary-positions-quotes.json --summary-output data/runtime/daily-summary-positions.csv`
+- fetch all equity orders with
+  `node scripts/rh_fast.mjs orders --account 878067701 --all --output data/runtime/daily-summary-orders-all.json`
 - import broker order history, fills, cancellations, rejections, and known
   skipped-action reasons into `data/private/order-ledger.csv`; this is audit
   history only
@@ -413,45 +466,30 @@ should:
 - if full position coverage is incomplete, still validate the top downside
   holdings as next-session DD watch candidates by reconstructing lot state and
   comparing current ask to `next_trigger_price`; report only, do not place
-  orders after close
-- if that downside/DD validation cannot complete, mark the close report
+  orders during the daily summary
+- if that downside/DD validation cannot complete, mark the daily report
   `DD SCAN BLOCKED`, email `rdgustave@gmail.com` with subject
   `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`, and include the exact
   blocker plus the symbols that were and were not verified
-- produce a concise close summary in Codex
-
-If a sell or double-down candidate is found at or after 1:00 PM Pacific, report
-it as a next-market-session candidate only. Do not review or place an order from
-the close automation.
-
-The close automation does not email routine no-action summaries by default. It
-emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
-fails, local ledger/cache update fails, DD scan coverage is blocked, or a
-high-priority next-session candidate is detected after the market has closed.
-
-## Daily Summary
-
-`17-00-pt-rh-daily-summary` runs every day at exactly 5:00 PM Pacific. It is a
-read-only performance report and must never place, review, cancel, prepare, or
-suggest orders.
-
-It should:
-
-- fetch the Agentic account portfolio with
-  `node scripts/rh_fast.mjs portfolio --account 878067701 --output data/runtime/daily-summary-portfolio.json`
-- fetch positions with quotes with
-  `node scripts/rh_fast.mjs positions --account 878067701 --with-quotes --output data/runtime/daily-summary-positions-quotes.json --summary-output data/runtime/daily-summary-positions.csv`
-- fetch all equity orders with
-  `node scripts/rh_fast.mjs orders --account 878067701 --all --output data/runtime/daily-summary-orders-all.json`
 - generate `data/private/daily-summary.md`,
   `data/private/daily-summary.json`, and
-  `data/private/daily-return-cycles.csv` with
-  `python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json`
+  `data/private/daily-return-cycles.csv`
+- update `data/private/performance-history.csv` and regenerate
+  `data/private/performance-history.md`; reruns for the same Pacific date must
+  replace that date's row instead of appending duplicates
+- use this command for the performance report and history:
+  `python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json --history-csv data/private/performance-history.csv --history-md data/private/performance-history.md`
 
 The report should highlight portfolio paper gain, portfolio paper loss, net
 paper P/L, realized trading-day profit by Pacific hour, sell-cycle hold time
 from first buy to sell, account value, cash, buying power, and any uncosted
 sold quantity caused by incomplete order history.
+
+The daily automation does not email routine no-action summaries by default. It
+emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
+fails, local ledger/cache update fails, DD scan coverage is blocked, or a
+high-priority next-session candidate is detected after extended-hours trading
+has closed.
 
 ## Weekly Symbol Policy Refresh
 
@@ -543,8 +581,8 @@ run. Updating the top-10 shortlist files at the end of a market-hours run is
 allowed as cleanup only after executable work is complete. Updating
 `data/private/sold-today.md` after confirmed sell fills or confirmed reopen
 fills is also allowed because it is the durable pending-reopen queue, but it
-must never delay a qualifying market-hours sell or double-down order. The 1 PM
-close automation is the standing exception and should update the audit ledger,
+must never delay a qualifying market-hours sell or double-down order. The 5 PM
+daily automation is the standing exception and should update the audit ledger,
 `data/private/current-symbols.json`, `data/private/close-summary.md`, and both
 shortlist files. Local audit/cache writes must never delay a qualifying
 market-hours sell or double-down order.
@@ -559,7 +597,7 @@ confirmation when the broker review is clean. It must still obey broker/tool
 blocks and must not claim an order was placed unless the broker placement call
 actually succeeded.
 
-The 1 PM close automation must never place real orders. It is for summary and
+The 5 PM daily automation must never place real orders. It is for summary and
 local persistence only.
 
 If persistence was explicitly requested and fails, report the exact path and

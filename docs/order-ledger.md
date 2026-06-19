@@ -17,7 +17,7 @@ such as `Agentic` or a masked last-four label, not a full account number.
 ## What To Record After Close
 
 Record broker workflow events during explicit audit/persistence runs, especially
-the 1 PM close reconciliation:
+the 5 PM daily reconciliation:
 
 - review previews from `review_equity_order`
 - placed order snapshots from `place_equity_order`
@@ -32,7 +32,7 @@ duplicate order-state rows when an order was first recorded manually and later
 appears in broker order history with the same order id, state, timestamp, fill
 quantity, and average price.
 
-After importing current order history during the close workflow, generate
+After importing current order history during the daily reconciliation workflow, generate
 `data/private/current-symbols.json` and `data/private/close-summary.md` with
 `agentic_strategy.current_symbols` so a new agent can see the last post-market
 broker-backed cache quickly.
