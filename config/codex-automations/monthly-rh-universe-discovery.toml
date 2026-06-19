@@ -1,0 +1,23 @@
+version = 1
+id = "monthly-rh-universe-discovery"
+kind = "cron"
+name = "Monthly RH Universe Discovery"
+prompt = '''Hard time gate first, before reading docs or calling Robinhood: check current Pacific time. This monthly universe discovery job is valid only on the first Saturday of the month at or after 08:00 PT. If this run is not on the first Saturday, starts before 08:00 PT, or is not clearly off-market/weekend, write a concise skip to automation memory if possible, do not query Robinhood, and stop.
+
+Start the first visible response with `MM-DD 08:00 PT - RH UNIVERSE`. Use only the Agentic Robinhood account. Broker data is source of truth for tradability validation. Read AGENTS.md, docs/automation-monitor.md, docs/universe-management.md, and docs/symbol-policy.md after the time gate.
+
+This automation is universe and policy maintenance only. Do not call broker order review or placement tools. Do not place, review, cancel, prepare, or suggest buy, sell, reopen, double-down, emergency-cash, or opening orders. Do not touch data/private/sold-today.md, top-10 shortlist files, order-ledger.csv, current-symbols.json, close-summary.md, or LIVE_STATE.md.
+
+Run `node scripts/monthly_universe_discovery.mjs --run --account 878067701`. This script fetches current Nasdaq Trader nasdaqlisted.txt and otherlisted.txt files, filters likely common-stock candidates not already in data/universe.csv, validates candidates through Robinhood get_equity_tradability, writes source/evidence artifacts under data/runtime/monthly-universe-discovery/<date>/, and merges only active/tradable/fractional symbols into data/universe.csv.
+
+Read the discovery summary JSON/Markdown. If accepted symbols were merged into data/universe.csv, run `node scripts/weekly_symbol_policy_refresh.mjs --run --account 878067701` so new names are classified before the next market session. Then run `python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv`.
+
+Report a concise summary with the discovery summary path, candidate count, local rejection count, broker checked count, accepted count, rejected count, universe rows before and after, active/tradable/fractional universe count, whether symbol-policy was refreshed, policy row counts, and any blockers. Email only if discovery, Robinhood validation, or policy validation is blocked.'''
+status = "ACTIVE"
+rrule = "FREQ=MONTHLY;BYDAY=1SA;BYHOUR=15;BYMINUTE=0;BYSECOND=0"
+model = "gpt-5.4"
+reasoning_effort = "xhigh"
+execution_environment = "local"
+cwds = ["C:\\Users\\ralph\\Documents\\dev\\robinhood-agentic-strategy"]
+created_at = 1781721600000
+updated_at = 1781599206423
