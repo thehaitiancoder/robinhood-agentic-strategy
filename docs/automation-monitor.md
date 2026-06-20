@@ -156,6 +156,21 @@ The `06:00 PT - RH PRE` automation must stop new broker reviews/placements by
 06:25 PT and hard-stop all work before 06:30 PT, leaving a concise handoff if
 anything remains, so it cannot overlap the `06:30 PT - RH MKT` automation.
 
+Market holiday gate:
+
+- The committed holiday file is `config/market-holidays.csv`.
+- After the hard Pacific-time gate and before docs, Robinhood calls, order
+  reviews, or trading/cache writes, premarket, market-hours, after-hours, and
+  daily summary automations must run:
+  `python -m agentic_strategy.market_calendar --date today --calendar config/market-holidays.csv --market US_EQUITIES`
+- If the helper reports `market_status=closed`, the automation writes a concise
+  `MARKET HOLIDAY SKIP` note if possible and stops.
+- If the helper reports `market_status=early_close`, the automation should
+  treat the reported `close_time_pt` as the regular-session boundary for that
+  date and avoid normal market-hours work after that boundary.
+- Keep the CSV refreshed from NYSE/Nasdaq holiday calendars before the covered
+  date range expires.
+
 Thread titles:
 
 - Market-hours automation names must start with the entry slot time, for example

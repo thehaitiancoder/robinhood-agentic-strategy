@@ -1,0 +1,35 @@
+date,market,status,close_time_et,close_time_pt,description,source
+2026-01-01,US_EQUITIES,closed,,,New Year's Day,NYSE/Nasdaq
+2026-01-19,US_EQUITIES,closed,,,Martin Luther King Jr. Day,NYSE/Nasdaq
+2026-02-16,US_EQUITIES,closed,,,Washington's Birthday,NYSE/Nasdaq
+2026-04-03,US_EQUITIES,closed,,,Good Friday,NYSE/Nasdaq
+2026-05-25,US_EQUITIES,closed,,,Memorial Day,NYSE/Nasdaq
+2026-06-19,US_EQUITIES,closed,,,Juneteenth National Independence Day,NYSE/Nasdaq
+2026-07-03,US_EQUITIES,closed,,,Independence Day observed,NYSE/Nasdaq
+2026-09-07,US_EQUITIES,closed,,,Labor Day,NYSE/Nasdaq
+2026-11-26,US_EQUITIES,closed,,,Thanksgiving Day,NYSE/Nasdaq
+2026-11-27,US_EQUITIES,early_close,13:00,10:00,Day after Thanksgiving,NYSE/Nasdaq
+2026-12-24,US_EQUITIES,early_close,13:00,10:00,Christmas Eve,NYSE/Nasdaq
+2026-12-25,US_EQUITIES,closed,,,Christmas Day,NYSE/Nasdaq
+2027-01-01,US_EQUITIES,closed,,,New Year's Day,NYSE
+2027-01-18,US_EQUITIES,closed,,,Martin Luther King Jr. Day,NYSE
+2027-02-15,US_EQUITIES,closed,,,Washington's Birthday,NYSE
+2027-03-26,US_EQUITIES,closed,,,Good Friday,NYSE
+2027-05-31,US_EQUITIES,closed,,,Memorial Day,NYSE
+2027-06-18,US_EQUITIES,closed,,,Juneteenth National Independence Day observed,NYSE
+2027-07-05,US_EQUITIES,closed,,,Independence Day observed,NYSE
+2027-09-06,US_EQUITIES,closed,,,Labor Day,NYSE
+2027-11-25,US_EQUITIES,closed,,,Thanksgiving Day,NYSE
+2027-11-26,US_EQUITIES,early_close,13:00,10:00,Day after Thanksgiving,NYSE
+2027-12-24,US_EQUITIES,closed,,,Christmas Day observed,NYSE
+2028-01-17,US_EQUITIES,closed,,,Martin Luther King Jr. Day,NYSE
+2028-02-21,US_EQUITIES,closed,,,Washington's Birthday,NYSE
+2028-04-14,US_EQUITIES,closed,,,Good Friday,NYSE
+2028-05-29,US_EQUITIES,closed,,,Memorial Day,NYSE
+2028-06-19,US_EQUITIES,closed,,,Juneteenth National Independence Day,NYSE
+2028-07-03,US_EQUITIES,early_close,13:00,10:00,Independence Day early close,NYSE
+2028-07-04,US_EQUITIES,closed,,,Independence Day,NYSE
+2028-09-04,US_EQUITIES,closed,,,Labor Day,NYSE
+2028-11-23,US_EQUITIES,closed,,,Thanksgiving Day,NYSE
+2028-11-24,US_EQUITIES,early_close,13:00,10:00,Day after Thanksgiving,NYSE
+2028-12-25,US_EQUITIES,closed,,,Christmas Day,NYSE

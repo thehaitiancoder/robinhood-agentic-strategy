@@ -240,6 +240,16 @@ Pacific-time gate before reading docs or calling Robinhood; the 06:00 premarket
 run must stop new broker reviews/placements by 06:25 Pacific and hard-stop
 before 06:30 Pacific.
 
+After the hard Pacific-time gate and before reading docs, calling Robinhood, or
+writing trading/cache state, every premarket, market-hours, after-hours, and
+daily summary automation must run the local market calendar gate:
+`python -m agentic_strategy.market_calendar --date today --calendar
+config/market-holidays.csv --market US_EQUITIES`. If it reports
+`market_status=closed`, the automation must write a concise
+`MARKET HOLIDAY SKIP` note if possible and stop. The committed calendar file is
+`config/market-holidays.csv`; update it from NYSE/Nasdaq holiday calendars
+before the covered date range expires.
+
 `17-00-pt-rh-daily-summary` must not place buy or sell orders. Its job is to
 refresh Robinhood broker truth, import broker order history/fills/cancellations
 into the audit ledger, update `data/private/current-symbols.json`, write
