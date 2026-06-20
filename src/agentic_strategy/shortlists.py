@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .sold_today import _as_pt as _as_pacific_time
 
@@ -262,9 +262,12 @@ def _quotes_by_symbol(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
         for result in results:
             if not isinstance(result, dict):
                 continue
-            quote = result.get("quote") if isinstance(result.get("quote"), dict) else result
-            if isinstance(quote, dict) and isinstance(result.get("close"), dict):
-                quote = {**quote, "close": result["close"]}
+            result_row = cast(dict[str, Any], result)
+            quote_payload = result_row.get("quote")
+            quote = cast(dict[str, Any], quote_payload) if isinstance(quote_payload, dict) else result_row
+            close_payload = result_row.get("close")
+            if isinstance(close_payload, dict):
+                quote = {**quote, "close": close_payload}
             symbol = _symbol(quote)
             if symbol:
                 quotes[symbol] = quote

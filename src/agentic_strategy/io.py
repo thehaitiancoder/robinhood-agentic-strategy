@@ -5,7 +5,7 @@ import json
 from dataclasses import asdict, is_dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .models import (
     Decision,
@@ -130,8 +130,8 @@ def _jsonable(value: Any) -> Any:
         return str(value)
     if isinstance(value, Decision):
         return asdict(value)
-    if is_dataclass(value):
-        return asdict(value)
+    if is_dataclass(value) and not isinstance(value, type):
+        return asdict(cast(Any, value))
     if isinstance(value, list):
         return [_jsonable(item) for item in value]
     if isinstance(value, dict):

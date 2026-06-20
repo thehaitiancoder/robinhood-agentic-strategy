@@ -579,8 +579,16 @@ def _hourly_profit(cycles: list[SellCycle]) -> dict[str, dict[str, Decimal | int
 
 
 def _portfolio(payload: dict[str, Any]) -> dict[str, Decimal]:
-    data = payload.get("portfolio") if isinstance(payload.get("portfolio"), dict) else payload.get("data", payload)
-    buying_power = data.get("buying_power") if isinstance(data.get("buying_power"), dict) else {}
+    portfolio_payload = payload.get("portfolio")
+    data_payload = payload.get("data")
+    if isinstance(portfolio_payload, dict):
+        data = portfolio_payload
+    elif isinstance(data_payload, dict):
+        data = data_payload
+    else:
+        data = payload
+    buying_power_payload = data.get("buying_power")
+    buying_power = buying_power_payload if isinstance(buying_power_payload, dict) else {}
     return {
         "total_value": _decimal(data.get("total_value")),
         "equity_value": _decimal(data.get("equity_value")),

@@ -6,13 +6,20 @@ from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
 from decimal import Decimal, ROUND_DOWN, ROUND_FLOOR
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
 
 from .ladder import next_lot_shares, next_trigger_price
 
 
 ACTIVE_ORDER_STATES = {"new", "queued", "unconfirmed", "confirmed", "partially_filled"}
 ZERO = Decimal("0")
+
+
+class _DueLot(TypedDict):
+    lot_index: int
+    trigger: Decimal
+    shares: Decimal
+    remaining: Decimal
 
 
 @dataclass(frozen=True)
@@ -367,8 +374,8 @@ def _due_lots(
     base_price: Decimal,
     base_shares: Decimal,
     buy_price: Decimal,
-) -> list[dict[str, Decimal | int]]:
-    due: list[dict[str, Decimal | int]] = []
+) -> list[_DueLot]:
+    due: list[_DueLot] = []
     trigger = base_price
     shares = base_shares
     for lot_index in range(2, 80):
