@@ -27,13 +27,14 @@ The repo now includes a local read-only monitor that:
 Remaining work:
 
 - Add quote staleness thresholds.
-- Add persistent ledger reconstruction from fills.
+- Add broker-fill lot reconstruction that does not slow market-hours execution.
 - Add broader tests against spreadsheet-derived examples.
 
 Success criteria:
 
 - Calculations match hand checks.
-- The ledger can be rebuilt from broker state and local fills.
+- Lot state can be rebuilt from broker state and local audit history after
+  close.
 - The system can explain every candidate and every skipped action.
 
 ## Phase 2: Paper or Simulated Execution
@@ -57,10 +58,12 @@ Use the Agentic account with `$1` base positions:
 
 - Start with a small approved symbol subset.
 - Use market execution for all strategy actions.
-- Validate dollar-based fractional sizing for stocks at or above `$1.00`.
-- Validate whole-share quantity sizing for sub-dollar stocks.
+- Validate dollar-based fractional sizing for openings/reopenings at or above
+  `$1.00`.
+- Validate whole-share quantity sizing for sub-dollar openings/reopenings.
+- Validate exact share quantity sizing for every double-down order.
 - Obey any runtime broker/tool confirmation requirements.
-- Compare broker fills against local ledger.
+- Compare broker fills against the local audit ledger after close.
 - Validate fractional order behavior.
 
 Success criteria:
@@ -82,7 +85,8 @@ Expand symbol coverage in batches:
 
 Before larger base sizes:
 
-- Add persistent SQLite ledger.
+- Add optional persistent SQLite audit/lot store outside the market-hours
+  execution path.
 - Add automatic daily reports.
 - Add circuit breakers.
 - Add test coverage for every hard rule.

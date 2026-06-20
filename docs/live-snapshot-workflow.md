@@ -38,12 +38,49 @@ The converter writes:
 - `data/runtime/latest/quotes.csv`
 - `data/runtime/latest/universe.validations.csv`
 
-`--position-state` is optional but needed for reliable double-down evaluation
-until a persistent ledger exists. Its columns are:
+`--position-state` is optional but needed for reliable offline double-down
+evaluation until broker-fill lot reconstruction is implemented. Its columns
+are:
 
 ```csv
 symbol,invested_cost,current_lot_index,next_trigger_price,next_lot_shares
 ```
+
+## Generate Post-Market Current Symbols
+
+After the close, generate a compact current-symbol cache for planning and fast
+universe exclusion:
+
+```bash
+PYTHONPATH=src python -m agentic_strategy.current_symbols \
+  --account-key Agentic \
+  --portfolio-json data/private/latest/portfolio.json \
+  --positions-json data/private/latest/positions.json \
+  --orders-json data/private/latest/orders.json \
+  --output-json data/private/current-symbols.json \
+  --summary-md data/private/close-summary.md \
+  --universe data/universe.csv \
+  --open-limit 50
+```
+
+Do not use this cache as market-hours trading truth. Refresh Robinhood before
+placing, reviewing, or cancelling orders.
+
+## Generate Candidate Shortlists
+
+After the main automation work is complete, generate the two top-10 shortlist
+documents:
+
+```bash
+PYTHONPATH=src python -m agentic_strategy.shortlists \
+  --positions-json data/private/latest/positions.json \
+  --quotes-json data/private/latest/quotes.json \
+  --buy-output data/private/top-10-buy-candidates.md \
+  --sell-output data/private/top-10-sell-candidates.md
+```
+
+These files are previous-run hints. Read and quote them first in the next
+market-hours run, but do not treat them as trading truth.
 
 ## Refresh The Universe
 
@@ -68,7 +105,8 @@ PYTHONPATH=src python3 -m agentic_strategy.monitor \
   --positions data/runtime/latest/positions.csv \
   --quotes data/runtime/latest/quotes.csv \
   --universe data/universe.csv \
-  --config-json config/strategy.example.json
+  --config-json config/strategy.example.json \
+  --symbol-policy data/symbol-policy.csv
 ```
 
 The monitor remains read-only. It emits decisions such as target sells,

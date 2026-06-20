@@ -12,7 +12,8 @@ PYTHONPATH=src python3 -m agentic_strategy.monitor \
   --positions examples/positions.csv \
   --quotes examples/quotes.csv \
   --universe examples/universe.csv \
-  --config-json config/strategy.example.json
+  --config-json config/strategy.example.json \
+  --symbol-policy data/symbol-policy.csv
 ```
 
 ## Run Tests
@@ -55,6 +56,9 @@ symbol,bid_price,ask_price,last_price,updated_at
 symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
 ```
 
+`symbol-policy.csv` is optional and defaults to `data/symbol-policy.csv` when
+present. It blocks new-open candidates when `allow_open=false`.
+
 ## Decision Actions
 
 - `sell_target`: full-position sell candidate at or above 10% combined return.
@@ -69,3 +73,13 @@ symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
 - `new_open_candidate`: eligible unowned symbol when no double-downs are due.
 - `block_new_open`: a hard rule blocks additional openings.
 - `block`: missing data or other non-order-specific rule block.
+
+`double_down_ready` metrics include:
+
+- `order_sizing`: `exact_share_quantity`
+- `due_lots`: comma-separated due same-symbol ladder lots included in the order
+- `order_quantity`: the combined broker `quantity` to review/place
+- `integer_part_quantity`: fallback quantity to retry if Robinhood rejects the
+  fractional DD quantity and the value is at least 1 share
+- `order_amount_source`: `estimate_only_do_not_place_dd_by_dollar_amount`
+- `estimated_cost`: cash/risk estimate only, not the DD order input

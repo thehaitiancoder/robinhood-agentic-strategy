@@ -1,16 +1,33 @@
 # Data Directory
 
-Do not commit private account exports, raw broker payloads, or logs containing
-full account numbers.
+Do not commit private account exports, current-symbol caches, close summaries,
+legacy live-state snapshots, raw broker payloads, order ledgers, or logs
+containing full account numbers. For cross-computer work, pull the committed
+repo and refresh live broker state from Robinhood before trading.
 
-Expected future files:
+Expected local files:
 
 - `universe.csv`: canonical Robinhood-validated symbols and metadata.
-- `ledger.csv` or `ledger.db`: local strategy state.
+- `symbol-policy.csv`: committed non-private strategy filters layered over the
+  universe for opens and reopens.
+- `private/current-symbols.json`: ignored post-market broker-derived symbol
+  cache for planning and universe exclusion.
+- `private/close-summary.md`: ignored post-market close summary.
+- `private/top-10-buy-candidates.md`: ignored previous-run DD/buy watchlist.
+- `private/top-10-sell-candidates.md`: ignored previous-run sell watchlist.
+- `private/sold-today.md`: ignored durable pending-reopen queue.
+- `private/order-ledger.csv`: ignored append-only audit ledger. It is not the
+  market-hours ownership source.
+- `private/LIVE_STATE.md`: deprecated ignored legacy Markdown snapshot.
+- `ledger.csv` or `ledger.db`: future durable local strategy state.
 - `fills.csv`: normalized fills from Robinhood order history.
 - `quotes/`: cached quote snapshots for backtesting and debugging.
 - `private/`: ignored local-only files.
 - `runtime/`: ignored generated state.
+
+The weekly policy refresh writes its metrics, policy diffs, backups, summaries,
+and resumable state under `runtime/weekly-symbol-policy-refresh/` and
+`runtime/symbol-policy-backups/`.
 
 Minimum `universe.csv` columns:
 
@@ -21,3 +38,8 @@ symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
 `source` should be `robinhood_validated` after an agent confirms the symbol
 through Robinhood. Mark delisted or rejected symbols as `active=false` and/or
 `tradable=false`; do not delete them by default.
+
+See `docs/current-symbols.md` for the current post-market cache workflow,
+`docs/shortlists.md` for previous-run candidate shortcuts,
+`docs/sold-today.md` for the durable pending-reopen queue, and
+`docs/order-ledger.md` for the local audit ledger workflow.

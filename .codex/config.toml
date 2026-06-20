@@ -1,0 +1,19 @@
+# Project-local Codex defaults for the Robinhood strategy automation.
+#
+# This repo is trusted to run scheduled market checks. The automation cwd must
+# stay at the repo root so data/private/ and data/runtime/ remain inside the
+# writable workspace.
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+
+[sandbox_workspace_write]
+network_access = true
+writable_roots = []
+exclude_tmpdir_env_var = false
+exclude_slash_tmp = false
+
+[shell_environment_policy]
+inherit = "all"
+set = { PYTHONPATH = "src" }

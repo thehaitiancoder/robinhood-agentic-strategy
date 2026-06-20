@@ -38,9 +38,12 @@ base increases by `$1`, then continues to `$3`, `$4`, and so on.
 Open or reopen only when:
 
 - No owned stock is due for double-down.
-- The 10% cash buffer remains intact after the order.
+- The 15% cash buffer remains intact after the order.
 - The position would remain below 10% of portfolio value.
 - The symbol is active, tradable, and eligible for the intended order.
+- The symbol policy allows the new open or reopen.
+- The symbol is not halted, paused, frozen, or otherwise blocked from current
+  order execution.
 
 There is no share-price cap for opening positions. A high-priced stock can still
 be opened with a `$1` fractional order if the account has deployable cash and
@@ -58,6 +61,46 @@ There is also no wash-sale or tax cooldown for openings or reopenings. Strategy
 decisions use actual fill prices and actual dollars invested, not tax-adjusted
 broker cost basis.
 
+## Sold-Today Reopen Queue
+
+When a profit sell fills, add the symbol to `data/private/sold-today.md` after
+the sell execution workflow is complete if the symbol has not been reopened.
+The filename is legacy; this is a durable pending-reopen queue and must not be
+reset at the beginning of a new Pacific trading day. It records the sold date,
+symbol, sell order id when known, blocked-reopen reason, attempt count, and
+last attempt timestamp when available.
+
+Market-hours automation exception: after a qualifying profitable sell order is
+confirmed filled, immediately reopen that same symbol as a base tracking lot if
+the fast blockers pass. This keeps a live marker on strong intraday runners and
+lets the strategy capture repeated sell cycles. Do not run a broad DD scan
+between the sell fill and this tracking reopen; only check current buying power
+and 15% cash buffer, symbol policy, known due or cash-short DDs from this run,
+active buy orders for the same symbol, halted/restricted broker state, and
+normal base-lot sizing. If the immediate reopen fills, do not keep the symbol in
+`sold-today.md`. If policy blocks reopen, do not add it there. If another
+blocker prevents reopen, leave or add it there for later.
+
+The sold-today queue exists so the user can later reopen closed symbols before
+buying unrelated new names. It should contain only sold symbols that are still
+not reopened, even if they were sold on prior days. When a reopen buy is
+confirmed filled, remove that symbol from the queue. It is not a trading
+authority. `REOPEN SOLD` must refresh
+Robinhood first, skip symbols already held or covered by active buy orders,
+then apply the normal priority checks:
+
+- sell targets first
+- due double-downs before reopens
+- emergency cash needs before reopens
+- 15% cash buffer
+- 10% single-position cap
+- active, tradable, eligible symbol
+- symbol policy allows reopen
+
+If policy blocks reopen, do not keep the symbol in the sold-today queue. If cash
+is needed for double-downs or the buffer, leave the symbol in the sold-today
+pending reopen list for later user-directed reopening.
+
 ## Profit Sell Rule
 
 Sell the full combined position whenever the position reaches 10% profit.
@@ -71,19 +114,54 @@ return_pct = ((bid_price * quantity) - invested_cost) / invested_cost
 Use bid-side pricing for sell decisions when available. Last trade can overstate
 the executable return for thin or volatile names.
 
+During a market-hours automation run, sell priority must not become an endless
+sell loop. After the current sell batch has been placed and each attempted sell
+is filled, blocked, canceled, rejected, or left as a known active broker order,
+the run must check due double-downs with fresh buying power before starting
+another broad sell batch or waiting for the +15 recheck. A refreshed watch that
+still shows sell candidates is not a valid reason to skip DDs.
+
+## Manual Sell-Auto Trigger
+
+`SELL AUTO UNTIL CLOSE`, abbreviated `SAUCE`, is a manual chat trigger for an
+active sell-only loop. It is pre-authorized to place qualifying full-position
+10% profit sells after a clean broker review without asking the user for another
+confirmation.
+
+When the user invokes `SAUCE` during regular market hours:
+
+1. Scan current live broker positions and quotes for sell targets.
+2. For each candidate, refresh/review the sell through the broker workflow.
+3. If the broker review is clean, the symbol is not halted or restricted, the
+   full sellable quantity is available, and bid-side return is still at least
+   10%, place the full-position market sell immediately.
+4. Resume scanning for the next candidate.
+5. Continue until 12:59 PM Pacific, then stop before the regular market close.
+
+`SAUCE` authorizes sells only. It does not authorize double-downs, openings,
+reopens, emergency green sells, or extended-hours orders. Do not delay a qualifying
+sell for local ledger, shortlist, or sold-today writes.
+
 ## Execution And Sizing Rule
 
 Strategy orders use immediate market execution when criteria are met. This
 applies to openings, reopenings, double-downs, target sells, and emergency green
 sells.
 
+Do not place market orders while a symbol is halted, paused for volatility,
+frozen, or not accepting orders. Treat the displayed halt price as stale. After
+trading resumes, refresh Robinhood quote/order state and re-run the normal
+sell/DD/opening checks from live broker data.
+
 Do not use GTC limit orders or broker-native persistent target exits as the
 strategy design. The execution system should monitor rules and execute market
 orders when criteria are met. The user does not want manual order monitoring.
 
 Do not interpret market execution to mean every buy is dollar-based fractional.
-Stocks priced at `$1.00` or higher use dollar-based fractional order sizing;
-sub-dollar penny stocks use whole-share quantity order sizing.
+Openings and reopenings priced at `$1.00` or higher use dollar-based fractional
+order sizing; sub-dollar penny stocks use whole-share quantity order sizing.
+Double-down buys are different: they must use exact share quantity sizing from
+the lot ladder.
 
 If the active broker or agent tool requires review or explicit confirmation for
 real-money order placement, implementation must obey that runtime constraint
@@ -112,6 +190,46 @@ The next lot buys:
 lot_n_shares = lot_(n-1)_shares * 2
 ```
 
+Double-down broker orders must be reviewed and placed with share quantity, not
+rounded `dollar_amount`. When only one DD lot is due, use `quantity=lot_n_shares`.
+When more than one DD lot is due for the same symbol at the current ask,
+combine those due lots into one broker order with `quantity` equal to the sum of
+the due lot shares. Use the estimated dollar value only to check actual buying
+power and concentration risk.
+
+If Robinhood rejects the fractional DD quantity, retry the same DD with only the
+integer part of the combined quantity when that integer part is at least 1
+share. Do not round up or convert the DD to a dollar order; if the integer part
+is zero, report the DD as broker-blocked.
+
+A DD order must pass the executable-price guard twice. Before placement, the
+fresh broker buy-side ask must be at or below every included lot trigger. For a
+combined DD order, the guard trigger is the deepest included trigger. After
+placement, compare the broker returned `price` or `average_price` with the guard
+trigger; if an active order is missing that price or is above the trigger,
+cancel it immediately and report the guard action.
+
+During live market checks, a full basket scan is preferred. If the monitor
+cannot exhaustively scan every live position, it must still validate the top
+downside holdings directly before reporting that no double-down is due. Any
+owned symbol exposed by the downside shortlist, a partial broker/fast scan, or
+other current broker-backed evidence at `<= -10%` return and with no active buy
+order is a mandatory DD verification candidate.
+
+That `<= -10%` screen is not automatic buy authority. For each candidate, fetch
+the filled buy/order history needed to reconstruct current lot state, calculate
+all same-symbol DD lots whose triggers are at or above the current ask, refresh
+the live quote, and buy the combined due-lot quantity only if current ask price
+is at or below the deepest included trigger and cash, buffer, concentration,
+broker checks, and the post-placement order-price guard pass. Do not stop after
+checking only symbols that already doubled down recently.
+
+If the monitor cannot exhaustively scan the basket and cannot verify those
+mandatory downside candidates, it must not call the result "no DD due." The
+correct status is `DD SCAN BLOCKED` with the exact missing coverage or tool
+failure. During market-hours automations, that blocked scan must email the user
+because a due double-down may be waiting.
+
 The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
 
 | Lot range | Drop from previous trigger | Number of buys |
@@ -128,20 +246,23 @@ or cash rules prevent another double-down.
 
 ## Cash Priority
 
-Disposable cash is not simply buying power. It must account for the cash buffer
-and known double-down obligations.
+For openings and reopens, disposable cash is not simply buying power. It must
+account for the cash buffer and known double-down obligations.
 
 ```text
-cash_floor = portfolio_value * 0.10
+cash_floor = portfolio_value * 0.15
 disposable_cash = buying_power - cash_floor
 ```
 
-If any double-down is due, disposable cash is reserved for double-downs first.
-New positions are paused.
+The cash floor is a reserve for double-downs. It blocks new openings, sold-symbol
+reopens, and post-sell tracking reopens, but it must not block a due DD merely
+because executing the DD would move buying power below the floor. For DD
+affordability, use actual broker buying power plus concentration and broker
+review checks. If any double-down is due, new positions are paused.
 
 ## Emergency Cash Mode
 
-If a double-down is due and there is not enough disposable cash:
+If a double-down is due and there is not enough actual broker buying power:
 
 1. Pause all new opens and reopens.
 2. Identify positions with positive return below 10%.

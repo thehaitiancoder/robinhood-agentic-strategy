@@ -11,6 +11,7 @@ from .io import (
     load_universe_csv,
     report_to_json,
 )
+from .symbol_policy import DEFAULT_SYMBOL_POLICY_CSV, read_symbol_policy_csv
 
 
 def main() -> int:
@@ -20,6 +21,11 @@ def main() -> int:
     parser.add_argument("--quotes", required=True, help="Path to quotes CSV snapshot.")
     parser.add_argument("--universe", required=True, help="Path to universe CSV snapshot.")
     parser.add_argument("--config-json", help="Optional JSON strategy config override.")
+    parser.add_argument(
+        "--symbol-policy",
+        default=str(DEFAULT_SYMBOL_POLICY_CSV),
+        help="Optional symbol policy CSV. Defaults to data/symbol-policy.csv when present.",
+    )
     args = parser.parse_args()
 
     report = evaluate_strategy(
@@ -28,6 +34,7 @@ def main() -> int:
         quotes=load_quotes_csv(args.quotes),
         universe=load_universe_csv(args.universe),
         config=load_config_json(args.config_json),
+        symbol_policies=read_symbol_policy_csv(args.symbol_policy) if args.symbol_policy else None,
     )
     print(report_to_json(report))
     return 0

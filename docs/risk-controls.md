@@ -8,12 +8,18 @@ exhaustion.
 
 These conditions must block the proposed action:
 
-- Cash buffer would fall below 10%.
+- Cash buffer would fall below 15% for a new opening, sold-symbol reopen, or
+  post-sell tracking reopen. This is not a DD blocker; the 15% floor is
+  reserved to fund due double-downs.
+- Symbol policy blocks the proposed open or reopen.
+- Due DD cost exceeds actual broker buying power.
 - Single position would exceed 10% of portfolio value.
 - Any owned symbol is due for double-down and the proposed action is a new open
   or reopen.
-- Symbol is halted, delisted, inactive, not tradable, or not eligible for the
-  intended order.
+- Symbol is halted, paused for volatility, frozen, delisted, inactive, not
+  tradable, or not eligible for the intended order. For temporary halts, do not
+  use the frozen displayed price as quote authority; re-quote and re-evaluate
+  after trading resumes.
 - Quote is stale or missing for a trade decision.
 - Cash account sale proceeds are unsettled and therefore not spendable.
 - Broker review returns an alert that invalidates the trade.
@@ -28,29 +34,34 @@ These should warn but not necessarily block:
 - Position is near the 10% concentration cap.
 - The symbol had recent corporate action, reverse split, or delisting risk.
 - The symbol is thinly traded.
-- The strategy ledger differs from broker-reported quantity.
+- The post-market cache differs from broker-reported quantity.
+- The symbol policy has a future review date.
 
 ## Circuit Breakers
 
 Pause new buying if:
 
 - More than a configured number of orders fail in a short period.
-- Broker account state cannot be reconciled.
+- Broker account state cannot be reconciled from Robinhood.
 - Buying power drops unexpectedly.
 - Quote data becomes unavailable for owned positions.
-- The ledger has missing lot history for an open position.
+- Broker fill history is insufficient to reconstruct lot state for an open
+  position.
 
 Pause all automation and ask for review if:
 
 - A real order appears in broker history that the strategy did not create or
   import.
 - A sell-ready position cannot be sold due to broker restrictions.
+- A sell-ready or DD-ready position is halted. Report the blocked action and
+  re-check after trading resumes; do not substitute a different action just
+  because the halted symbol cannot trade.
 - A required double-down is blocked by the 10% concentration cap.
 - The account type changes from cash to margin or vice versa.
 
 ## Audit Requirements
 
-For every proposed order, store:
+During explicit audit/persistence windows, record:
 
 - Rule inputs.
 - Quote snapshot.

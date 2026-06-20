@@ -36,7 +36,8 @@ PYTHONPATH=src python3 -m agentic_strategy.monitor \
   --positions examples/positions.csv \
   --quotes examples/quotes.csv \
   --universe examples/universe.csv \
-  --config-json config/strategy.example.json
+  --config-json config/strategy.example.json \
+  --symbol-policy data/symbol-policy.csv
 ```
 
 Run tests:
@@ -47,7 +48,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 
 ## Hard Guardrails
 
-- Keep at least 10% of portfolio value as cash buffer.
+- Keep at least 15% of portfolio value as cash buffer.
 - Do not open or reopen positions while any owned symbol is due for a
   double-down.
 - Do not allow one position to exceed 10% of portfolio value.
@@ -69,9 +70,25 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `examples/`: sample snapshots for local monitor runs.
 - `docs/strategy-rules.md`: strategy rules in plain English.
 - `docs/universe-management.md`: how to build and maintain the RH universe.
+- `docs/symbol-policy.md`: durable open/reopen filters layered over the
+  universe.
 - `docs/live-snapshot-workflow.md`: how to convert live Robinhood tool outputs
   into monitor snapshots without committing private account data.
 - `docs/monitor-usage.md`: how to run the read-only monitor.
+- `docs/current-symbols.md`: post-market current-symbol cache and opening
+  candidate selector.
+- `docs/shortlists.md`: previous-run top-10 buy/sell watchlists for faster
+  market checks.
+- `docs/sold-today.md`: durable pending-reopen queue at the legacy
+  `sold-today.md` path.
+- `docs/fast-mcp-workflows.md`: read-only fast Robinhood MCP scripts for broad
+  scans and planning.
+- `docs/live-state.md`: deprecated legacy live-state handoff workflow.
+- `docs/order-ledger.md`: how to persist local audit ledger events.
+- `docs/shortcuts.md`: short commands the user can give future agents.
+- `docs/automation-monitor.md`: Codex automation schedule, alerts, and writable roots.
+- `scripts/weekly_symbol_policy_refresh.mjs`: weekend historical range refresh
+  for generated symbol-policy rows, with Yahoo primary and Robinhood fallback.
 - `docs/operating-model.md`: daily and intraday operating flow.
 - `docs/data-model.md`: entities, fields, and calculations.
 - `docs/risk-controls.md`: hard blocks, warnings, and circuit breakers.
@@ -80,7 +97,9 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 - `docs/decisions.md`: confirmed strategy decisions.
 - `config/strategy.example.yaml`: first machine-readable rules draft.
 - `config/strategy.example.json`: config used by the Python monitor.
-- `data/README.md`: where future universe, fills, and ledger data should live.
+- `data/README.md`: where universe, private caches, audit ledger, fills, and runtime data live.
+- `scripts/`: local helper scripts, including read-only fast Robinhood MCP
+  workflows.
 
 ## Source References
 

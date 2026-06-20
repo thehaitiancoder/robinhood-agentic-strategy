@@ -21,6 +21,140 @@ When future agents receive symbols:
 Do not delete delisted or inactive symbols by default. Mark them inactive so the
 system has an audit trail and does not keep rediscovering the same dead ticker.
 
+Strategy filters live in `data/symbol-policy.csv`, not in the universe file.
+If a stock should remain known but no longer be opened or reopened, add or update
+its policy row instead of changing broker-truth fields such as `active`,
+`tradable`, or `fractional_eligible`. See `docs/symbol-policy.md`.
+
+## Current Coverage
+
+As of the 2026-06-09 universe import, `data/universe.csv` contains the original
+S&P 500 batch plus S&P MidCap 400 and S&P SmallCap 600 constituents. The
+S&P 400/600 batch was pulled from public constituent tables and then validated
+against Robinhood instrument data before merging.
+
+Import summary:
+
+- 400 S&P MidCap 400 rows parsed.
+- 603 S&P SmallCap 600 rows parsed.
+- 1,003 unique source symbols processed.
+- 1,002 source symbols validated as active/tradable on Robinhood.
+- `CWEN.A` was not found by Robinhood and is kept inactive/non-tradable.
+- Committed universe size after the import: 1,495 rows.
+
+Ignored import artifacts may exist locally under
+`data/private/sp-400-600.source.csv`,
+`data/private/sp-400-600.validations.csv`, and
+`data/private/sp-400-600.import-summary.json`. Those files are local evidence
+only; the committed durable state is `data/universe.csv`.
+
+As of the 2026-06-10 exchange-listed expansion, the universe was expanded from
+official Nasdaq Trader symbol directories after explicit user approval for
+read-only bulk Robinhood validation. Candidate priority after the S&P indexes
+was:
+
+1. Nasdaq Global Select common stocks.
+2. Nasdaq Global Market common stocks.
+3. Nasdaq Capital Market common stocks.
+4. NYSE common stocks.
+5. NYSE American common stocks.
+6. Other listed common stocks.
+
+Expansion summary:
+
+- 4,280 post-dedupe common-stock candidates parsed from Nasdaq Trader symbol
+  directories.
+- 1,518 new symbols validated as active/tradable/fractional on Robinhood.
+- 222 candidates rejected or not found before the 1,518 target was reached.
+- `SEZL` is retained in the universe but marked `tradable=false` and
+  `fractional_eligible=false` after Robinhood rejected new fractional openings.
+- Committed universe size after the expansion: 3,013 rows, including 3,000
+  active/tradable/fractional rows and 13 retained blocked/non-fractional rows.
+
+Ignored expansion artifacts may exist locally under:
+
+- `data/runtime/nasdaqlisted.txt`
+- `data/runtime/otherlisted.txt`
+- `data/runtime/universe-expansion-candidates.csv`
+- `data/runtime/universe-expansion.validations.csv`
+- `data/runtime/universe-expansion.rejections.csv`
+
+As of the 2026-06-11 exchange-listed expansion, the remaining Nasdaq Trader
+candidate list was filtered against the committed universe and validated again
+through Robinhood. This run added another 1,000 active/tradable/fractional
+symbols without placing orders.
+
+Expansion summary:
+
+- 2,762 fresh candidates remained after excluding all existing universe rows.
+- 1,740 candidates were checked before the 1,000-symbol target was reached.
+- 1,000 symbols validated as active/tradable/fractional on Robinhood.
+- 733 candidates were rejected or not found during the validation pass.
+- Accepted symbols came from the next priority buckets: 618 Nasdaq Capital
+  Market common stocks and 382 NYSE common stocks.
+- `KALV` is retained in the universe but marked `tradable=false` and
+  `fractional_eligible=false` after Robinhood showed a marketwide trading halt
+  on 2026-06-11. Revalidate it after trading resumes before re-enabling.
+- `CRMT` is retained as active/tradable but marked
+  `fractional_eligible=false` after Robinhood rejected a 2026-06-11 sold-list
+  reopen with `You cannot open new fractional positions on this stock.`
+- Committed universe size after the expansion: 4,013 rows, including 4,000
+  rows initially validated as active/tradable/fractional and 15 retained
+  blocked/non-fractional rows after the KALV and CRMT blocks.
+
+Ignored expansion artifacts may exist locally under:
+
+- `data/runtime/universe-expansion-2026-06-11-candidates.csv`
+- `data/runtime/universe-expansion-2026-06-11.validations.csv`
+- `data/runtime/universe-expansion-2026-06-11.rejections.csv`
+
+As of the 2026-06-15 final Nasdaq Trader sweep, the remaining exchange-listed
+common-stock candidates were validated through Robinhood and merged only when
+Robinhood reported them active, tradable, and fractionally tradable.
+
+Expansion summary:
+
+- 141 remaining Nasdaq Trader candidates were checked.
+- 72 symbols validated as active/tradable/fractional on Robinhood.
+- 69 symbols were rejected or not found and preserved as evidence.
+- Committed universe size after the expansion: 5,088 rows, including 5,072
+  active/tradable/fractional rows.
+
+Ignored expansion artifacts may exist locally under:
+
+- `data/runtime/universe-expansion-2026-06-15-candidates.csv`
+- `data/runtime/universe-expansion-2026-06-15.validations.csv`
+- `data/runtime/universe-expansion-2026-06-15.rejections.csv`
+
+## Monthly Discovery
+
+`monthly-rh-universe-discovery` runs the first Saturday of each month at
+8:00 AM Pacific. It is intended to catch new IPOs, listings that become newly
+fractional/tradable on Robinhood, ticker changes that appear in the current
+Nasdaq Trader directories, and stale rejected symbols whose broker status has
+changed.
+
+The automation runs:
+
+```powershell
+node scripts/monthly_universe_discovery.mjs --run --account 878067701
+```
+
+The script fetches current Nasdaq Trader `nasdaqlisted.txt` and
+`otherlisted.txt`, filters likely common-stock candidates not already in
+`data/universe.csv`, validates candidates through Robinhood
+`get_equity_tradability`, and merges only active/tradable/fractional rows into
+`data/universe.csv`. It writes raw source files, candidate rows, local filter
+rejections, broker validation rows, broker rejections, and summaries under:
+
+```text
+data/runtime/monthly-universe-discovery/<YYYY-MM-DD>/
+```
+
+After accepted rows are merged, the monthly automation should run the normal
+symbol-policy refresh so newly added names are filtered before the next market
+session.
+
 ## Validation CSV
 
 The merge utility expects the same columns as the canonical universe:
@@ -52,4 +186,34 @@ PYTHONPATH=src python3 -m agentic_strategy.universe \
   --universe data/universe.csv \
   --validations data/private/validated-symbols.csv \
   --output data/runtime/universe.preview.csv
+```
+
+## Bulk Robinhood Validation
+
+`scripts/bulk_validate_robinhood_universe.mjs` performs read-only calls to the
+Robinhood Agentic MCP `get_equity_tradability` tool using the locally configured
+Codex connector credential. Use it only after the user explicitly approves bulk
+Robinhood validation. It uses `scripts/rh_fast_mcp_client.mjs` and does not
+place orders.
+
+Default inputs and outputs:
+
+- input: `data/runtime/universe-expansion-candidates.csv`
+- output: `data/runtime/universe-expansion.validations.csv`
+- rejection evidence: `data/runtime/universe-expansion.rejections.csv`
+
+Run it with the bundled or system Node runtime:
+
+```powershell
+$env:RH_ACCOUNT_NUMBER = "<agentic account number>"
+node scripts/bulk_validate_robinhood_universe.mjs
+```
+
+Useful environment overrides:
+
+```powershell
+$env:RH_ACCOUNT_NUMBER = "<agentic account number>"
+$env:RH_VALIDATION_NEEDED = "1518"
+$env:RH_VALIDATION_DATE = "2026-06-10"
+node scripts/bulk_validate_robinhood_universe.mjs
 ```

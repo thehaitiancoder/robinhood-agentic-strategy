@@ -38,9 +38,14 @@ For this strategy:
 - The execution system should monitor criteria and submit market orders when a
   target sell, emergency green sell, double-down, open, or reopen condition is
   met.
-- Stocks at or above `$1.00` use dollar-based fractional sizing when eligible.
+- Openings and reopenings at or above `$1.00` use dollar-based fractional
+  sizing when eligible.
 - Sub-dollar penny stocks use whole-share quantity sizing and should not be
   bought fractionally.
+- Double-down buys must be submitted with share `quantity`, not with a rounded
+  `dollar_amount`. When multiple same-symbol DD lots are due, combine the due
+  lot shares into one order. If Robinhood rejects the fractional DD quantity,
+  retry the integer part only when it is at least 1 share.
 - Fractional market orders should be treated as regular-hours-only unless live
   tool review says otherwise. Whole-share sub-dollar orders still need live
   tradability and broker review/response handling.
