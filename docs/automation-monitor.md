@@ -326,6 +326,12 @@ Execution rules:
   order. Do not place DDs with a rounded `dollar_amount`; dollar values are
   estimates for cash and risk checks only. If Robinhood rejects the fractional
   DD quantity, retry the integer part only when it is at least 1 share.
+- If a DD is due but the remaining due quantity has `integer_qty=0`, classify
+  it as a fractional-only leftover, not a DD coverage blocker. Keep the symbol
+  eligible for future DD checks, report the leftover, and record/update
+  `data/runtime/dd-fractional-leftovers.csv` as a same-day speed hint. Re-check
+  the symbol if the quote, position quantity, active-order state, or deeper
+  trigger changes enough to make at least 1 whole share executable.
 - If the full live position basket cannot be exhaustively scanned, the monitor
   must still validate the top downside holdings directly before reporting no
   DD. Any owned symbol shown by the top downside shortlist, a partial broker or
@@ -343,7 +349,8 @@ Execution rules:
   cannot be fetched, the market run is blocked. Start the report with exactly
   `DD SCAN BLOCKED`, email `rdgustave@gmail.com`, include the exact blocker and
   which symbols were/weren't verified, and do not report a routine no-action
-  result.
+  result. Fractional-only DD leftovers with `integer_qty=0` are verified
+  report-only leftovers and must not be included in that blocker set.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
 - Do not write `data/private/sold-today.md` while sell execution is still in
@@ -422,7 +429,9 @@ Extended-hours execution scope is intentionally narrow:
 - For DDs, reconstruct the current lot ladder from broker filled orders. If the
   live extended-hours ask is at or below the deepest due trigger, place only
   the integer part of the combined due quantity as an extended-hours limit buy.
-  Leave fractional leftovers unplaced and report them.
+  Leave fractional leftovers unplaced, report them, and write/update
+  `data/runtime/dd-fractional-leftovers.csv`. These leftovers are not DD scan
+  blockers.
 - For sells, use live extended-hours bid as the sell-side executable price. If
   the integer sellable quantity is at least 1 share and bid-side return is at
   least 10%, place that integer quantity as an extended-hours limit sell. If

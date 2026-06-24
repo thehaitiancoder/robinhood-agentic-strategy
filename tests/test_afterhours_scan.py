@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import csv
+import tempfile
 import unittest
+from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
 
-from agentic_strategy.afterhours_scan import scan_afterhours
+from agentic_strategy.afterhours_scan import scan_afterhours, write_fractional_dd_leftovers
 from agentic_strategy.symbol_policy import SymbolPolicy
 
 
@@ -117,6 +121,51 @@ class AfterHoursScanTest(unittest.TestCase):
         self.assertEqual(report.incomplete, [])
         self.assertEqual(report.policy_blocked_dd, ["LILAP"])
         self.assertEqual(report.policy_blocked_sell, ["LILAP"])
+
+    def test_writes_fractional_only_dd_leftover_cache(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "FRAC",
+                        "quantity": "0.100000",
+                        "shares_available_for_sells": "0.100000",
+                        "average_buy_price": "10.00",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [
+                    {
+                        "symbol": "FRAC",
+                        "bid": "8.80",
+                        "ask": "9.00",
+                        "last_trade": "9.00",
+                    }
+                ],
+            },
+            orders_payload={"orders": [_order("FRAC", "buy", "0.100000", "10.00")]},
+        )
+
+        self.assertEqual(report.whole_share_dd, [])
+        self.assertEqual(len(report.fractional_dd), 1)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "dd-fractional-leftovers.csv"
+            write_fractional_dd_leftovers(
+                path,
+                report.fractional_dd,
+                today=date(2026, 6, 24),
+                recorded_at=datetime(2026, 6, 24, 6, 30, tzinfo=timezone(timedelta(hours=-7))),
+            )
+
+            with path.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["pacific_date"], "2026-06-24")
+        self.assertEqual(rows[0]["symbol"], "FRAC")
+        self.assertEqual(rows[0]["reason"], "integer_qty_zero_fractional_only")
+        self.assertEqual(rows[0]["integer_qty"], "0")
+        self.assertEqual(rows[0]["decimal_left"], "0.200000")
 
 
 def _order(symbol: str, side: str, quantity: str, price: str) -> dict[str, object]:

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import argparse
 import json
+from csv import DictReader, DictWriter
 from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
+from datetime import date, datetime
 from decimal import Decimal, ROUND_DOWN, ROUND_FLOOR
 from pathlib import Path
 from typing import Any, TypedDict
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .ladder import next_lot_shares, next_trigger_price
 from .symbol_policy import (
@@ -20,6 +23,23 @@ from .symbol_policy import (
 
 ACTIVE_ORDER_STATES = {"new", "queued", "unconfirmed", "confirmed", "partially_filled"}
 ZERO = Decimal("0")
+DEFAULT_DD_FRACTIONAL_LEFTOVERS_CSV = Path("data/runtime/dd-fractional-leftovers.csv")
+DD_FRACTIONAL_LEFTOVER_FIELDS = [
+    "pacific_date",
+    "recorded_at",
+    "symbol",
+    "reason",
+    "due_lots",
+    "due_qty",
+    "integer_qty",
+    "decimal_left",
+    "buy_price",
+    "buy_price_basis",
+    "deepest_trigger",
+    "suggested_limit",
+    "active_buy_count",
+    "active_buy_details",
+]
 
 
 class _DueLot(TypedDict):
@@ -232,6 +252,11 @@ def main() -> int:
         default=str(DEFAULT_SYMBOL_POLICY_CSV),
         help="Optional symbol policy CSV. Defaults to data/symbol-policy.csv when present.",
     )
+    parser.add_argument(
+        "--fractional-dd-cache",
+        default=str(DEFAULT_DD_FRACTIONAL_LEFTOVERS_CSV),
+        help="Ignored CSV used to track same-day DD leftovers where integer_qty is 0.",
+    )
     args = parser.parse_args()
 
     report = scan_afterhours(
@@ -245,8 +270,69 @@ def main() -> int:
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = report_to_json(report)
     output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    if args.fractional_dd_cache:
+        write_fractional_dd_leftovers(Path(args.fractional_dd_cache), report.fractional_dd)
     print(json.dumps({key: payload[key] for key in payload if key.endswith("_count") or key == "checked_positions"}))
     return 0
+
+
+def write_fractional_dd_leftovers(
+    path: Path,
+    candidates: list[AfterHoursDoubleDownCandidate],
+    *,
+    today: date | None = None,
+    recorded_at: datetime | None = None,
+) -> None:
+    if not candidates:
+        return
+    now = recorded_at or _now_pacific()
+    pacific_date = (today or now.date()).isoformat()
+    symbols = {candidate.symbol for candidate in candidates}
+    rows: list[dict[str, str]] = []
+    if path.exists():
+        with path.open(newline="", encoding="utf-8") as handle:
+            rows = [
+                row
+                for row in DictReader(handle)
+                if not (row.get("pacific_date") == pacific_date and row.get("symbol") in symbols)
+            ]
+    rows.extend(_fractional_leftover_row(candidate, pacific_date=pacific_date, recorded_at=now) for candidate in candidates)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = DictWriter(handle, fieldnames=DD_FRACTIONAL_LEFTOVER_FIELDS)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _fractional_leftover_row(
+    candidate: AfterHoursDoubleDownCandidate,
+    *,
+    pacific_date: str,
+    recorded_at: datetime,
+) -> dict[str, str]:
+    return {
+        "pacific_date": pacific_date,
+        "recorded_at": recorded_at.isoformat(),
+        "symbol": candidate.symbol,
+        "reason": "integer_qty_zero_fractional_only",
+        "due_lots": candidate.due_lots,
+        "due_qty": str(candidate.due_qty),
+        "integer_qty": str(candidate.integer_qty),
+        "decimal_left": str(candidate.decimal_left),
+        "buy_price": str(candidate.buy_price),
+        "buy_price_basis": candidate.buy_price_basis,
+        "deepest_trigger": str(candidate.deepest_trigger),
+        "suggested_limit": str(candidate.suggested_limit),
+        "active_buy_count": str(candidate.active_buy_count),
+        "active_buy_details": candidate.active_buy_details,
+    }
+
+
+def _now_pacific() -> datetime:
+    try:
+        return datetime.now(tz=ZoneInfo("America/Los_Angeles"))
+    except ZoneInfoNotFoundError:
+        return datetime.now().astimezone()
 
 
 def _double_down_candidate(

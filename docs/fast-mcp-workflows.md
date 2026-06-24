@@ -26,6 +26,11 @@ workflow one candidate at a time.
 - If the fast path is blocked and no other path can verify the mandatory
   downside candidates, the correct result is `DD SCAN BLOCKED`; do not emit a
   routine no-action report.
+- A verified DD whose remaining due quantity has `integer_qty=0` is a
+  fractional-only leftover, not missing coverage. Report it and use ignored
+  `data/runtime/dd-fractional-leftovers.csv` as a same-day speed hint, but keep
+  the symbol eligible for DD if it later reaches an executable whole-share
+  quantity.
 - Write outputs under ignored `data/runtime/` unless the user explicitly asks
   for post-market persistence.
 - The scripts require `RH_ACCOUNT_NUMBER`; do not commit full account numbers.
