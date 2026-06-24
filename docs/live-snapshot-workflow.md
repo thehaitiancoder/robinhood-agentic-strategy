@@ -43,7 +43,7 @@ evaluation until broker-fill lot reconstruction is implemented. Its columns
 are:
 
 ```csv
-symbol,invested_cost,current_lot_index,next_trigger_price,next_lot_shares
+symbol,invested_cost,current_lot_index,next_trigger_price,next_lot_shares,ladder_profile
 ```
 
 ## Generate Post-Market Current Symbols

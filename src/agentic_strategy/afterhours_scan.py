@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, TypedDict
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from .ladder import next_lot_shares, next_trigger_price
+from .ladder import ladder_profile_for_open_lot_count, next_lot_shares, next_trigger_price
 from .symbol_policy import (
     DEFAULT_SYMBOL_POLICY_CSV,
     SymbolPolicy,
@@ -60,6 +60,7 @@ class AfterHoursDoubleDownCandidate:
     buy_price_basis: str
     base_price: Decimal
     base_shares: Decimal
+    ladder_profile: str
     position_qty: Decimal
     completed_lot: int
     partial_next: Decimal
@@ -357,10 +358,12 @@ def _double_down_candidate(
     if base_price <= ZERO or base_shares <= ZERO:
         return None
 
+    ladder_profile = ladder_profile_for_open_lot_count(base_price, _open_buy_order_count(lots))
     completed_lot, partial_next = _current_ladder_progress(
         position_qty=position_qty,
         base_price=base_price,
         base_shares=base_shares,
+        ladder_profile=ladder_profile,
     )
     due_lots = _due_lots(
         start_lot=completed_lot + 1,
@@ -368,6 +371,7 @@ def _double_down_candidate(
         base_price=base_price,
         base_shares=base_shares,
         buy_price=buy_price,
+        ladder_profile=ladder_profile,
     )
     if not due_lots:
         return None
@@ -388,6 +392,7 @@ def _double_down_candidate(
         buy_price_basis=buy_price_basis,
         base_price=base_price,
         base_shares=base_shares,
+        ladder_profile=ladder_profile,
         position_qty=position_qty,
         completed_lot=completed_lot,
         partial_next=partial_next,
@@ -458,6 +463,7 @@ def _current_ladder_progress(
     position_qty: Decimal,
     base_price: Decimal,
     base_shares: Decimal,
+    ladder_profile: str,
 ) -> tuple[int, Decimal]:
     cumulative = ZERO
     completed_lot = 0
@@ -469,10 +475,10 @@ def _current_ladder_progress(
             trigger = base_price
             shares = base_shares
         elif lot_index == 2:
-            trigger = next_trigger_price(base_price, 2)
+            trigger = next_trigger_price(base_price, 2, ladder_profile=ladder_profile)
             shares = next_lot_shares(base_shares)
         else:
-            trigger = next_trigger_price(trigger, lot_index)
+            trigger = next_trigger_price(trigger, lot_index, ladder_profile=ladder_profile)
             shares = next_lot_shares(shares)
         if position_qty + Decimal("0.000001") >= cumulative + shares:
             cumulative += shares
@@ -491,16 +497,17 @@ def _due_lots(
     base_price: Decimal,
     base_shares: Decimal,
     buy_price: Decimal,
+    ladder_profile: str,
 ) -> list[_DueLot]:
     due: list[_DueLot] = []
     trigger = base_price
     shares = base_shares
     for lot_index in range(2, 80):
         if lot_index == 2:
-            trigger = next_trigger_price(base_price, 2)
+            trigger = next_trigger_price(base_price, 2, ladder_profile=ladder_profile)
             shares = next_lot_shares(base_shares)
         else:
-            trigger = next_trigger_price(trigger, lot_index)
+            trigger = next_trigger_price(trigger, lot_index, ladder_profile=ladder_profile)
             shares = next_lot_shares(shares)
         if lot_index < start_lot:
             continue
@@ -512,6 +519,11 @@ def _due_lots(
         if remaining > ZERO:
             due.append({"lot_index": lot_index, "trigger": trigger, "shares": shares, "remaining": remaining})
     return due
+
+
+def _open_buy_order_count(lots: list[dict[str, Any]]) -> int:
+    order_ids = {str(lot.get("order_id") or "").strip() for lot in lots if lot.get("order_id")}
+    return len(order_ids) if order_ids else len(lots)
 
 
 def _reconstruct_open_lots(orders: list[dict[str, Any]]) -> list[dict[str, Any]]:

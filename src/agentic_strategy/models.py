@@ -37,6 +37,7 @@ class PositionSnapshot:
     current_lot_index: int = 1
     next_trigger_price: Decimal | None = None
     next_lot_shares: Decimal | None = None
+    ladder_profile: str = "standard"
 
     @property
     def average_cost(self) -> Decimal:

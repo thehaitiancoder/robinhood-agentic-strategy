@@ -50,6 +50,100 @@ class AfterHoursScanTest(unittest.TestCase):
         self.assertEqual(str(candidate.integer_qty), "16")
         self.assertEqual(str(candidate.decimal_left), "0.853910")
         self.assertEqual(str(candidate.suggested_limit), "0.9200")
+        self.assertEqual(candidate.ladder_profile, "standard")
+
+    def test_under5_base_only_position_uses_20_pct_ladder(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "BASE",
+                        "quantity": "2.000000",
+                        "shares_available_for_sells": "2.000000",
+                        "average_buy_price": "0.50",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [
+                    {
+                        "symbol": "BASE",
+                        "bid": "0.38",
+                        "ask": "0.39",
+                        "last_trade": "0.39",
+                    }
+                ],
+            },
+            orders_payload={"orders": [_order("BASE", "buy", "2.000000", "0.50")]},
+        )
+
+        self.assertEqual(len(report.whole_share_dd), 1)
+        candidate = report.whole_share_dd[0]
+        self.assertEqual(candidate.ladder_profile, "under5_20")
+        self.assertEqual(candidate.due_lots, "2")
+        self.assertEqual(str(candidate.deepest_trigger), "0.4000")
+        self.assertEqual(str(candidate.due_qty), "4.000000")
+
+    def test_under5_base_only_position_waits_past_old_10_pct_trigger(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "WAIT",
+                        "quantity": "2.000000",
+                        "shares_available_for_sells": "2.000000",
+                        "average_buy_price": "0.50",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [
+                    {
+                        "symbol": "WAIT",
+                        "bid": "0.44",
+                        "ask": "0.44",
+                        "last_trade": "0.44",
+                    }
+                ],
+            },
+            orders_payload={"orders": [_order("WAIT", "buy", "2.000000", "0.50")]},
+        )
+
+        self.assertEqual(report.whole_share_dd, [])
+        self.assertEqual(report.fractional_dd, [])
+
+    def test_under5_multi_lot_position_keeps_standard_ladder(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "OLD",
+                        "quantity": "0.750000",
+                        "shares_available_for_sells": "0.750000",
+                        "average_buy_price": "3.733333",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [
+                    {
+                        "symbol": "OLD",
+                        "bid": "3.20",
+                        "ask": "3.20",
+                        "last_trade": "3.20",
+                    }
+                ],
+            },
+            orders_payload={
+                "orders": [
+                    _order("OLD", "buy", "0.250000", "4.00"),
+                    _order("OLD", "buy", "0.500000", "3.60"),
+                ]
+            },
+        )
+
+        self.assertEqual(len(report.whole_share_dd), 1)
+        candidate = report.whole_share_dd[0]
+        self.assertEqual(candidate.ladder_profile, "standard")
+        self.assertEqual(candidate.due_lots, "3")
+        self.assertEqual(str(candidate.deepest_trigger), "3.240000")
 
     def test_finds_whole_share_sell_and_fractional_remainder(self) -> None:
         report = scan_afterhours(

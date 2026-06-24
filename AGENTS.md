@@ -373,9 +373,13 @@ original rules, and make rule violations visible before money is put at risk.
 - If DD coverage remains incomplete after that fallback, report `DD SCAN
   BLOCKED`, email the user, and do not present the run as a successful no-action
   scan.
-- Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
-  lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
-  lot's share count.
+- Lot 1 is the base buy. The default ladder uses lots 2-5 at every 10% drop,
+  lots 6-10 at every 20% drop, lots 11-15 at every 40% drop, and lots 16+ at
+  every 80% drop; each new lot doubles the prior lot's share count. For new
+  openings/reopens and current base-only positions whose base price is under
+  `$5`, use the `under5_20` ladder profile instead: the first 10 double-down
+  steps after base use 20% drops, and every later step uses 40% drops. Do not
+  migrate existing multi-lot positions to `under5_20` automatically.
 - Double-down orders must follow the share ladder, not a rounded dollar amount.
   When multiple DD lots are due for the same symbol at the current ask, combine
   them into one broker order with `quantity` equal to the sum of the due lot

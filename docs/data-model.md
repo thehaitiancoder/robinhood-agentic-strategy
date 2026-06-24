@@ -38,6 +38,7 @@ in the file with `active=false` or `tradable=false` for auditability.
 | `current_lot_index` | Highest lot reached |
 | `next_lot_shares` | Shares required for next double-down |
 | `next_trigger_price` | Price that triggers next double-down from the ladder |
+| `ladder_profile` | DD trigger profile, usually `standard` or `under5_20` |
 | `target_sell_price` | Combined price needed for 10% return |
 
 ## Lot

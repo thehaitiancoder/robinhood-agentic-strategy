@@ -14,8 +14,8 @@ class BrokerSnapshotTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             state_path = Path(tmpdir) / "position-state.csv"
             state_path.write_text(
-                "symbol,invested_cost,current_lot_index,next_trigger_price,next_lot_shares\n"
-                "msft,100.00,3,47.50,4\n"
+                "symbol,invested_cost,current_lot_index,next_trigger_price,next_lot_shares,ladder_profile\n"
+                "msft,100.00,3,47.50,4,under5_20\n"
             )
 
             files = write_broker_snapshot(
@@ -88,6 +88,7 @@ class BrokerSnapshotTest(unittest.TestCase):
             self.assertEqual(positions[0]["invested_cost"], "100.00")
             self.assertEqual(positions[0]["current_lot_index"], "3")
             self.assertEqual(positions[0]["next_trigger_price"], "47.50")
+            self.assertEqual(positions[0]["ladder_profile"], "under5_20")
 
             quotes = _read_csv(files.quotes)
             self.assertEqual(quotes[0]["symbol"], "MSFT")

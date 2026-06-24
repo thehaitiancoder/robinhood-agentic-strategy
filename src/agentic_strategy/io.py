@@ -59,6 +59,7 @@ def load_positions_csv(path: str | Path) -> list[PositionSnapshot]:
                 current_lot_index=int(row.get("current_lot_index") or 1),
                 next_trigger_price=_optional_decimal(row.get("next_trigger_price")),
                 next_lot_shares=_optional_decimal(row.get("next_lot_shares")),
+                ladder_profile=row.get("ladder_profile") or "standard",
             )
         )
     return positions

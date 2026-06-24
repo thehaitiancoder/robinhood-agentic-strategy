@@ -238,7 +238,8 @@ it in ignored `data/runtime/dd-fractional-leftovers.csv` so later same-day
 automations can avoid reclassifying the same non-executable remainder unless
 the quote, position quantity, active-order state, or deeper trigger changes.
 
-The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
+The trigger price uses a ladder profile. The default profile uses the
+spreadsheet-style drop zones. Lot 1 is the base open:
 
 | Lot range | Drop from previous trigger | Number of buys |
 | --- | ---: | ---: |
@@ -251,6 +252,18 @@ The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
 The 80% zone can continue indefinitely in theory. In practice, the sequence
 should stop when the stock is sold, delisted, blocked by the 10% position cap,
 or cash rules prevent another double-down.
+
+For new openings/reopens and current base-only positions whose base price is
+under `$5`, use the `under5_20` profile:
+
+| Lot range | Drop from previous trigger | Number of buys |
+| --- | ---: | ---: |
+| 1 | 0% | base open |
+| 2-11 | 20% | 10 |
+| 12+ | 40% | repeated |
+
+Do not automatically migrate existing multi-lot positions into `under5_20`.
+They keep the default profile unless explicitly reviewed and migrated later.
 
 ## Cash Priority
 

@@ -41,7 +41,7 @@ Robinhood tool payloads into these files under ignored `data/runtime/`.
 `positions.csv` requires:
 
 ```csv
-symbol,quantity,invested_cost,current_lot_index,next_trigger_price,next_lot_shares
+symbol,quantity,invested_cost,current_lot_index,next_trigger_price,next_lot_shares,ladder_profile
 ```
 
 `quotes.csv` requires:
