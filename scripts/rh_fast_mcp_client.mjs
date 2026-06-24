@@ -1,6 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 
+export const DEFAULT_MCP_SERVER_URL = "https://agent.robinhood.com/mcp/trading";
+const DEFAULT_CREDENTIAL_SERVER_NAMES = ["robinhood", "robinhood_agentic"];
+
 export function credentialPath() {
   return (
     process.env.CODEX_CREDENTIALS_PATH ||
@@ -91,14 +94,85 @@ export function csvValue(value) {
 }
 
 function readRobinhoodCredential() {
-  const credentials = readJson(credentialPath());
-  const entry = Object.values(credentials).find(
-    (item) => item.server_name === "robinhood_agentic",
+  const filePath = credentialPath();
+  if (!fs.existsSync(filePath)) {
+    throw new Error(
+      `Robinhood MCP credentials not found at ${filePath}. Run: node scripts/rh_fast_oauth_login.mjs`,
+    );
+  }
+  const credentials = readJson(filePath);
+  const names = (process.env.RH_MCP_SERVER_NAME || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const acceptedNames = names.length > 0 ? names : DEFAULT_CREDENTIAL_SERVER_NAMES;
+  const entry = Object.entries(credentials).find(
+    ([, item]) => item && acceptedNames.includes(item.server_name),
   );
   if (!entry) {
-    throw new Error("robinhood_agentic credential not found");
+    throw new Error(
+      `Robinhood MCP credential not found in ${filePath}; expected server_name one of: ${acceptedNames.join(", ")}`,
+    );
   }
-  return entry;
+  const [key, credential] = entry;
+  return { credentials, credential: { server_url: DEFAULT_MCP_SERVER_URL, ...credential }, filePath, key };
+}
+
+function tokenExpiresSoon(credential) {
+  if (!credential.expires_at) {
+    return false;
+  }
+  const expiresAt = Date.parse(credential.expires_at);
+  if (!Number.isFinite(expiresAt)) {
+    return false;
+  }
+  return expiresAt <= Date.now() + 60_000;
+}
+
+async function refreshCredential(source, { force = false } = {}) {
+  if (!source?.credential?.refresh_token || !source?.credential?.client_id) {
+    return false;
+  }
+  if (!force && !tokenExpiresSoon(source.credential)) {
+    return false;
+  }
+
+  const tokenEndpoint = source.credential.token_endpoint || "https://api.robinhood.com/oauth2/token/";
+  const body = new URLSearchParams({
+    grant_type: "refresh_token",
+    refresh_token: source.credential.refresh_token,
+    client_id: source.credential.client_id,
+    resource: source.credential.server_url || DEFAULT_MCP_SERVER_URL,
+  });
+  const response = await fetch(tokenEndpoint, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/x-www-form-urlencoded",
+    },
+    body,
+  });
+  const text = await response.text();
+  if (!response.ok) {
+    throw new Error(`Robinhood MCP token refresh failed: HTTP ${response.status} ${text.slice(0, 200)}`);
+  }
+  const payload = JSON.parse(text);
+  const expiresIn = Number.parseInt(payload.expires_in, 10);
+  const updated = {
+    ...source.credential,
+    access_token: payload.access_token || source.credential.access_token,
+    refresh_token: payload.refresh_token || source.credential.refresh_token,
+    token_type: payload.token_type || source.credential.token_type || "Bearer",
+    scope: payload.scope || source.credential.scope || "internal",
+    expires_at: Number.isFinite(expiresIn)
+      ? new Date(Date.now() + expiresIn * 1000).toISOString()
+      : source.credential.expires_at,
+    updated_at: new Date().toISOString(),
+  };
+  source.credentials[source.key] = updated;
+  writeJson(source.filePath, source.credentials);
+  source.credential = updated;
+  return true;
 }
 
 function parseMcpResponse(text, contentType) {
@@ -147,8 +221,11 @@ export function nextCursor(payload) {
 }
 
 export class RobinhoodFastClient {
-  constructor({ credential = readRobinhoodCredential(), clientName = "codex-rh-fast" } = {}) {
-    this.credential = credential;
+  constructor({ credential, clientName = "codex-rh-fast" } = {}) {
+    this.credentialSource = credential
+      ? { credential: { server_url: DEFAULT_MCP_SERVER_URL, ...credential } }
+      : readRobinhoodCredential();
+    this.credential = this.credentialSource.credential;
     this.clientName = clientName;
     this.session = undefined;
     this.nextId = 1;
@@ -158,6 +235,7 @@ export class RobinhoodFastClient {
     if (this.session) {
       return;
     }
+    await this.#refreshCredentialIfNeeded();
     const response = await this.#mcpCall({
       jsonrpc: "2.0",
       id: this.nextId,
@@ -231,7 +309,7 @@ export class RobinhoodFastClient {
     return { rows, payloads };
   }
 
-  async #mcpCall(body) {
+  async #mcpCall(body, { retryAuth = true } = {}) {
     const headers = {
       authorization: `Bearer ${this.credential.access_token}`,
       "content-type": "application/json",
@@ -246,10 +324,32 @@ export class RobinhoodFastClient {
       body: JSON.stringify(body),
     });
     const text = await response.text();
+    if (response.status === 401 && retryAuth && this.credentialSource?.credential?.refresh_token) {
+      await this.#refreshCredentialIfNeeded({ force: true });
+      return this.#mcpCall(body, { retryAuth: false });
+    }
+    let payloads;
+    try {
+      payloads = parseMcpResponse(text, response.headers.get("content-type"));
+    } catch (error) {
+      if (response.status >= 400) {
+        payloads = [{ error: { message: text || error.message } }];
+      } else {
+        throw error;
+      }
+    }
     return {
       status: response.status,
       session: response.headers.get("mcp-session-id") || this.session,
-      payloads: parseMcpResponse(text, response.headers.get("content-type")),
+      payloads,
     };
+  }
+
+  async #refreshCredentialIfNeeded(options = {}) {
+    const refreshed = await refreshCredential(this.credentialSource, options);
+    if (refreshed) {
+      this.credential = this.credentialSource.credential;
+      this.session = undefined;
+    }
   }
 }

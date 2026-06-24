@@ -67,6 +67,26 @@ class CurrentSymbolsTest(unittest.TestCase):
         self.assertEqual(state["blocked_open_symbols"], ["AAPL", "AMD", "TSLA"])
         self.assertEqual(state["counts"]["active_orders"], 2)
 
+    def test_reads_portfolio_from_helper_wrapper_shape(self) -> None:
+        state = build_current_symbols(
+            account_key="Agentic",
+            generated_at="2026-06-23T17:00:00Z",
+            portfolio_payload={
+                "generated_at": "2026-06-24T00:03:02Z",
+                "portfolio": {
+                    "total_value": "5819.9162087087",
+                    "cash": "389.21",
+                    "buying_power": {"buying_power": "233.6800"},
+                },
+            },
+            positions_payload={"positions": []},
+            orders_payload={"orders": []},
+        )
+
+        self.assertEqual(state["portfolio"]["total_value"], "5819.9162087087")
+        self.assertEqual(state["portfolio"]["cash"], "389.21")
+        self.assertEqual(state["portfolio"]["buying_power"], "233.68")
+
     def test_select_open_symbols_uses_broker_state_not_ledger(self) -> None:
         current_symbols = {
             "blocked_open_symbols": ["AAPL", "AMD", "TSLA"],

@@ -6,8 +6,10 @@ from pathlib import Path
 
 from agentic_strategy.symbol_policy import (
     SymbolPolicy,
+    is_double_down_allowed,
     is_open_allowed,
     is_reopen_allowed,
+    is_sell_allowed,
     read_symbol_policy_csv,
     write_symbol_policy_csv,
 )
@@ -41,6 +43,8 @@ class SymbolPolicyTest(unittest.TestCase):
         self.assertFalse(is_reopen_allowed("FLAT", policies))
         self.assertTrue(policies["FLAT"].allow_double_down)
         self.assertTrue(policies["FLAT"].allow_sell)
+        self.assertTrue(is_double_down_allowed("FLAT", policies))
+        self.assertTrue(is_sell_allowed("FLAT", policies))
 
 
 if __name__ == "__main__":

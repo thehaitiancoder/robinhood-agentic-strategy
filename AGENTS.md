@@ -331,6 +331,10 @@ original rules, and make rule violations visible before money is put at risk.
   `allow_reopen=false` must not be reopened after a sell and should not be
   appended to `sold-today.md` as a pending reopen. Keep filtered symbols in
   `data/universe.csv`; the policy overlay controls strategy eligibility.
+- Also apply manual symbol-policy overrides to owned-position automation checks.
+  A symbol with `allow_double_down=false` must not be double-downed and must not
+  be treated as a DD coverage blocker. A symbol with `allow_sell=false` must
+  not be sold by automation.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
 - For market-hours automation sell and double-down checks, process one

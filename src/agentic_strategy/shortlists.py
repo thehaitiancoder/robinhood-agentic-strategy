@@ -257,6 +257,17 @@ def _positions(payload: dict[str, Any]) -> list[dict[str, Any]]:
 def _quotes_by_symbol(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
     quotes: dict[str, dict[str, Any]] = {}
     data = _data(payload)
+    quote_rows = data.get("quotes") if isinstance(data, dict) else None
+    if isinstance(quote_rows, list):
+        for quote_row in quote_rows:
+            if not isinstance(quote_row, dict):
+                continue
+            normalized = _normalize_quote_row(cast(dict[str, Any], quote_row))
+            symbol = _symbol(normalized)
+            if symbol:
+                quotes[symbol] = normalized
+        if quotes:
+            return quotes
     results = data.get("results") if isinstance(data, dict) else None
     if isinstance(results, list):
         for result in results:
@@ -276,6 +287,26 @@ def _quotes_by_symbol(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
         if symbol:
             quotes[symbol] = data
     return quotes
+
+
+def _normalize_quote_row(row: dict[str, Any]) -> dict[str, Any]:
+    raw = row.get("raw")
+    if isinstance(raw, dict):
+        quote_payload = raw.get("quote")
+        quote = cast(dict[str, Any], quote_payload) if isinstance(quote_payload, dict) else {}
+        close_payload = raw.get("close")
+        if isinstance(close_payload, dict):
+            quote = {**quote, "close": close_payload}
+        if quote:
+            return quote
+    return {
+        "symbol": row.get("symbol"),
+        "bid_price": row.get("bid"),
+        "ask_price": row.get("ask"),
+        "last_trade_price": row.get("last_trade") or row.get("last"),
+        "last_non_reg_trade_price": row.get("last_non_reg"),
+        "close": {"price": row.get("close")} if row.get("close") not in (None, "") else None,
+    }
 
 
 def _data(payload: dict[str, Any]) -> dict[str, Any]:

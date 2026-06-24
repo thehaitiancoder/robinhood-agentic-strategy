@@ -3,6 +3,7 @@ from __future__ import annotations
 import unittest
 
 from agentic_strategy.afterhours_scan import scan_afterhours
+from agentic_strategy.symbol_policy import SymbolPolicy
 
 
 class AfterHoursScanTest(unittest.TestCase):
@@ -77,6 +78,45 @@ class AfterHoursScanTest(unittest.TestCase):
         self.assertEqual(str(candidate.whole_qty), "2")
         self.assertEqual(str(candidate.decimal_left), "0.173911")
         self.assertEqual(str(candidate.suggested_limit), "1.40")
+
+    def test_policy_blocked_dd_does_not_require_lot_history(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "LILAP",
+                        "quantity": "0.025268",
+                        "shares_available_for_sells": "0.025268",
+                        "average_buy_price": "25.33",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [
+                    {
+                        "symbol": "LILAP",
+                        "bid": "19.61",
+                        "ask": "19.87",
+                        "last_trade": "19.745",
+                    }
+                ],
+            },
+            orders_payload={"orders": []},
+            symbol_policies={
+                "LILAP": SymbolPolicy(
+                    symbol="LILAP",
+                    policy="manual_trade_only",
+                    allow_open=False,
+                    allow_reopen=False,
+                    allow_double_down=False,
+                    allow_sell=False,
+                )
+            },
+        )
+
+        self.assertEqual(report.no_history, [])
+        self.assertEqual(report.incomplete, [])
+        self.assertEqual(report.policy_blocked_dd, ["LILAP"])
+        self.assertEqual(report.policy_blocked_sell, ["LILAP"])
 
 
 def _order(symbol: str, side: str, quantity: str, price: str) -> dict[str, object]:

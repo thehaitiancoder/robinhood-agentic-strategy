@@ -270,7 +270,14 @@ def _active_order_rows(payload: dict[str, Any]) -> list[dict[str, str]]:
 
 
 def _portfolio_row(payload: dict[str, Any]) -> dict[str, str]:
-    portfolio = _data(payload)
+    portfolio_payload = payload.get("portfolio")
+    data_payload = payload.get("data")
+    if isinstance(portfolio_payload, dict):
+        portfolio = portfolio_payload
+    elif isinstance(data_payload, dict):
+        portfolio = data_payload
+    else:
+        portfolio = payload
     buying_power = portfolio.get("buying_power") or {}
     return {
         "total_value": _amount(portfolio.get("total_value")),

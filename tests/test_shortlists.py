@@ -215,6 +215,51 @@ class ShortlistsTest(unittest.TestCase):
             self.assertIn("# Top 10 Buy Candidates", buy_path.read_text())
             self.assertIn("# Top 10 Sell Candidates", sell_path.read_text())
 
+    def test_accepts_rh_fast_positions_with_quotes_payload_for_quotes(self) -> None:
+        candidates = build_return_candidates(
+            positions_payload={
+                "positions": [
+                    {"symbol": "DOWN", "quantity": "1", "average_buy_price": "10"},
+                    {"symbol": "UP", "quantity": "1", "average_buy_price": "10"},
+                    {"symbol": "FLAT", "quantity": "1", "average_buy_price": "10"},
+                ]
+            },
+            quotes_payload={
+                "quotes": [
+                    {
+                        "symbol": "DOWN",
+                        "bid": 7.9,
+                        "ask": 8.0,
+                        "last": 8.0,
+                        "last_trade": 8.0,
+                        "last_non_reg": 0,
+                        "close": 8.5,
+                    },
+                    {
+                        "symbol": "UP",
+                        "bid": 12.0,
+                        "ask": 12.1,
+                        "last": 12.1,
+                        "last_trade": 12.1,
+                        "last_non_reg": 0,
+                        "close": 11.9,
+                    },
+                    {
+                        "symbol": "FLAT",
+                        "bid": 10.0,
+                        "ask": 10.1,
+                        "last": 10.1,
+                        "last_trade": 10.1,
+                        "last_non_reg": 0,
+                        "close": 10.0,
+                    },
+                ]
+            },
+        )
+
+        self.assertEqual([item.symbol for item in top_sell_candidates(candidates)], ["UP", "FLAT", "DOWN"])
+        self.assertEqual([item.symbol for item in top_buy_candidates(candidates)], ["DOWN", "FLAT", "UP"])
+
 
 if __name__ == "__main__":
     unittest.main()

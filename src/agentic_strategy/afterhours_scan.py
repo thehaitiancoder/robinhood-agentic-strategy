@@ -9,6 +9,13 @@ from pathlib import Path
 from typing import Any, TypedDict
 
 from .ladder import next_lot_shares, next_trigger_price
+from .symbol_policy import (
+    DEFAULT_SYMBOL_POLICY_CSV,
+    SymbolPolicy,
+    is_double_down_allowed,
+    is_sell_allowed,
+    read_symbol_policy_csv,
+)
 
 
 ACTIVE_ORDER_STATES = {"new", "queued", "unconfirmed", "confirmed", "partially_filled"}
@@ -74,6 +81,8 @@ class AfterHoursScanReport:
     fractional_dd: list[AfterHoursDoubleDownCandidate]
     whole_share_sells: list[AfterHoursSellCandidate]
     not_due_count: int
+    policy_blocked_dd: list[str]
+    policy_blocked_sell: list[str]
     no_history: list[str]
     incomplete: list[dict[str, str]]
 
@@ -84,6 +93,7 @@ def scan_afterhours(
     orders_payload: dict[str, Any],
     active_orders_payload: dict[str, Any] | None = None,
     sell_return_threshold: Decimal = Decimal("10"),
+    symbol_policies: dict[str, SymbolPolicy] | None = None,
 ) -> AfterHoursScanReport:
     positions = _positions(positions_payload)
     quotes = _quotes_by_symbol(positions_payload)
@@ -102,21 +112,30 @@ def scan_afterhours(
     whole_share_dd: list[AfterHoursDoubleDownCandidate] = []
     fractional_dd: list[AfterHoursDoubleDownCandidate] = []
     whole_share_sells: list[AfterHoursSellCandidate] = []
+    policy_blocked_dd: list[str] = []
+    policy_blocked_sell: list[str] = []
     no_history: list[str] = []
     incomplete: list[dict[str, str]] = []
     not_due_count = 0
 
     for symbol, position in sorted(position_by_symbol.items()):
         quote = quotes.get(symbol, {})
-        sell_candidate = _sell_candidate(
-            symbol=symbol,
-            position=position,
-            quote=quote,
-            active_sells=active_sells.get(symbol, []),
-            sell_return_threshold=sell_return_threshold,
-        )
-        if sell_candidate is not None:
-            whole_share_sells.append(sell_candidate)
+        if is_sell_allowed(symbol, symbol_policies):
+            sell_candidate = _sell_candidate(
+                symbol=symbol,
+                position=position,
+                quote=quote,
+                active_sells=active_sells.get(symbol, []),
+                sell_return_threshold=sell_return_threshold,
+            )
+            if sell_candidate is not None:
+                whole_share_sells.append(sell_candidate)
+        else:
+            policy_blocked_sell.append(symbol)
+
+        if not is_double_down_allowed(symbol, symbol_policies):
+            policy_blocked_dd.append(symbol)
+            continue
 
         lots = _reconstruct_open_lots(orders_by_symbol.get(symbol, []))
         position_qty = _decimal(position.get("quantity"))
@@ -160,6 +179,8 @@ def scan_afterhours(
         fractional_dd=fractional_dd,
         whole_share_sells=whole_share_sells,
         not_due_count=not_due_count,
+        policy_blocked_dd=policy_blocked_dd,
+        policy_blocked_sell=policy_blocked_sell,
         no_history=no_history,
         incomplete=incomplete,
     )
@@ -172,11 +193,15 @@ def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
         "fractional_dd_count": len(report.fractional_dd),
         "whole_share_sell_count": len(report.whole_share_sells),
         "not_due_count": report.not_due_count,
+        "policy_blocked_dd_count": len(report.policy_blocked_dd),
+        "policy_blocked_sell_count": len(report.policy_blocked_sell),
         "no_history_count": len(report.no_history),
         "incomplete_count": len(report.incomplete),
         "whole_share_dd": [_json_row(item) for item in report.whole_share_dd],
         "fractional_dd": [_json_row(item) for item in report.fractional_dd],
         "whole_share_sells": [_json_row(item) for item in report.whole_share_sells],
+        "policy_blocked_dd_sample": report.policy_blocked_dd[:25],
+        "policy_blocked_sell_sample": report.policy_blocked_sell[:25],
         "no_history_sample": report.no_history[:25],
         "incomplete_sample": report.incomplete[:25],
     }
@@ -202,6 +227,11 @@ def main() -> int:
     )
     parser.add_argument("--output", required=True, help="Where to write the scan JSON report.")
     parser.add_argument("--sell-return-pct", default="10", help="Sell threshold percentage.")
+    parser.add_argument(
+        "--symbol-policy",
+        default=str(DEFAULT_SYMBOL_POLICY_CSV),
+        help="Optional symbol policy CSV. Defaults to data/symbol-policy.csv when present.",
+    )
     args = parser.parse_args()
 
     report = scan_afterhours(
@@ -209,6 +239,7 @@ def main() -> int:
         orders_payload=_read_json(args.orders_json),
         active_orders_payload=_read_json(args.active_orders_json) if args.active_orders_json else None,
         sell_return_threshold=Decimal(args.sell_return_pct),
+        symbol_policies=read_symbol_policy_csv(args.symbol_policy) if args.symbol_policy else None,
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)

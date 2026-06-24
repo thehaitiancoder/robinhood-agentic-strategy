@@ -23,6 +23,11 @@ Use the policy file instead.
 
 Missing symbols default to fully eligible.
 
+Manual rows may disable owned-position actions. If `allow_double_down=false`,
+automation must skip DD checks for that symbol and must not count it as a DD
+coverage blocker. If `allow_sell=false`, automation must leave sell handling to
+the user.
+
 ## Current Filter
 
 As of 2026-06-13, symbols with `valid_months = 6` and

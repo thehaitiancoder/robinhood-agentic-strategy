@@ -81,6 +81,14 @@ def is_reopen_allowed(symbol: str, policies: Mapping[str, SymbolPolicy] | None) 
     return policy_for_symbol(symbol, policies).allow_reopen
 
 
+def is_double_down_allowed(symbol: str, policies: Mapping[str, SymbolPolicy] | None) -> bool:
+    return policy_for_symbol(symbol, policies).allow_double_down
+
+
+def is_sell_allowed(symbol: str, policies: Mapping[str, SymbolPolicy] | None) -> bool:
+    return policy_for_symbol(symbol, policies).allow_sell
+
+
 def _policy_from_row(row: dict[str, str]) -> SymbolPolicy:
     return SymbolPolicy(
         symbol=_normalize_symbol(row.get("symbol", "")),
