@@ -1234,7 +1234,7 @@ CVU,"CPI Aerostructures, Inc.",stock,true,true,true,robinhood_validated,2026-06-
 CVV,CVD Equipment Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 CVX,Chevron Corp,stock,true,true,true,robinhood_validated,2026-06-09
 CW,Curtiss Wright,stock,true,true,true,robinhood_validated,2026-06-09
-CWAN,"Clearwater Analytics Holdings, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
+CWAN,"Clearwater Analytics Holdings, Inc.",stock,false,false,false,broker_not_found,2026-06-25
 CWBC,Community West Bancshares Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 CWCO,Consolidated Water Co. Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 CWEN,Clearway Energy,stock,true,true,true,robinhood_validated,2026-06-09

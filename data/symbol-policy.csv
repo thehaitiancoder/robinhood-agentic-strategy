@@ -131,6 +131,7 @@ CLM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.979
 CLST,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.9511 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 CMS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.9872 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 CNP,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.3151 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
+CNTA,broker_unavailable,false,false,false,true,Robinhood quote returned inactive_instruments and tradability/orders/review returned not_found/instrument not found while live position remains sellable,manual_broker_check_2026-06-25,,2026-06-25
 COLA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.1499 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 COPL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.3604 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 COSO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7771 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
@@ -148,7 +149,7 @@ CSWC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.3374
 CTO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8118 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 CTVA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8917 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 CUB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.4485 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
-CWAN,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.5012 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
+CWAN,broker_unavailable,false,false,false,true,Robinhood quote returned inactive_instruments and tradability/orders returned not_found/instrument not found after Clearwater take-private deal; live fast position snapshot no longer includes CWAN,manual_broker_check_2026-06-25,,2026-06-25
 CWBC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8463 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 CWT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9399 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 D,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7591 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
