@@ -199,10 +199,12 @@ power and concentration risk.
 
 If Robinhood rejects the fractional DD quantity, retry the same DD with only the
 integer part of the combined quantity when that integer part is at least 1
-share. Do not round up or convert the DD to a dollar order. If the integer part
-is zero, record/report the DD as a fractional-only leftover, keep the symbol
-eligible for future DD checks, and do not count that leftover as a DD coverage
-blocker.
+share. Do not round up or convert the DD to a dollar order. During regular
+market hours, a due exact-share DD with `integer_qty=0` is still executable if
+Robinhood accepts the fractional buy. If the integer part is zero after
+Robinhood rejects the exact fractional quantity, report it as a broker-blocked
+exact fractional DD, keep the symbol eligible for future DD checks, and do not
+count it as a DD coverage blocker.
 
 A DD order must pass the executable-price guard twice. Before placement, the
 fresh broker buy-side ask must be at or below every included lot trigger. For a
@@ -232,11 +234,11 @@ correct status is `DD SCAN BLOCKED` with the exact missing coverage or tool
 failure. During market-hours automations, that blocked scan must email the user
 because a due double-down may be waiting.
 
-A verified DD whose remaining due quantity has `integer_qty=0` is not missing
-coverage. Treat it as a report-only fractional leftover and optionally record
-it in ignored `data/runtime/dd-fractional-leftovers.csv` so later same-day
-automations can avoid reclassifying the same non-executable remainder unless
-the quote, position quantity, active-order state, or deeper trigger changes.
+In premarket and after-hours whole-share lanes, a verified DD whose remaining
+due quantity has `integer_qty=0` is regular-hours-only. Treat it as report-only
+for that lane, not missing coverage. `data/runtime/dd-fractional-leftovers.csv`
+is only for decimal remainders left after an integer-share execution or integer
+fallback, not for regular-market exact-share due lots.
 
 The trigger price uses a ladder profile. The default profile uses the
 spreadsheet-style drop zones. Lot 1 is the base open:

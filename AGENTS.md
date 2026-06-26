@@ -47,16 +47,18 @@ below the deepest included trigger and cash/risk checks pass, review/place one
 combined order with `quantity` equal to the sum of those due lot shares. After
 placement, inspect the broker returned order price and immediately cancel an
 active DD order if that price is missing or above the deepest included trigger.
-If Robinhood rejects the fractional DD quantity, retry the integer part only
-when it is at least 1 share. If the remaining due quantity has
-`integer_qty=0`, treat it as a fractional-only DD leftover: keep the symbol
-eligible for future DD checks, record/report the leftover, but do not count it
-as a DD coverage blocker and do not send `DD SCAN BLOCKED` for that reason
-alone. Same-day leftovers may be tracked in ignored
-`data/runtime/dd-fractional-leftovers.csv` as a speed hint only; re-check if
-the quote, position quantity, active-order state, or deeper trigger changes
-enough to make at least 1 whole share executable. Do not stop after checking
-only recently doubled down symbols.
+During regular market hours, a due DD with `integer_qty=0` is still a due
+exact-share ladder buy when its fractional share quantity is broker-executable.
+Do not classify it as a leftover before broker review/place; buy the combined
+exact due lot quantity if Robinhood allows it and all strategy checks pass. If
+Robinhood rejects the fractional DD quantity, retry the integer part only when
+it is at least 1 share. If the integer part is 0 after rejection, report it as a
+broker-blocked exact fractional DD, not missing DD coverage. In premarket and
+after-hours whole-share lanes, an `integer_qty=0` due DD is regular-hours-only
+and not executable in that lane. A DD fractional leftover means only a decimal
+remainder left after an integer-share execution or integer fallback, and those
+leftovers may be tracked in ignored `data/runtime/dd-fractional-leftovers.csv`.
+Do not stop after checking only recently doubled down symbols.
 
 If the monitor cannot complete full DD coverage and also cannot verify the
 mandatory top-downside candidates because the fast path is blocked, broker
@@ -66,9 +68,9 @@ history cannot be fetched, the run is blocked. It must not report "no DD due,"
 `DD SCAN BLOCKED`, email `rdgustave@gmail.com` with subject
 `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`, include the exact blocker, and
 state which symbols were and were not verified.
-Fractional-only DD leftovers with `integer_qty=0` are verified report-only
-leftovers, not missing coverage. They should appear in the report and optional
-runtime leftover file, but they must not be included in the blocker set.
+Regular-hours-only exact-share DDs and post-integer DD decimal leftovers are
+verified report-only items in lanes where they are not executable, not missing
+coverage. They must not be included in the blocker set.
 
 Shortlist files under `data/private/top-10-buy-candidates.md` and
 `data/private/top-10-sell-candidates.md` are speed hints from the previous run.
@@ -384,10 +386,14 @@ original rules, and make rule violations visible before money is put at risk.
   When multiple DD lots are due for the same symbol at the current ask, combine
   them into one broker order with `quantity` equal to the sum of the due lot
   shares. Use dollar estimates only for cash, concentration, and affordability
-  checks. If Robinhood rejects the fractional DD quantity, retry with only the
-  integer part of that same quantity when the integer part is at least 1 share.
-  If the integer part is 0, record/report it as a fractional-only leftover
-  instead of a DD scan blocker.
+  checks. During regular market hours, place due exact-share DD quantities even
+  when the combined quantity is below 1 share if Robinhood supports that
+  fractional buy. If Robinhood rejects the fractional DD quantity, retry with
+  only the integer part of that same quantity when the integer part is at least
+  1 share. If the integer part is 0 after rejection, report it as a
+  broker-blocked exact fractional DD instead of a DD scan coverage blocker. In
+  premarket and after-hours lanes, below-1-share DD quantities are
+  regular-hours-only and not executable in that lane.
 - A DD is executable only when the fresh broker buy-side ask is at or below the
   deepest included DD trigger. After placing a DD, immediately compare the
   broker returned `price` or `average_price` with that deepest included trigger;
