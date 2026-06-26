@@ -76,6 +76,7 @@ class AfterHoursScanTest(unittest.TestCase):
             orders_payload={"orders": [_order("BASE", "buy", "2.000000", "0.50")]},
         )
 
+        self.assertEqual(len(report.exact_share_dd), 1)
         self.assertEqual(len(report.whole_share_dd), 1)
         candidate = report.whole_share_dd[0]
         self.assertEqual(candidate.ladder_profile, "under5_20")
@@ -107,8 +108,16 @@ class AfterHoursScanTest(unittest.TestCase):
             orders_payload={"orders": [_order("WAIT", "buy", "2.000000", "0.50")]},
         )
 
+        self.assertEqual(report.exact_share_dd, [])
         self.assertEqual(report.whole_share_dd, [])
         self.assertEqual(report.fractional_dd, [])
+        self.assertEqual(len(report.dd_watch), 1)
+        watch = report.dd_watch[0]
+        self.assertEqual(watch.symbol, "WAIT")
+        self.assertEqual(watch.ladder_profile, "under5_20")
+        self.assertEqual(watch.next_lot, 2)
+        self.assertEqual(str(watch.next_trigger), "0.4000")
+        self.assertEqual(str(watch.trigger_gap_pct), "10.0")
 
     def test_under5_multi_lot_position_keeps_standard_ladder(self) -> None:
         report = scan_afterhours(
@@ -139,6 +148,7 @@ class AfterHoursScanTest(unittest.TestCase):
             },
         )
 
+        self.assertEqual(len(report.exact_share_dd), 1)
         self.assertEqual(len(report.whole_share_dd), 1)
         candidate = report.whole_share_dd[0]
         self.assertEqual(candidate.ladder_profile, "standard")
@@ -216,7 +226,7 @@ class AfterHoursScanTest(unittest.TestCase):
         self.assertEqual(report.policy_blocked_dd, ["LILAP"])
         self.assertEqual(report.policy_blocked_sell, ["LILAP"])
 
-    def test_writes_fractional_only_dd_leftover_cache(self) -> None:
+    def test_sub_one_share_due_dd_is_regular_hours_only_not_leftover(self) -> None:
         report = scan_afterhours(
             positions_payload={
                 "positions": [
@@ -240,13 +250,52 @@ class AfterHoursScanTest(unittest.TestCase):
             orders_payload={"orders": [_order("FRAC", "buy", "0.100000", "10.00")]},
         )
 
+        self.assertEqual(len(report.exact_share_dd), 1)
         self.assertEqual(report.whole_share_dd, [])
-        self.assertEqual(len(report.fractional_dd), 1)
+        self.assertEqual(len(report.regular_hours_only_dd), 1)
+        self.assertEqual(report.fractional_dd, report.regular_hours_only_dd)
+        candidate = report.regular_hours_only_dd[0]
+        self.assertEqual(candidate.symbol, "FRAC")
+        self.assertEqual(str(candidate.due_qty), "0.200000")
+        self.assertEqual(str(candidate.est_cost), "1.80000000")
+
+    def test_writes_post_integer_dd_leftover_cache_when_called_explicitly(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "LEFT",
+                        "quantity": "18.539301",
+                        "shares_available_for_sells": "18.539301",
+                        "average_buy_price": "0.98",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [
+                    {
+                        "symbol": "LEFT",
+                        "bid": "0.85",
+                        "ask": "0.92",
+                        "last_trade": "0.9178",
+                        "last_non_reg": "0.90",
+                    }
+                ],
+            },
+            orders_payload={
+                "orders": [
+                    _order("LEFT", "buy", "0.561797", "1.78"),
+                    _order("LEFT", "buy", "16.853910", "0.9547"),
+                    _order("LEFT", "buy", "1.123594", "0.9649"),
+                ]
+            },
+        )
+
+        self.assertEqual(len(report.whole_share_dd), 1)
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "dd-fractional-leftovers.csv"
             write_fractional_dd_leftovers(
                 path,
-                report.fractional_dd,
+                report.whole_share_dd,
                 today=date(2026, 6, 24),
                 recorded_at=datetime(2026, 6, 24, 6, 30, tzinfo=timezone(timedelta(hours=-7))),
             )
@@ -256,10 +305,46 @@ class AfterHoursScanTest(unittest.TestCase):
 
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["pacific_date"], "2026-06-24")
-        self.assertEqual(rows[0]["symbol"], "FRAC")
-        self.assertEqual(rows[0]["reason"], "integer_qty_zero_fractional_only")
-        self.assertEqual(rows[0]["integer_qty"], "0")
-        self.assertEqual(rows[0]["decimal_left"], "0.200000")
+        self.assertEqual(rows[0]["symbol"], "LEFT")
+        self.assertEqual(rows[0]["reason"], "post_integer_execution_decimal_leftover")
+        self.assertEqual(rows[0]["integer_qty"], "16")
+        self.assertEqual(rows[0]["decimal_left"], "0.853910")
+
+    def test_inve_like_sub_one_share_due_dd_stays_exact_share_candidate(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "INVE",
+                        "quantity": "0.257069",
+                        "shares_available_for_sells": "0.257069",
+                        "average_buy_price": "3.89",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [
+                    {
+                        "symbol": "INVE",
+                        "bid": "2.53",
+                        "ask": "2.58",
+                        "last_trade": "2.54",
+                    }
+                ],
+            },
+            orders_payload={"orders": [_order("INVE", "buy", "0.257069", "3.89")]},
+        )
+
+        self.assertEqual(len(report.exact_share_dd), 1)
+        candidate = report.exact_share_dd[0]
+        self.assertEqual(candidate.symbol, "INVE")
+        self.assertEqual(candidate.ladder_profile, "under5_20")
+        self.assertEqual(candidate.due_lots, "2")
+        self.assertEqual(str(candidate.deepest_trigger), "3.1120")
+        self.assertEqual(str(candidate.due_qty), "0.514138")
+        self.assertEqual(str(candidate.integer_qty), "0")
+        self.assertEqual(str(candidate.est_cost), "1.32647604")
+        self.assertEqual(report.whole_share_dd, [])
+        self.assertEqual(report.regular_hours_only_dd, [candidate])
 
 
 def _order(symbol: str, side: str, quantity: str, price: str) -> dict[str, object]:

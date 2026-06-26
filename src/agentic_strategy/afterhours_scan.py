@@ -41,6 +41,8 @@ DD_FRACTIONAL_LEFTOVER_FIELDS = [
     "active_buy_details",
 ]
 
+POST_INTEGER_DD_LEFTOVER_REASON = "post_integer_execution_decimal_leftover"
+
 
 class _DueLot(TypedDict):
     lot_index: int
@@ -73,6 +75,31 @@ class AfterHoursDoubleDownCandidate:
     active_buy_count: int
     active_buy_details: str
     est_cost: Decimal
+    integer_est_cost: Decimal
+
+
+@dataclass(frozen=True)
+class AfterHoursDoubleDownWatchCandidate:
+    symbol: str
+    ask: Decimal
+    bid: Decimal
+    last_non_reg: Decimal
+    last_trade: Decimal
+    buy_price: Decimal
+    buy_price_basis: str
+    base_price: Decimal
+    base_shares: Decimal
+    ladder_profile: str
+    position_qty: Decimal
+    completed_lot: int
+    partial_next: Decimal
+    next_lot: int
+    next_trigger: Decimal
+    next_lot_shares: Decimal
+    remaining_lot_shares: Decimal
+    trigger_gap_pct: Decimal
+    active_buy_count: int
+    active_buy_details: str
 
 
 @dataclass(frozen=True)
@@ -98,8 +125,11 @@ class AfterHoursSellCandidate:
 @dataclass(frozen=True)
 class AfterHoursScanReport:
     checked_positions: int
+    exact_share_dd: list[AfterHoursDoubleDownCandidate]
     whole_share_dd: list[AfterHoursDoubleDownCandidate]
+    regular_hours_only_dd: list[AfterHoursDoubleDownCandidate]
     fractional_dd: list[AfterHoursDoubleDownCandidate]
+    dd_watch: list[AfterHoursDoubleDownWatchCandidate]
     whole_share_sells: list[AfterHoursSellCandidate]
     not_due_count: int
     policy_blocked_dd: list[str]
@@ -131,7 +161,9 @@ def scan_afterhours(
     active_buys, active_sells = _active_orders_by_side(active_orders)
 
     whole_share_dd: list[AfterHoursDoubleDownCandidate] = []
-    fractional_dd: list[AfterHoursDoubleDownCandidate] = []
+    exact_share_dd: list[AfterHoursDoubleDownCandidate] = []
+    regular_hours_only_dd: list[AfterHoursDoubleDownCandidate] = []
+    dd_watch: list[AfterHoursDoubleDownWatchCandidate] = []
     whole_share_sells: list[AfterHoursSellCandidate] = []
     policy_blocked_dd: list[str] = []
     policy_blocked_sell: list[str] = []
@@ -183,21 +215,36 @@ def scan_afterhours(
             active_buys=active_buys.get(symbol, []),
         )
         if dd_candidate is None:
+            watch_candidate = _double_down_watch_candidate(
+                symbol=symbol,
+                position_qty=position_qty,
+                lots=lots,
+                quote=quote,
+                active_buys=active_buys.get(symbol, []),
+            )
+            if watch_candidate is not None:
+                dd_watch.append(watch_candidate)
             not_due_count += 1
             continue
+        exact_share_dd.append(dd_candidate)
         if dd_candidate.integer_qty >= Decimal("1"):
             whole_share_dd.append(dd_candidate)
         else:
-            fractional_dd.append(dd_candidate)
+            regular_hours_only_dd.append(dd_candidate)
 
-    whole_share_dd.sort(key=lambda item: (item.active_buy_count > 0, -item.est_cost, item.symbol))
-    fractional_dd.sort(key=lambda item: (-item.due_qty, item.symbol))
+    exact_share_dd.sort(key=lambda item: (item.active_buy_count > 0, -item.est_cost, item.symbol))
+    whole_share_dd.sort(key=lambda item: (item.active_buy_count > 0, -item.integer_est_cost, item.symbol))
+    regular_hours_only_dd.sort(key=lambda item: (-item.due_qty, item.symbol))
+    dd_watch.sort(key=lambda item: (item.active_buy_count > 0, item.trigger_gap_pct, item.symbol))
     whole_share_sells.sort(key=lambda item: (item.active_sell_count > 0, -item.return_pct, item.symbol))
 
     return AfterHoursScanReport(
         checked_positions=len(position_by_symbol),
+        exact_share_dd=exact_share_dd,
         whole_share_dd=whole_share_dd,
-        fractional_dd=fractional_dd,
+        regular_hours_only_dd=regular_hours_only_dd,
+        fractional_dd=regular_hours_only_dd,
+        dd_watch=dd_watch[:100],
         whole_share_sells=whole_share_sells,
         not_due_count=not_due_count,
         policy_blocked_dd=policy_blocked_dd,
@@ -210,16 +257,22 @@ def scan_afterhours(
 def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
     return {
         "checked_positions": report.checked_positions,
+        "exact_share_dd_count": len(report.exact_share_dd),
         "whole_share_dd_count": len(report.whole_share_dd),
+        "regular_hours_only_dd_count": len(report.regular_hours_only_dd),
         "fractional_dd_count": len(report.fractional_dd),
+        "dd_watch_count": len(report.dd_watch),
         "whole_share_sell_count": len(report.whole_share_sells),
         "not_due_count": report.not_due_count,
         "policy_blocked_dd_count": len(report.policy_blocked_dd),
         "policy_blocked_sell_count": len(report.policy_blocked_sell),
         "no_history_count": len(report.no_history),
         "incomplete_count": len(report.incomplete),
+        "exact_share_dd": [_json_row(item) for item in report.exact_share_dd],
         "whole_share_dd": [_json_row(item) for item in report.whole_share_dd],
+        "regular_hours_only_dd": [_json_row(item) for item in report.regular_hours_only_dd],
         "fractional_dd": [_json_row(item) for item in report.fractional_dd],
+        "dd_watch": [_json_row(item) for item in report.dd_watch],
         "whole_share_sells": [_json_row(item) for item in report.whole_share_sells],
         "policy_blocked_dd_sample": report.policy_blocked_dd[:25],
         "policy_blocked_sell_sample": report.policy_blocked_sell[:25],
@@ -255,8 +308,11 @@ def main() -> int:
     )
     parser.add_argument(
         "--fractional-dd-cache",
-        default=str(DEFAULT_DD_FRACTIONAL_LEFTOVERS_CSV),
-        help="Ignored CSV used to track same-day DD leftovers where integer_qty is 0.",
+        default="",
+        help=(
+            "Optional ignored CSV for actual DD decimal leftovers after an integer-share execution. "
+            "Due exact-share DDs with integer_qty=0 are not written automatically."
+        ),
     )
     args = parser.parse_args()
 
@@ -271,8 +327,6 @@ def main() -> int:
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = report_to_json(report)
     output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    if args.fractional_dd_cache:
-        write_fractional_dd_leftovers(Path(args.fractional_dd_cache), report.fractional_dd)
     print(json.dumps({key: payload[key] for key in payload if key.endswith("_count") or key == "checked_positions"}))
     return 0
 
@@ -315,7 +369,7 @@ def _fractional_leftover_row(
         "pacific_date": pacific_date,
         "recorded_at": recorded_at.isoformat(),
         "symbol": candidate.symbol,
-        "reason": "integer_qty_zero_fractional_only",
+        "reason": POST_INTEGER_DD_LEFTOVER_REASON,
         "due_lots": candidate.due_lots,
         "due_qty": str(candidate.due_qty),
         "integer_qty": str(candidate.integer_qty),
@@ -404,7 +458,75 @@ def _double_down_candidate(
         suggested_limit=suggested_limit,
         active_buy_count=len(active_buys),
         active_buy_details=_active_details(active_buys),
-        est_cost=integer_qty * suggested_limit,
+        est_cost=due_qty * suggested_limit,
+        integer_est_cost=integer_qty * suggested_limit,
+    )
+
+
+def _double_down_watch_candidate(
+    *,
+    symbol: str,
+    position_qty: Decimal,
+    lots: list[dict[str, Any]],
+    quote: dict[str, Any],
+    active_buys: list[dict[str, Any]],
+) -> AfterHoursDoubleDownWatchCandidate | None:
+    ask = _decimal(quote.get("ask") or quote.get("ask_price"))
+    bid = _decimal(quote.get("bid") or quote.get("bid_price"))
+    last_non_reg = _decimal(quote.get("last_non_reg") or quote.get("last_non_reg_trade_price"))
+    last_trade = _decimal(quote.get("last_trade") or quote.get("last_trade_price") or quote.get("last"))
+    buy_price = ask if ask > ZERO else (last_non_reg or last_trade)
+    buy_price_basis = "ask" if ask > ZERO else "after_hours_last_fallback"
+    if buy_price <= ZERO:
+        return None
+
+    base_price = lots[0]["price"]
+    base_shares = lots[0]["qty"]
+    if base_price <= ZERO or base_shares <= ZERO:
+        return None
+
+    ladder_profile = ladder_profile_for_open_lot_count(base_price, _open_buy_order_count(lots))
+    completed_lot, partial_next = _current_ladder_progress(
+        position_qty=position_qty,
+        base_price=base_price,
+        base_shares=base_shares,
+        ladder_profile=ladder_profile,
+    )
+    next_lot = max(completed_lot + 1, 2)
+    next_trigger, shares = _ladder_lot(
+        base_price=base_price,
+        base_shares=base_shares,
+        lot_index=next_lot,
+        ladder_profile=ladder_profile,
+    )
+    if buy_price <= next_trigger:
+        return None
+
+    remaining = shares
+    if next_lot == completed_lot + 1 and partial_next > ZERO:
+        remaining = max(shares - partial_next, ZERO)
+
+    return AfterHoursDoubleDownWatchCandidate(
+        symbol=symbol,
+        ask=ask,
+        bid=bid,
+        last_non_reg=last_non_reg,
+        last_trade=last_trade,
+        buy_price=buy_price,
+        buy_price_basis=buy_price_basis,
+        base_price=base_price,
+        base_shares=base_shares,
+        ladder_profile=ladder_profile,
+        position_qty=position_qty,
+        completed_lot=completed_lot,
+        partial_next=partial_next,
+        next_lot=next_lot,
+        next_trigger=next_trigger,
+        next_lot_shares=shares,
+        remaining_lot_shares=remaining,
+        trigger_gap_pct=((buy_price - next_trigger) / next_trigger) * Decimal("100"),
+        active_buy_count=len(active_buys),
+        active_buy_details=_active_details(active_buys),
     )
 
 
@@ -519,6 +641,23 @@ def _due_lots(
         if remaining > ZERO:
             due.append({"lot_index": lot_index, "trigger": trigger, "shares": shares, "remaining": remaining})
     return due
+
+
+def _ladder_lot(
+    *,
+    base_price: Decimal,
+    base_shares: Decimal,
+    lot_index: int,
+    ladder_profile: str,
+) -> tuple[Decimal, Decimal]:
+    if lot_index < 1:
+        raise ValueError("lot_index must be positive")
+    trigger = base_price
+    shares = base_shares
+    for next_index in range(2, lot_index + 1):
+        trigger = next_trigger_price(trigger, next_index, ladder_profile=ladder_profile)
+        shares = next_lot_shares(shares)
+    return trigger, shares
 
 
 def _open_buy_order_count(lots: list[dict[str, Any]]) -> int:
