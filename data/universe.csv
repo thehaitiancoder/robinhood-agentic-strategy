@@ -1067,7 +1067,7 @@ CNP,Centerpoint Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CNQ,Canadian Natural Resources Limited,stock,true,true,true,robinhood_validated,2026-06-11
 CNR,Core Natural,stock,true,true,true,robinhood_validated,2026-06-09
 CNS,Cohen & Steers,stock,true,true,true,robinhood_validated,2026-06-09
-CNTA,Centessa Pharmaceuticals plc American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+CNTA,Centessa Pharmaceuticals plc American Depositary Shares,stock,false,false,false,broker_unavailable,2026-06-26
 CNTB,Connect Biopharma Holdings Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 CNTN,"Canton Strategic Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CNTX,Context Therapeutics Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -3673,7 +3673,7 @@ PPSI,"Pioneer Power Solutions, Inc. Common Stock",stock,true,true,true,robinhood
 PPT,Putnam Premier Income Trust,stock,true,true,true,robinhood_validated,2026-06-15
 PPTA,Perpetua Resources Corp. Common Shares,stock,true,true,true,robinhood_validated,2026-06-11
 PR,Permian Resources,stock,true,true,true,robinhood_validated,2026-06-09
-PRA,ProAssurance,stock,true,true,true,robinhood_validated,2026-06-09
+PRA,ProAssurance,stock,false,false,false,broker_not_found,2026-06-26
 PRAA,PRA Group,stock,true,true,true,robinhood_validated,2026-06-09
 PRAX,"Praxis Precision Medicines, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 PRCH,"Porch Group, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11

@@ -132,6 +132,7 @@ CLST,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.9511
 CMS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.9872 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 CNP,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.3151 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 CNTA,broker_unavailable,false,false,false,true,Robinhood quote returned inactive_instruments and tradability/orders/review returned not_found/instrument not found while live position remains sellable,manual_broker_check_2026-06-25,,2026-06-25
+CNTA^,broker_unavailable,false,false,false,true,Live Robinhood position symbol is CNTA^ with average_buy_price=0 and direct CNTA/CNTA^ quote checks return inactive_instruments or broker API errors,manual_broker_check_2026-06-26,,2026-06-26
 COLA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.1499 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 COPL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.3604 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 COSO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7771 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
@@ -550,7 +551,7 @@ POLE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6135
 POR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.9803 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 PPL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.5512 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 PPT,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.5115 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
-PRA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.7051 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
+PRA,broker_unavailable,false,false,false,true,Robinhood app shows stock not supported and rh_fast quote/orders returned broker errors while live positions snapshot no longer includes PRA,manual_broker_check_2026-06-26,,2026-06-26
 PROV,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.0034 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 PSF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.8502 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
 PTA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.9664 below 10,weekly_intraday_range_2026-01_to_2026-06,,2026-06-21
