@@ -353,6 +353,12 @@ Execution rules:
   result. Regular-hours-only exact-share DDs and post-integer DD decimal
   leftovers are verified report-only items in lanes where they are not
   executable and must not be included in that blocker set.
+- Use `data/runtime/dd-known-blockers.csv` as an ignored same-system cache for
+  repeated non-executable DD noise. If the scan output reports
+  `suppressed_dd_blockers_sample`, those rows were already seen with the same
+  signature and should not be repeated in the blocker email/count. New or
+  changed blockers must still be reported, and executable DDs must still be
+  reviewed/placed normally.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
 - Do not write `data/private/sold-today.md` while sell execution is still in
@@ -434,6 +440,10 @@ Extended-hours execution scope is intentionally narrow:
   Leave fractional leftovers unplaced, report them, and write/update
   `data/runtime/dd-fractional-leftovers.csv`. These leftovers are not DD scan
   blockers.
+- `python -m agentic_strategy.afterhours_scan` also maintains
+  `data/runtime/dd-known-blockers.csv` by default. Treat unchanged suppressed
+  rows from that cache as already-known noise, not as fresh blocked coverage.
+  Do not use the cache to skip an executable whole-share sell/DD candidate.
 - For sells, use live extended-hours bid as the sell-side executable price. If
   the integer sellable quantity is at least 1 share and bid-side return is at
   least 10%, place that integer quantity as an extended-hours limit sell. If

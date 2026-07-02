@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, TypedDict
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from .dd_blockers import DDBlockerEvent, DEFAULT_KNOWN_DD_BLOCKERS_CSV, update_known_dd_blockers
 from .ladder import ladder_profile_for_open_lot_count, next_lot_shares, next_trigger_price
 from .symbol_policy import (
     DEFAULT_SYMBOL_POLICY_CSV,
@@ -281,6 +282,44 @@ def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
     }
 
 
+def apply_known_dd_blocker_cache(
+    payload: dict[str, Any],
+    report: AfterHoursScanReport,
+    *,
+    path: Path,
+    source: str = "",
+    recorded_at: datetime | None = None,
+) -> dict[str, Any]:
+    events = _known_dd_blocker_events(report, source=source)
+    update = update_known_dd_blockers(path, events, recorded_at=recorded_at or _now_pacific())
+    suppressed_keys = {
+        (row.get("symbol", ""), row.get("blocker_type", ""))
+        for row in update.suppressed
+        if row.get("status") == "coverage_blocker"
+    }
+    raw_no_history = list(report.no_history)
+    raw_incomplete = list(report.incomplete)
+    filtered_no_history = [
+        symbol for symbol in raw_no_history if (symbol.upper(), "missing_lot_history") not in suppressed_keys
+    ]
+    filtered_incomplete = [
+        row for row in raw_incomplete if (row.get("symbol", "").upper(), "quantity_mismatch") not in suppressed_keys
+    ]
+    payload["raw_no_history_count"] = len(raw_no_history)
+    payload["raw_incomplete_count"] = len(raw_incomplete)
+    payload["no_history_count"] = len(filtered_no_history)
+    payload["incomplete_count"] = len(filtered_incomplete)
+    payload["no_history_sample"] = filtered_no_history[:25]
+    payload["incomplete_sample"] = filtered_incomplete[:25]
+    payload["known_dd_blocker_cache"] = str(path)
+    payload["known_dd_blocker_count"] = len(update.cache_rows)
+    payload["new_dd_blocker_count"] = len(update.reported)
+    payload["suppressed_dd_blocker_count"] = len(update.suppressed)
+    payload["new_dd_blockers"] = update.reported[:50]
+    payload["suppressed_dd_blockers_sample"] = update.suppressed[:50]
+    return payload
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Scan owned positions for extended-hours whole-share DD and sell candidates."
@@ -314,6 +353,19 @@ def main() -> int:
             "Due exact-share DDs with integer_qty=0 are not written automatically."
         ),
     )
+    parser.add_argument(
+        "--known-dd-blockers-cache",
+        default=str(DEFAULT_KNOWN_DD_BLOCKERS_CSV),
+        help=(
+            "Ignored CSV used to suppress unchanged known DD blocker/report-only rows. "
+            "Pass an empty string to disable."
+        ),
+    )
+    parser.add_argument(
+        "--known-dd-blockers-source",
+        default="",
+        help="Optional source label recorded in the known DD blockers cache.",
+    )
     args = parser.parse_args()
 
     report = scan_afterhours(
@@ -326,9 +378,60 @@ def main() -> int:
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = report_to_json(report)
+    if args.known_dd_blockers_cache:
+        payload = apply_known_dd_blocker_cache(
+            payload,
+            report,
+            path=Path(args.known_dd_blockers_cache),
+            source=args.known_dd_blockers_source,
+        )
     output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({key: payload[key] for key in payload if key.endswith("_count") or key == "checked_positions"}))
     return 0
+
+
+def _known_dd_blocker_events(report: AfterHoursScanReport, *, source: str = "") -> list[DDBlockerEvent]:
+    events: list[DDBlockerEvent] = []
+    for symbol in report.no_history:
+        events.append(
+            DDBlockerEvent(
+                symbol=symbol,
+                blocker_type="missing_lot_history",
+                status="coverage_blocker",
+                reason="no_filled_buy_lot_history",
+                source=source,
+            )
+        )
+    for row in report.incomplete:
+        events.append(
+            DDBlockerEvent(
+                symbol=row.get("symbol", ""),
+                blocker_type="quantity_mismatch",
+                status="coverage_blocker",
+                reason="live_position_quantity_does_not_match_reconstructed_lots",
+                quantity=row.get("position_qty", ""),
+                source=source,
+                notes=f"calculated_qty={row.get('calculated_qty', '')}",
+            )
+        )
+    for candidate in report.regular_hours_only_dd:
+        events.append(
+            DDBlockerEvent(
+                symbol=candidate.symbol,
+                blocker_type="regular_hours_only_exact_dd",
+                status="report_only",
+                reason="integer_qty_zero_in_whole_share_lane",
+                quantity=str(candidate.position_qty),
+                buy_price=str(candidate.buy_price),
+                deepest_trigger=str(candidate.deepest_trigger),
+                due_qty=str(candidate.due_qty),
+                integer_qty=str(candidate.integer_qty),
+                active_buy_count=str(candidate.active_buy_count),
+                source=source,
+                notes=f"due_lots={candidate.due_lots}",
+            )
+        )
+    return events
 
 
 def write_fractional_dd_leftovers(

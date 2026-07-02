@@ -72,6 +72,15 @@ Regular-hours-only exact-share DDs and post-integer DD decimal leftovers are
 verified report-only items in lanes where they are not executable, not missing
 coverage. They must not be included in the blocker set.
 
+Use the ignored known-DD-blocker cache at
+`data/runtime/dd-known-blockers.csv` to reduce repeated blocker noise without
+changing trading behavior. If the scanner reports suppressed known blockers,
+do not include those unchanged rows in `DD SCAN BLOCKED` emails or blocker
+counts. Still keep each symbol eligible for future DD checks unless symbol
+policy explicitly has `allow_double_down=false`. Always surface and act on
+executable DDs, new blockers, changed blocker signatures, quantity/order-state
+changes, and broker blocks on executable DD orders.
+
 Shortlist files under `data/private/top-10-buy-candidates.md` and
 `data/private/top-10-sell-candidates.md` are speed hints from the previous run.
 At the start of a market-hours check, quote those symbols first because the next
@@ -457,6 +466,10 @@ requests and the 5 PM daily automation:
   `data/private/top-10-sell-candidates.md` from fresh broker positions and
   quotes. These are previous-run speed hints to check first, then refresh after
   the main work is complete.
+- `agentic_strategy.dd_blockers`: maintains ignored
+  `data/runtime/dd-known-blockers.csv` so unchanged no-history,
+  quantity-mismatch, and regular-hours-only exact-DD rows do not resurface as
+  fresh DD blocker noise every automation run.
 - `agentic_strategy.sold_today`: initializes, appends, or removes symbols from
   `data/private/sold-today.md`, the durable queue for symbols sold for profit
   and not yet reopened. Append only after sell execution is done and fills are

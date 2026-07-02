@@ -6,7 +6,7 @@ import unittest
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from agentic_strategy.afterhours_scan import scan_afterhours, write_fractional_dd_leftovers
+from agentic_strategy.afterhours_scan import apply_known_dd_blocker_cache, report_to_json, scan_afterhours, write_fractional_dd_leftovers
 from agentic_strategy.symbol_policy import SymbolPolicy
 
 
@@ -345,6 +345,101 @@ class AfterHoursScanTest(unittest.TestCase):
         self.assertEqual(str(candidate.est_cost), "1.32647604")
         self.assertEqual(report.whole_share_dd, [])
         self.assertEqual(report.regular_hours_only_dd, [candidate])
+
+    def test_known_dd_blocker_cache_suppresses_unchanged_missing_history(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "LILAP",
+                        "quantity": "0.025268",
+                        "shares_available_for_sells": "0.025268",
+                        "average_buy_price": "25.33",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [{"symbol": "LILAP", "bid": "19.61", "ask": "19.87", "last_trade": "19.745"}],
+            },
+            orders_payload={"orders": []},
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "dd-known-blockers.csv"
+            first = apply_known_dd_blocker_cache(
+                report_to_json(report),
+                report,
+                path=path,
+                source="test",
+                recorded_at=datetime(2026, 6, 30, 4, 0, tzinfo=timezone(timedelta(hours=-7))),
+            )
+            second = apply_known_dd_blocker_cache(
+                report_to_json(report),
+                report,
+                path=path,
+                source="test",
+                recorded_at=datetime(2026, 6, 30, 4, 30, tzinfo=timezone(timedelta(hours=-7))),
+            )
+
+        self.assertEqual(first["no_history_count"], 1)
+        self.assertEqual(first["new_dd_blocker_count"], 1)
+        self.assertEqual(first["suppressed_dd_blocker_count"], 0)
+        self.assertEqual(second["raw_no_history_count"], 1)
+        self.assertEqual(second["no_history_count"], 0)
+        self.assertEqual(second["new_dd_blocker_count"], 0)
+        self.assertEqual(second["suppressed_dd_blocker_count"], 1)
+
+    def test_known_dd_blocker_cache_resurfaces_changed_quantity_mismatch(self) -> None:
+        first_report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "AIFU",
+                        "quantity": "2.500000",
+                        "shares_available_for_sells": "2.500000",
+                        "average_buy_price": "1.00",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [{"symbol": "AIFU", "bid": "0.70", "ask": "0.75", "last_trade": "0.75"}],
+            },
+            orders_payload={"orders": [_order("AIFU", "buy", "1.000000", "1.00")]},
+        )
+        changed_report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "AIFU",
+                        "quantity": "3.000000",
+                        "shares_available_for_sells": "3.000000",
+                        "average_buy_price": "1.00",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [{"symbol": "AIFU", "bid": "0.70", "ask": "0.75", "last_trade": "0.75"}],
+            },
+            orders_payload={"orders": [_order("AIFU", "buy", "1.000000", "1.00")]},
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "dd-known-blockers.csv"
+            first = apply_known_dd_blocker_cache(
+                report_to_json(first_report),
+                first_report,
+                path=path,
+                recorded_at=datetime(2026, 6, 30, 4, 0, tzinfo=timezone(timedelta(hours=-7))),
+            )
+            changed = apply_known_dd_blocker_cache(
+                report_to_json(changed_report),
+                changed_report,
+                path=path,
+                recorded_at=datetime(2026, 6, 30, 5, 0, tzinfo=timezone(timedelta(hours=-7))),
+            )
+
+        self.assertEqual(first["incomplete_count"], 1)
+        self.assertEqual(first["new_dd_blocker_count"], 1)
+        self.assertEqual(changed["incomplete_count"], 1)
+        self.assertEqual(changed["new_dd_blocker_count"], 1)
+        self.assertEqual(changed["suppressed_dd_blocker_count"], 0)
 
 
 def _order(symbol: str, side: str, quantity: str, price: str) -> dict[str, object]:
