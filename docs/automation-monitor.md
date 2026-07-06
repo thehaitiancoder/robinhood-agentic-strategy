@@ -394,17 +394,22 @@ Execution rules:
   market work and leave extended-hours trading to the `13:00 PT - RH AH`
   automation.
 
-It emails `rdgustave@gmail.com` only for urgent execution outcomes:
+It emails `rdgustave@gmail.com` only when an action is blocked or an issue
+needs user attention. Do not email for successful sell fills, successful
+double-down fills, successful reopens, routine fills, routine no-action checks,
+or `OPEN CASH AVAILABLE`; record successful orders in the thread and automation
+memory only.
 
-- `URGENT SELL EXECUTED - Robinhood strategy`
+Email-worthy outcomes include:
+
 - `URGENT SELL BLOCKED - Robinhood strategy`
-- `DOUBLE-DOWN EXECUTED - Robinhood strategy`
 - `DOUBLE-DOWN BLOCKED - Robinhood strategy`
 - `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`
 
-It does not email routine no-action checks or `OPEN CASH AVAILABLE` by default.
-An incomplete DD scan is not routine no-action; it is a blocked scan and must
-email.
+Guard exceptions, broker/tool failures, reconciliation failures, or other
+attention-needed conditions should also email even if an order eventually
+filled. An incomplete DD scan is not routine no-action; it is a blocked scan
+and must email.
 
 ## Premarket Trading
 

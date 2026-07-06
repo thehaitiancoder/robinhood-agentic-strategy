@@ -203,10 +203,14 @@ retested and proven.
 The market-hours half-hour automations and their in-thread +15 rechecks are
 pre-authorized to place qualifying
 strategy sell and double-down orders directly when the broker tool workflow
-allows placement. They email `rdgustave@gmail.com` after urgent sell or
-double-down orders are executed or blocked, including blocked DD scans. They do
-not place new-opening buys unless the user explicitly authorizes openings in
-that run.
+allows placement. They email `rdgustave@gmail.com` only when an action is
+blocked or an issue needs user attention, including blocked DD scans,
+broker-blocked sell/DD attempts, guard exceptions, broker/tool failures, or
+high-priority next-session warnings. Do not email for successful sells,
+successful double-downs, successful reopens, routine fills, or routine
+no-action checks; record those outcomes in the thread and automation memory
+instead. They do not place new-opening buys unless the user explicitly
+authorizes openings in that run.
 
 The premarket and after-hours trade automations are extended-hours trading
 lanes. They must first check Pacific time and run only during their scheduled
