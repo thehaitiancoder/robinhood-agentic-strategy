@@ -55,13 +55,18 @@ historical bars for that symbol before marking it failed.
 Decision: the base buy is lot 1. After that, each new lot doubles the previous
 lot's share count and uses a drop trigger from the previous trigger price.
 
-Lot trigger zones:
+Default lot trigger zones:
 
 - Lots 2-5: 10% drop, 4 buys total after the base.
 - Lots 6-10: 20% drop, 5 buys total.
 - Lots 11-15: 40% drop, 5 buys total.
 - Lots 16 and beyond: 80% drop, continuing in 5-buy 80% zones as long as the
   stock remains tradable and cash/risk rules allow it.
+
+Under-$5 exception: new openings/reopens and current base-only positions whose
+base price is under `$5` use `under5_20`: lots 2-11 trigger every 20% drop, and
+lot 12 onward triggers every 40% drop. Existing multi-lot positions keep the
+default profile unless explicitly migrated later.
 
 Reason: the ladder can theoretically continue indefinitely because each 80%
 drop moves the next trigger price closer to zero. In practice, a stock will

@@ -89,6 +89,30 @@ class StrategyEngineTest(unittest.TestCase):
         )
         self.assertEqual(double_down.metrics["price_guard_trigger"], "72.9000")
 
+    def test_due_double_down_continues_under5_profile(self) -> None:
+        report = evaluate_strategy(
+            portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("900")),
+            positions=[
+                PositionSnapshot(
+                    symbol="PENNY",
+                    quantity=Decimal("0.25"),
+                    invested_cost=Decimal("1"),
+                    current_lot_index=1,
+                    next_trigger_price=Decimal("3.2000"),
+                    next_lot_shares=Decimal("0.50"),
+                    ladder_profile="under5_20",
+                )
+            ],
+            quotes=[QuoteSnapshot(symbol="PENNY", bid_price=Decimal("2.50"), ask_price=Decimal("2.50"))],
+            universe=[],
+        )
+
+        double_down = next(decision for decision in report.decisions if decision.action == "double_down_ready")
+        self.assertEqual(double_down.metrics["ladder_profile"], "under5_20")
+        self.assertEqual(double_down.metrics["due_lots"], "2,3")
+        self.assertEqual(double_down.metrics["order_quantity"], "1.50")
+        self.assertEqual(double_down.metrics["price_guard_trigger"], "2.5600")
+
     def test_cash_short_double_down_surfaces_green_sells(self) -> None:
         report = evaluate_strategy(
             portfolio=PortfolioSnapshot(total_value=Decimal("1000"), buying_power=Decimal("101")),

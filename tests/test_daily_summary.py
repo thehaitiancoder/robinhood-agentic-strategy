@@ -152,6 +152,142 @@ class DailySummaryTest(unittest.TestCase):
             self.assertEqual(rows[0]["report_date"], "2026-06-15")
             self.assertIn("$1,000.00", history_md.read_text(encoding="utf-8"))
 
+    def test_performance_history_renders_partial_backfill_rows_without_fake_zero_snapshots(self) -> None:
+        backfill = {
+            "report_date": "2026-06-10",
+            "generated_at": "2026-06-26T07:22:05.748726+00:00",
+            "portfolio": {
+                "total_value": "",
+                "equity_value": "",
+                "cash": "",
+                "buying_power": "",
+            },
+            "paper": {
+                "gross_paper_gain": "",
+                "gross_paper_loss": "",
+                "net_paper_gain": "",
+                "long_market_value": "",
+                "positions_up": "",
+                "positions_down": "",
+                "positions_flat": "",
+            },
+            "totals": {
+                "realized_profit": "0.561059538100",
+                "sell_proceeds": "5.560934338100",
+                "sold_cost_basis": "4.999874800000",
+                "realized_return_pct": "11.22147174765256122013295213",
+                "sell_count": 5,
+                "costed_sell_count": 5,
+                "winning_sells": 5,
+                "losing_sells": 0,
+                "uncosted_quantity": "0.000000",
+                "average_hold_minutes": "107.0148800000000052",
+                "median_hold_minutes": "59.09668333333333",
+            },
+            "hourly": {
+                "06": {"count": 2, "proceeds": "2.224450035700", "cost": "1.999874800000", "profit": "0.224575235700"},
+                "07": {"count": 2, "proceeds": "2.237792562600", "cost": "1.999874800000", "profit": "0.237917762600"},
+                "12": {"count": 1, "proceeds": "1.098691739800", "cost": "1.000125200000", "profit": "0.098566539800"},
+            },
+            "cycles": [],
+        }
+        first = build_daily_summary(
+            portfolio_payload={"portfolio": {"total_value": "1000", "cash": "200", "buying_power": "250"}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={"orders": []},
+            report_date="2026-06-15",
+        )
+        second = build_daily_summary(
+            portfolio_payload={"portfolio": {"total_value": "1100", "cash": "300", "buying_power": "350"}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={"orders": []},
+            report_date="2026-06-16",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            history_csv = root / "performance-history.csv"
+            history_md = root / "performance-history.md"
+
+            write_performance_history(summary=backfill, history_csv=history_csv, history_markdown=history_md)
+            write_performance_history(summary=first, history_csv=history_csv, history_markdown=history_md)
+            write_performance_history(summary=second, history_csv=history_csv, history_markdown=history_md)
+
+            markdown = history_md.read_text(encoding="utf-8")
+            self.assertIn("| 2026-06-10 |  |  |  | $0.56 |  | 5 | 5/0 | 1.8 hr | 59.1 min | 0 |", markdown)
+            self.assertIn("| Account value change since first tracked day | $100.00 |", markdown)
+            self.assertIn("Blank account snapshot cells indicate realized-only backfill rows", markdown)
+
+    def test_performance_history_reads_utf8_bom_csv(self) -> None:
+        summary = build_daily_summary(
+            portfolio_payload={"portfolio": {"total_value": "1100", "cash": "300", "buying_power": "350"}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={"orders": []},
+            report_date="2026-06-16",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            history_csv = root / "performance-history.csv"
+            history_md = root / "performance-history.md"
+            with history_csv.open("w", newline="", encoding="utf-8-sig") as handle:
+                writer = csv.DictWriter(
+                    handle,
+                    fieldnames=[
+                        "report_date",
+                        "generated_at",
+                        "account_value",
+                        "equity_value",
+                        "cash",
+                        "buying_power",
+                        "long_market_value",
+                        "gross_paper_gain",
+                        "gross_paper_loss",
+                        "net_paper_pl",
+                        "positions_up",
+                        "positions_down",
+                        "positions_flat",
+                        "realized_profit",
+                        "sell_proceeds",
+                        "sold_cost_basis",
+                        "realized_return_pct",
+                        "sell_count",
+                        "costed_sell_count",
+                        "winning_sells",
+                        "losing_sells",
+                        "uncosted_quantity",
+                        "average_hold_minutes",
+                        "median_hold_minutes",
+                        "profit_by_hour",
+                    ],
+                )
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "report_date": "2026-06-10",
+                        "generated_at": "2026-06-26T07:22:05.748726+00:00",
+                        "realized_profit": "0.561059538100",
+                        "sell_proceeds": "5.560934338100",
+                        "sold_cost_basis": "4.999874800000",
+                        "realized_return_pct": "11.22147174765256122013295213",
+                        "sell_count": "5",
+                        "costed_sell_count": "5",
+                        "winning_sells": "5",
+                        "losing_sells": "0",
+                        "uncosted_quantity": "0.000000",
+                        "average_hold_minutes": "107.0148800000000052",
+                        "median_hold_minutes": "59.09668333333333",
+                        "profit_by_hour": "06=0.224575235700;07=0.237917762600;12=0.098566539800",
+                    }
+                )
+
+            write_performance_history(summary=summary, history_csv=history_csv, history_markdown=history_md)
+
+            with history_csv.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+
+            self.assertEqual([row["report_date"] for row in rows], ["2026-06-10", "2026-06-16"])
+
 
 def _order(order_id: str, symbol: str, side: str, quantity: str, price: str, timestamp: str) -> dict[str, object]:
     return {

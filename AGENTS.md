@@ -47,9 +47,18 @@ below the deepest included trigger and cash/risk checks pass, review/place one
 combined order with `quantity` equal to the sum of those due lot shares. After
 placement, inspect the broker returned order price and immediately cancel an
 active DD order if that price is missing or above the deepest included trigger.
-If Robinhood rejects the fractional DD quantity, retry the integer part only
-when it is at least 1 share. Do not stop after checking only recently doubled
-down symbols.
+During regular market hours, a due DD with `integer_qty=0` is still a due
+exact-share ladder buy when its fractional share quantity is broker-executable.
+Do not classify it as a leftover before broker review/place; buy the combined
+exact due lot quantity if Robinhood allows it and all strategy checks pass. If
+Robinhood rejects the fractional DD quantity, retry the integer part only when
+it is at least 1 share. If the integer part is 0 after rejection, report it as a
+broker-blocked exact fractional DD, not missing DD coverage. In premarket and
+after-hours whole-share lanes, an `integer_qty=0` due DD is regular-hours-only
+and not executable in that lane. A DD fractional leftover means only a decimal
+remainder left after an integer-share execution or integer fallback, and those
+leftovers may be tracked in ignored `data/runtime/dd-fractional-leftovers.csv`.
+Do not stop after checking only recently doubled down symbols.
 
 If the monitor cannot complete full DD coverage and also cannot verify the
 mandatory top-downside candidates because the fast path is blocked, broker
@@ -59,6 +68,18 @@ history cannot be fetched, the run is blocked. It must not report "no DD due,"
 `DD SCAN BLOCKED`, email `rdgustave@gmail.com` with subject
 `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`, include the exact blocker, and
 state which symbols were and were not verified.
+Regular-hours-only exact-share DDs and post-integer DD decimal leftovers are
+verified report-only items in lanes where they are not executable, not missing
+coverage. They must not be included in the blocker set.
+
+Use the ignored known-DD-blocker cache at
+`data/runtime/dd-known-blockers.csv` to reduce repeated blocker noise without
+changing trading behavior. If the scanner reports suppressed known blockers,
+do not include those unchanged rows in `DD SCAN BLOCKED` emails or blocker
+counts. Still keep each symbol eligible for future DD checks unless symbol
+policy explicitly has `allow_double_down=false`. Always surface and act on
+executable DDs, new blockers, changed blocker signatures, quantity/order-state
+changes, and broker blocks on executable DD orders.
 
 Shortlist files under `data/private/top-10-buy-candidates.md` and
 `data/private/top-10-sell-candidates.md` are speed hints from the previous run.
@@ -182,10 +203,14 @@ retested and proven.
 The market-hours half-hour automations and their in-thread +15 rechecks are
 pre-authorized to place qualifying
 strategy sell and double-down orders directly when the broker tool workflow
-allows placement. They email `rdgustave@gmail.com` after urgent sell or
-double-down orders are executed or blocked, including blocked DD scans. They do
-not place new-opening buys unless the user explicitly authorizes openings in
-that run.
+allows placement. They email `rdgustave@gmail.com` only when an action is
+blocked or an issue needs user attention, including blocked DD scans,
+broker-blocked sell/DD attempts, guard exceptions, broker/tool failures, or
+high-priority next-session warnings. Do not email for successful sells,
+successful double-downs, successful reopens, routine fills, or routine
+no-action checks; record those outcomes in the thread and automation memory
+instead. They do not place new-opening buys unless the user explicitly
+authorizes openings in that run.
 
 The premarket and after-hours trade automations are extended-hours trading
 lanes. They must first check Pacific time and run only during their scheduled
@@ -331,6 +356,10 @@ original rules, and make rule violations visible before money is put at risk.
   `allow_reopen=false` must not be reopened after a sell and should not be
   appended to `sold-today.md` as a pending reopen. Keep filtered symbols in
   `data/universe.csv`; the policy overlay controls strategy eligibility.
+- Also apply manual symbol-policy overrides to owned-position automation checks.
+  A symbol with `allow_double_down=false` must not be double-downed and must not
+  be treated as a DD coverage blocker. A symbol with `allow_sell=false` must
+  not be sold by automation.
 - The strategy goal is automatic market execution when criteria are met. Do not
   require manual monitoring as a strategy rule.
 - For market-hours automation sell and double-down checks, process one
@@ -359,16 +388,25 @@ original rules, and make rule violations visible before money is put at risk.
 - If DD coverage remains incomplete after that fallback, report `DD SCAN
   BLOCKED`, email the user, and do not present the run as a successful no-action
   scan.
-- Lot 1 is the base buy. Lots 2-5 trigger every 10% drop, lots 6-10 every 20%,
-  lots 11-15 every 40%, and lots 16+ every 80%; each new lot doubles the prior
-  lot's share count.
+- Lot 1 is the base buy. The default ladder uses lots 2-5 at every 10% drop,
+  lots 6-10 at every 20% drop, lots 11-15 at every 40% drop, and lots 16+ at
+  every 80% drop; each new lot doubles the prior lot's share count. For new
+  openings/reopens and current base-only positions whose base price is under
+  `$5`, use the `under5_20` ladder profile instead: the first 10 double-down
+  steps after base use 20% drops, and every later step uses 40% drops. Do not
+  migrate existing multi-lot positions to `under5_20` automatically.
 - Double-down orders must follow the share ladder, not a rounded dollar amount.
   When multiple DD lots are due for the same symbol at the current ask, combine
   them into one broker order with `quantity` equal to the sum of the due lot
   shares. Use dollar estimates only for cash, concentration, and affordability
-  checks. If Robinhood rejects the fractional DD quantity, retry with only the
-  integer part of that same quantity when the integer part is at least 1 share;
-  otherwise report the DD as broker-blocked.
+  checks. During regular market hours, place due exact-share DD quantities even
+  when the combined quantity is below 1 share if Robinhood supports that
+  fractional buy. If Robinhood rejects the fractional DD quantity, retry with
+  only the integer part of that same quantity when the integer part is at least
+  1 share. If the integer part is 0 after rejection, report it as a
+  broker-blocked exact fractional DD instead of a DD scan coverage blocker. In
+  premarket and after-hours lanes, below-1-share DD quantities are
+  regular-hours-only and not executable in that lane.
 - A DD is executable only when the fresh broker buy-side ask is at or below the
   deepest included DD trigger. After placing a DD, immediately compare the
   broker returned `price` or `average_price` with that deepest included trigger;
@@ -432,6 +470,10 @@ requests and the 5 PM daily automation:
   `data/private/top-10-sell-candidates.md` from fresh broker positions and
   quotes. These are previous-run speed hints to check first, then refresh after
   the main work is complete.
+- `agentic_strategy.dd_blockers`: maintains ignored
+  `data/runtime/dd-known-blockers.csv` so unchanged no-history,
+  quantity-mismatch, and regular-hours-only exact-DD rows do not resurface as
+  fresh DD blocker noise every automation run.
 - `agentic_strategy.sold_today`: initializes, appends, or removes symbols from
   `data/private/sold-today.md`, the durable queue for symbols sold for profit
   and not yet reopened. Append only after sell execution is done and fills are

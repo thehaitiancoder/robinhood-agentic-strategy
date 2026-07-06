@@ -278,10 +278,13 @@ def render_performance_history(rows: list[dict[str, str]]) -> str:
         lines.extend(["No daily summaries have been recorded yet.", ""])
         return "\n".join(lines)
 
-    first = rows[0]
     latest = rows[-1]
     cumulative_realized = sum((_decimal(row.get("realized_profit")) for row in rows), ZERO)
-    account_change = _decimal(latest.get("account_value")) - _decimal(first.get("account_value"))
+    first_account_row = next((row for row in rows if row.get("account_value") not in (None, "")), None)
+    latest_account_value = latest.get("account_value")
+    account_change = None
+    if first_account_row is not None and latest_account_value not in (None, ""):
+        account_change = _decimal(latest_account_value) - _decimal(first_account_row.get("account_value"))
 
     lines.extend(
         [
@@ -327,6 +330,7 @@ def render_performance_history(rows: list[dict[str, str]]) -> str:
             "- This file is regenerated from `performance-history.csv`.",
             "- One row is kept per Pacific trading date; reruns replace that date instead of appending duplicates.",
             "- Values come from the 5 PM read-only daily summary job and Robinhood broker artifacts fetched during that run.",
+            "- Blank account snapshot cells indicate realized-only backfill rows where no same-day 5 PM broker snapshot was preserved.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -705,7 +709,7 @@ def _history_profit_by_hour(hourly: dict[str, dict[str, Decimal | int]]) -> str:
 def _read_history_rows(path: Path) -> list[dict[str, str]]:
     if not path.exists():
         return []
-    with path.open(newline="", encoding="utf-8") as handle:
+    with path.open(newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         return [
             {field: str(row.get(field, "")) for field in HISTORY_FIELDS}
@@ -891,7 +895,7 @@ def _read_json(path: str | Path) -> dict[str, Any]:
 
 
 def _money(value: Any) -> str:
-    if value is None:
+    if value in (None, ""):
         return ""
     amount = _decimal(value).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     sign = "-" if amount < ZERO else ""

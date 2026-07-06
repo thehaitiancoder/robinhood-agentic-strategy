@@ -26,6 +26,17 @@ workflow one candidate at a time.
 - If the fast path is blocked and no other path can verify the mandatory
   downside candidates, the correct result is `DD SCAN BLOCKED`; do not emit a
   routine no-action report.
+- During regular market hours, a verified due DD remains an exact-share
+  candidate even when `integer_qty=0` if Robinhood accepts the fractional buy.
+  In premarket and after-hours whole-share lanes, that same DD is
+  regular-hours-only and not missing coverage. Use ignored
+  `data/runtime/dd-fractional-leftovers.csv` only for decimal remainders left
+  after an integer-share execution or integer fallback.
+- `python -m agentic_strategy.afterhours_scan` writes ignored
+  `data/runtime/dd-known-blockers.csv` by default and includes
+  `new_dd_blockers` plus `suppressed_dd_blockers_sample` in its JSON output.
+  Report new/changed blockers; suppress unchanged known rows. This cache is a
+  reporting-noise control only and must never override live executable DDs.
 - Write outputs under ignored `data/runtime/` unless the user explicitly asks
   for post-market persistence.
 - The scripts require `RH_ACCOUNT_NUMBER`; do not commit full account numbers.

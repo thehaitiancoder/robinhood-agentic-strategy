@@ -42,6 +42,7 @@ ACAD,ACADIA Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
 ACB,Aurora Cannabis Inc. Common Shares,stock,true,true,true,robinhood_validated,2026-06-10
 ACCL,Acco Group Holdings Limited Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-15
 ACCO,Acco Brands Corporation,stock,true,true,true,robinhood_validated,2026-06-11
+ACCS,ACCESS Newswire Inc.,stock,true,true,true,robinhood_validated,2026-07-04
 ACDC,ProFrac Holding Corp. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 ACEL,"Accel Entertainment, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
 ACET,"Adicet Bio, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -111,8 +112,10 @@ AEO,American Eagle,stock,true,true,true,robinhood_validated,2026-06-09
 AEP,American Electric Power Inc,stock,true,true,true,robinhood_validated,2026-06-09
 AER,Aercap Holdings N.V.,stock,true,true,true,robinhood_validated,2026-06-11
 AERO,"Grupo Aeromexico, S.A.B. de C.V. American Depositary Shares (each representing ten (10) Common Shares)",stock,true,true,true,robinhood_validated,2026-06-11
+AERT,"Aeries Technology, Inc. Class A Ordinary Share",stock,true,true,true,robinhood_validated,2026-07-04
 AES,AES Corp,stock,true,true,true,robinhood_validated,2026-06-09
 AESI,Atlas Energy Solutions,stock,true,true,true,robinhood_validated,2026-06-09
+AESP,Aeon Acquisition I Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 AEVA,"Aeva Technologies, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 AEXA,American Exceptionalism Acquisition Corp. A,stock,true,true,true,robinhood_validated,2026-06-11
 AEYE,"AudioEye, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -202,6 +205,7 @@ ALGT,Allegiant Air,stock,true,true,true,robinhood_validated,2026-06-09
 ALH,Alliance Laundry Holdings Inc.,stock,true,true,true,robinhood_validated,2026-06-11
 ALHC,Alignment Healthcare,stock,true,true,true,robinhood_validated,2026-06-09
 ALIS,Calisa Acquisition Corp Ordinary shares,stock,true,true,true,robinhood_validated,2026-06-10
+ALIT,"Alight, Inc.",stock,true,true,true,robinhood_validated,2026-07-04
 ALK,Alaska Air,stock,true,true,true,robinhood_validated,2026-06-09
 ALKS,Alkermes,stock,true,true,true,robinhood_validated,2026-06-09
 ALKT,"Alkami Technology, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -293,7 +297,6 @@ ANNX,"Annexon, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-
 ANPA,Rich Sparkle Holdings Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 ANRO,Alto Neuroscience Inc.,stock,true,true,true,robinhood_validated,2026-06-11
 ANSC,Agriculture & Natural Solutions Acquisition Corporation Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
-ANSS,Ansys Inc,stock,false,false,false,robinhood_not_found,2026-06-09
 ANTA,Antalpha Platform Holding Company Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 ANTX,"AN2 Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 ANVS,"Annovis Bio, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
@@ -318,6 +321,7 @@ API,"Agora, Inc. American Depositary Shares",stock,true,true,true,robinhood_vali
 APLD,Applied Digital Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 APLE,Apple Hospitality REIT,stock,true,true,true,robinhood_validated,2026-06-09
 APLM,Apollomics Inc. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+APMC,AmperCap Acquisition Company Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 APO,"Apollo Global Management, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 APOG,Apogee,stock,true,true,true,robinhood_validated,2026-06-09
 APP,AppLovin Corp,stock,true,true,true,robinhood_validated,2026-06-09
@@ -467,6 +471,7 @@ AVR,Anteris Technologies Global Corp. Common Stock,stock,true,true,true,robinhoo
 AVT,Avnet,stock,true,true,true,robinhood_validated,2026-06-09
 AVTR,Avantor,stock,true,true,true,robinhood_validated,2026-06-09
 AVTX,"Avalo Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+AVX,Avax One Technology Ltd. Common Shares,stock,true,true,true,robinhood_validated,2026-07-04
 AVXL,Anavex Life Sciences Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 AVY,Avery Dennison Corp,stock,true,true,true,robinhood_validated,2026-06-09
 AWF,"ALLIANCEBERSTEIN GLOBAL HIGH INCOME FUND, INC.",stock,true,true,true,robinhood_validated,2026-06-15
@@ -827,10 +832,12 @@ CACC,Credit Acceptance Corporation Common Stock,stock,true,true,true,robinhood_v
 CACI,CACI,stock,true,true,true,robinhood_validated,2026-06-09
 CADL,"Candel Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CAE,CAE INC,stock,true,true,true,robinhood_validated,2026-06-11
+CAES,"Cantor Equity Partners VII, Inc. Class A Ordinary Shares",stock,true,true,true,robinhood_validated,2026-07-04
 CAF,"MORGAN STANLEY CHINA A SHARE FUND, INC",stock,true,true,true,robinhood_validated,2026-06-11
 CAG,Conagra Brands Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CAH,Cardinal Health Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CAI,"Caris Life Sciences, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+CAII,Collective Acquisition Corp. II Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 CAKE,Cheesecake Factory,stock,true,true,true,robinhood_validated,2026-06-09
 CAL,Caleres Inc,stock,true,true,true,robinhood_validated,2026-06-11
 CALM,Cal-Maine Foods,stock,true,true,true,robinhood_validated,2026-06-09
@@ -850,6 +857,7 @@ CARS,Cars.com Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06
 CART,Instacart (Maplebear Inc.),stock,true,true,true,robinhood_validated,2026-06-09
 CASH,Pathward Financial,stock,true,true,true,robinhood_validated,2026-06-09
 CASS,"Cass Information Systems, Inc Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+CAST,"FreeCast, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 CASY,"Casey's General Stores, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CAT,Caterpillar Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CATO,CATO CORP,stock,true,true,true,robinhood_validated,2026-06-11
@@ -997,6 +1005,7 @@ CINF,Cincinnati Financial Corp,stock,true,true,true,robinhood_validated,2026-06-
 CING,Cingulate Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 CINT,CI&T Inc,stock,true,true,true,robinhood_validated,2026-06-11
 CION,CION Investment Corporation,stock,true,true,true,robinhood_validated,2026-06-11
+CIRC,"Circle8 Group, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 CITR,CitroTech Inc.,stock,true,true,true,robinhood_validated,2026-06-15
 CIVB,"Civista Bancshares, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CIX,Comp X International Inc.,stock,true,true,true,robinhood_validated,2026-06-15
@@ -1068,7 +1077,7 @@ CNP,Centerpoint Energy Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CNQ,Canadian Natural Resources Limited,stock,true,true,true,robinhood_validated,2026-06-11
 CNR,Core Natural,stock,true,true,true,robinhood_validated,2026-06-09
 CNS,Cohen & Steers,stock,true,true,true,robinhood_validated,2026-06-09
-CNTA,Centessa Pharmaceuticals plc American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+CNTA,Centessa Pharmaceuticals plc American Depositary Shares,stock,false,false,false,broker_unavailable,2026-06-26
 CNTB,Connect Biopharma Holdings Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 CNTN,"Canton Strategic Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CNTX,Context Therapeutics Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -1102,6 +1111,7 @@ COO,"Cooper Companies, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 COOK,"Traeger, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
 COP,ConocoPhillips,stock,true,true,true,robinhood_validated,2026-06-09
 COPL,Copley Acquisition Corp,stock,true,true,true,robinhood_validated,2026-06-11
+COPR,Idaho Copper Corporation,stock,true,true,true,robinhood_validated,2026-07-04
 COR,Cencora Inc,stock,true,true,true,robinhood_validated,2026-06-09
 CORT,Corcept Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
 CORZ,"Core Scientific, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -1169,6 +1179,7 @@ CRSP,CRISPR Therapeutics AG Common Shares,stock,true,true,true,robinhood_validat
 CRSR,Corsair Gaming,stock,true,true,true,robinhood_validated,2026-06-09
 CRUS,Cirrus Logic,stock,true,true,true,robinhood_validated,2026-06-09
 CRVL,CorVel,stock,true,true,true,robinhood_validated,2026-06-09
+CRVO,CervoMed Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 CRVS,"Corvus Pharmaceuticals, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CRWD,CrowdStrike Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 CRWS,Crown Crafts Inc Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
@@ -1235,7 +1246,7 @@ CVU,"CPI Aerostructures, Inc.",stock,true,true,true,robinhood_validated,2026-06-
 CVV,CVD Equipment Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 CVX,Chevron Corp,stock,true,true,true,robinhood_validated,2026-06-09
 CW,Curtiss Wright,stock,true,true,true,robinhood_validated,2026-06-09
-CWAN,"Clearwater Analytics Holdings, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
+CWAN,"Clearwater Analytics Holdings, Inc.",stock,false,false,false,broker_not_found,2026-06-25
 CWBC,Community West Bancshares Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 CWCO,Consolidated Water Co. Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 CWEN,Clearway Energy,stock,true,true,true,robinhood_validated,2026-06-09
@@ -1246,6 +1257,7 @@ CWST,Casella,stock,true,true,true,robinhood_validated,2026-06-09
 CWT,California Water,stock,true,true,true,robinhood_validated,2026-06-09
 CX,Cemex S.A.B. de C.V.,stock,true,true,true,robinhood_validated,2026-06-11
 CXDO,"Crexendo, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
+CXII,Churchill Capital Corp XII Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 CXM,Sprinklr,stock,true,true,true,robinhood_validated,2026-06-09
 CXT,Crane NXT,stock,true,true,true,robinhood_validated,2026-06-09
 CXW,CoreCivic,stock,true,true,true,robinhood_validated,2026-06-09
@@ -1270,7 +1282,6 @@ DARE,"Dare Bioscience, Inc. Common Stock",stock,true,true,true,robinhood_validat
 DASH,DoorDash Inc,stock,true,true,true,robinhood_validated,2026-06-09
 DAVA,Endava plc American Depositary Shares (each representing one Class A Ordinary Share),stock,true,true,true,robinhood_validated,2026-06-11
 DAVE,Dave,stock,true,true,true,robinhood_validated,2026-06-09
-DAY,"Dayforce, Inc.",stock,false,false,false,robinhood_not_found,2026-06-09
 DB,Deutsche Bank Aktiengesellschaft,stock,true,true,true,robinhood_validated,2026-06-11
 DBCA,D. Boral Acquisition I Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 DBD,Diebold Nixdorf,stock,true,true,true,robinhood_validated,2026-06-09
@@ -1305,6 +1316,7 @@ DERM,Journey Medical Corporation Common Stock,stock,true,true,true,robinhood_val
 DFDV,DeFi Development Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 DFH,Dream Finders Homes,stock,true,true,true,robinhood_validated,2026-06-09
 DFIN,Donnelley Financial Solutions,stock,true,true,true,robinhood_validated,2026-06-09
+DFLI,Dragonfly Energy Holdings Corp. Common Stock (NV),stock,true,true,true,robinhood_validated,2026-07-04
 DFP,FLAHERTY & CRUMRINE DYNAMIC PREFERRED AND INCOME FUND INCORPORATED,stock,true,true,true,robinhood_validated,2026-06-15
 DFTX,"Definium Therapeutics, Inc. Common Shares",stock,true,true,true,robinhood_validated,2026-06-10
 DG,Dollar General Corp,stock,true,true,true,robinhood_validated,2026-06-09
@@ -1345,6 +1357,7 @@ DMA,Destra Multi-Alternative Fund,stock,true,true,true,robinhood_validated,2026-
 DMAA,Drugs Made In America Acquisition Corp. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 DMAC,DiaMedica Therapeutics Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 DMB,"BNY Mellon Municipal Bond Infrastructure Fund, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
+DMC,Del Monte Corporation,stock,true,true,true,robinhood_validated,2026-07-04
 DMII,Drugs Made In America Acquisition II Corp. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 DMO,Western Asset Mortgage Opportunity Fund Inc.,stock,true,true,true,robinhood_validated,2026-06-11
 DMRA,"Damora Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
@@ -1371,6 +1384,7 @@ DOV,Dover Corp,stock,true,true,true,robinhood_validated,2026-06-09
 DOW,Dow Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 DOX,Amdocs Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 DOYU,DouYu International Holdings Limited ADS,stock,true,true,true,robinhood_validated,2026-06-10
+DPC,DPC Holdings PLC,stock,true,true,true,robinhood_validated,2026-07-04
 DPG,Duff & Phelps Utility and Infrastructure Fund Inc.,stock,true,true,true,robinhood_validated,2026-06-11
 DPRO,Draganfly Inc. Common Shares,stock,true,true,true,robinhood_validated,2026-06-11
 DPZ,Dominos Pizza Inc,stock,true,true,true,robinhood_validated,2026-06-09
@@ -1385,6 +1399,7 @@ DRTS,Alpha Tau Medical Ltd. Ordinary Shares,stock,true,true,true,robinhood_valid
 DRUG,Bright Minds Biosciences Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 DRVN,Driven Brands Holdings Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 DSAC,Daedalus Special Acquisition Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+DSC,DSC Holdings Ltd. American Depositary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 DSGN,"Design Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 DSGR,"Distribution Solutions Group, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 DSGX,Descartes Systems Group Inc. (The) Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -1419,6 +1434,7 @@ DXPE,DXP,stock,true,true,true,robinhood_validated,2026-06-09
 DXR,Daxor Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-15
 DXYZ,Destiny Tech100 Inc.,stock,true,true,true,robinhood_validated,2026-06-11
 DY,Dycom,stock,true,true,true,robinhood_validated,2026-06-09
+DYAI,"Dyadic International, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 DYN,"Dyne Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 DYNC,Dynamix Corporation Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 DYOR,Insight Digital Partners II Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
@@ -1438,6 +1454,7 @@ ECBK,"ECB Bancorp, Inc. Common Stock",stock,true,true,true,robinhood_validated,2
 ECC,Eagle Point Credit Company,stock,true,true,true,robinhood_validated,2026-06-11
 ECF,Ellsworth Growth and Income Fund Ltd,stock,true,true,true,robinhood_validated,2026-06-15
 ECG,Everus Construction Group,stock,true,true,true,robinhood_validated,2026-06-09
+ECHO,EchoStar Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 ECL,Ecolab Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ECO,Okeanis Eco Tankers Corp.,stock,true,true,true,robinhood_validated,2026-06-11
 ECOR,"electroCore, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
@@ -1519,6 +1536,7 @@ EMPD,Empery Digital Inc. Common stock,stock,true,true,true,robinhood_validated,2
 EMR,Emerson Electric,stock,true,true,true,robinhood_validated,2026-06-09
 ENB,"Enbridge, Inc",stock,true,true,true,robinhood_validated,2026-06-11
 ENGN,enGene Therapeutics Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
+ENGS,Energys Group Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 ENHA,Enhanced Group Inc.,stock,true,true,true,robinhood_validated,2026-06-11
 ENIC,Enel Chile S.A. American Depositary Shares Representing Common Stock (Each representing 50 shares of Common Stock),stock,true,true,true,robinhood_validated,2026-06-11
 ENLT,Enlight Renewable Energy Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
@@ -1670,6 +1688,7 @@ FBYD,"Falcon's Beyond Global, Inc. Class A Common Stock",stock,true,true,true,ro
 FC,Franklin Covey Company,stock,true,true,true,robinhood_validated,2026-06-11
 FCAP,"First Capital, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 FCBC,"First Community Bankshares, Inc. (VA) Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+FCBM,"First Carolina Financial Services, Inc.",stock,true,true,true,robinhood_validated,2026-07-04
 FCCO,First Community Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 FCEL,"FuelCell Energy, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 FCF,First Commonwealth Financial,stock,true,true,true,robinhood_validated,2026-06-09
@@ -1711,7 +1730,6 @@ FHB,First Hawaiian,stock,true,true,true,robinhood_validated,2026-06-09
 FHI,Federated Hermes,stock,true,true,true,robinhood_validated,2026-06-09
 FHN,First Horizon,stock,true,true,true,robinhood_validated,2026-06-09
 FHTX,Foghorn Therapeutics Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
-FI,Fiserv Inc,stock,false,false,false,robinhood_not_found,2026-06-09
 FIBK,First Interstate,stock,true,true,true,robinhood_validated,2026-06-09
 FICO,Fair Isaac Corp,stock,true,true,true,robinhood_validated,2026-06-09
 FIEE,"FiEE, Inc Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
@@ -1723,8 +1741,10 @@ FINS,Angel Oak Financial Strategies Income Term Trust,stock,true,true,true,robin
 FINV,"FinVolution Group American depositary shares, each representing five Class A ordinary shares",stock,true,true,true,robinhood_validated,2026-06-11
 FINW,FinWise Bancorp Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 FIP,FTAI Infrastructure Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
+FIRY,Firy Inc.,stock,true,true,true,robinhood_validated,2026-07-04
 FIS,Fidelity National Information Services,stock,true,true,true,robinhood_validated,2026-06-09
 FISI,"Financial Institutions, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+FISN,"Deep Fission, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 FISV,"Fiserv, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 FITB,Fifth Third Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
 FIVE,Five Below,stock,true,true,true,robinhood_validated,2026-06-09
@@ -1753,6 +1773,7 @@ FLXS,"Flexsteel Industries, Inc. Common Stock",stock,true,true,true,robinhood_va
 FLY,Firefly Aerospace Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 FLYW,Flywire Corporation Voting Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 FLYX,"flyExclusive, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
+FLZH,"Flash Sports & Media Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 FMAC,Future Money Acquisition Corporation Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 FMAO,"Farmers & Merchants Bancorp, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 FMBH,"First Mid Bancshares, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -1775,6 +1796,7 @@ FNWB,First Northwest Bancorp Common Stock,stock,true,true,true,robinhood_validat
 FNWD,Finward Bancorp Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 FOA,Finance of America Companies Inc.,stock,true,true,true,robinhood_validated,2026-06-15
 FOF,Cohen & Steers Closed End Opportunity Fund,stock,true,true,true,robinhood_validated,2026-06-15
+FOFO,"Hang Feng Technology Innovation Co., Ltd. Ordinary Shares",stock,true,true,true,robinhood_validated,2026-07-04
 FOR,Forestar Group Inc.,stock,true,true,true,robinhood_validated,2026-06-15
 FORM,FormFactor,stock,true,true,true,robinhood_validated,2026-06-09
 FORR,"Forrester Research, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -1828,6 +1850,9 @@ FTCI,"FTC Solar, Inc. Common Stock",stock,true,true,true,robinhood_validated,202
 FTDR,Frontdoor,stock,true,true,true,robinhood_validated,2026-06-09
 FTEK,"Fuel Tech, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 FTF,Franklin Limited Duration Income Trust Common Shrs. of Beneficial Interest,stock,true,true,true,robinhood_validated,2026-06-15
+FTH,"Faeth Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
+FTHA,Forefront Tech Holdings Acquisition Corp Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
+FTHM,Fathom Holdings Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 FTHY,First Trust High Yield Opportunities 2027 Term Fund,stock,true,true,true,robinhood_validated,2026-06-15
 FTI,TechnipFMC,stock,true,true,true,robinhood_validated,2026-06-09
 FTK,"Flotek Industries, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
@@ -1880,6 +1905,7 @@ GBLI,"Global Indemnity Group, LLC Class A Common Stock",stock,true,true,true,rob
 GBTG,"Global Business Travel Group, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 GBX,Greenbrier,stock,true,true,true,robinhood_validated,2026-06-09
 GCBC,"Greene County Bancorp, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
+GCGR,General Catalyst Global Resilience Merger Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 GCMG,GCM Grosvenor Inc. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 GCO,Genesco Inc.,stock,true,true,true,robinhood_validated,2026-06-15
 GCT,GigaCloud Technology Inc Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
@@ -2044,6 +2070,7 @@ GSK,GSK plc American Depositary Shares (Each representing two Ordinary Shares),s
 GSL,"Global Ship Lease, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 GSM,Ferroglobe PLC Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
 GSRF,GSR IV Acquisition Corp. Class  A ordinary share,stock,true,true,true,robinhood_validated,2026-06-10
+GSRV,GSR V Acquisition Corp,stock,true,true,true,robinhood_validated,2026-07-04
 GT,Goodyear,stock,true,true,true,robinhood_validated,2026-06-09
 GTE,Gran Tierra Energy Inc.,stock,true,true,true,robinhood_validated,2026-06-15
 GTEN,"Gores Holdings X, Inc. Class A ordinary shares",stock,true,true,true,robinhood_validated,2026-06-10
@@ -2072,6 +2099,7 @@ HAFC,Hanmi Bank,stock,true,true,true,robinhood_validated,2026-06-09
 HAFN,Hafnia Limited,stock,true,true,true,robinhood_validated,2026-06-15
 HAL,Halliburton,stock,true,true,true,robinhood_validated,2026-06-09
 HALO,Halozyme Therapeutics,stock,true,true,true,robinhood_validated,2026-06-09
+HAPN,"Happen, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 HAS,Hasbro Inc,stock,true,true,true,robinhood_validated,2026-06-09
 HASI,HA Sustainable Infrastructure Capital,stock,true,true,true,robinhood_validated,2026-06-09
 HAVA,Harvard Ave Acquisition Corporation Class A Ordinary Share,stock,true,true,true,robinhood_validated,2026-06-10
@@ -2110,7 +2138,6 @@ HEPS,D-Market Electronic Services & Trading American Depositary Shares,stock,tru
 HEQ,John Hancock Diversified Income Fund,stock,true,true,true,robinhood_validated,2026-06-15
 HERE,Here Group Limited American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 HERZ,"Herzfeld Credit Income Fund, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-15
-HES,Hess Corp,stock,false,false,false,robinhood_not_found,2026-06-09
 HESM,Hess Midstream LP Class A Share representing a limited partner Interest,stock,true,true,true,robinhood_validated,2026-06-15
 HFBL,"Home Federal Bancorp, Inc. of Louisiana Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 HFFG,HF Foods Group Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
@@ -2161,9 +2188,9 @@ HNVR,"Hanover Bancorp, Inc. Common Stock",stock,true,true,true,robinhood_validat
 HOFT,Hooker Furnishings Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 HOG,Harley-Davidson,stock,true,true,true,robinhood_validated,2026-06-09
 HOLO,MicroCloud Hologram Inc. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
-HOLX,Hologic Inc,stock,false,false,false,robinhood_not_found,2026-06-09
 HOMB,Home Bank,stock,true,true,true,robinhood_validated,2026-06-09
 HON,Honeywell International Inc,stock,true,true,true,robinhood_validated,2026-06-09
+HONA,Honeywell Aerospace Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 HOOD,"Robinhood Markets, Inc",stock,true,true,true,robinhood_validated,2026-06-09
 HOPE,Hope Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
 HOUR,"Hour Loop, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
@@ -2244,6 +2271,7 @@ HYPR,"Hyperfine, Inc. Class A Common Stock",stock,true,true,true,robinhood_valid
 HYT,BLACKROCK CORPORATE HIGH YIELD FUND INC.,stock,true,true,true,robinhood_validated,2026-06-15
 HZO,MarineMax,stock,true,true,true,robinhood_validated,2026-06-09
 IACO,Idea Acquisition Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+IACQ,Irenic Acquisition Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 IAE,VOYA ASIA PACIFIC HIGH DIVIDEND EQUITY INCOME FUND,stock,true,true,true,robinhood_validated,2026-06-15
 IAF,"abrdn Australia Equity Fund, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 IAG,IAMGold Corporation,stock,true,true,true,robinhood_validated,2026-06-15
@@ -2301,6 +2329,7 @@ IIIV,"i3 Verticals, Inc. Class A Common Stock",stock,true,true,true,robinhood_va
 IIM,INVESCO VALUE MUNICIPAL INCOME TRUST,stock,true,true,true,robinhood_validated,2026-06-15
 IIPR,Innovative Industrial Properties,stock,true,true,true,robinhood_validated,2026-06-09
 IKT,"Inhibikase Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
+ILLR,Triller Group Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 ILLU,Illumination Acquisition Corp I Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 ILMN,Illumina,stock,true,true,true,robinhood_validated,2026-06-09
 ILPT,Industrial Logistics Properties Trust Common Shares of Beneficial Interest,stock,true,true,true,robinhood_validated,2026-06-10
@@ -2378,7 +2407,6 @@ IPAR,Interparfums,stock,true,true,true,robinhood_validated,2026-06-09
 IPCX,Inflection Point Acquisition Corp. III Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 IPEX,Inflection Point Acquisition Corp. V Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 IPFX,Inflection Point Acquisition Corp. VI Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
-IPG,Interpublic Group Of Companies Inc,stock,false,false,false,robinhood_not_found,2026-06-09
 IPGP,IPG Photonics,stock,true,true,true,robinhood_validated,2026-06-09
 IPI,"Intrepid Potash, Inc",stock,true,true,true,robinhood_validated,2026-06-15
 IPM,Intelligent Protection Management Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
@@ -2408,6 +2436,7 @@ ISRG,Intuitive Surgical Inc,stock,true,true,true,robinhood_validated,2026-06-09
 ISSC,"Innovative Solutions and Support, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 ISTR,Investar Holding Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 IT,Gartner Inc,stock,true,true,true,robinhood_validated,2026-06-09
+ITG,"ITG, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 ITGR,Integer Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 ITHA,ITHAX Acquisition Corp III Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 ITIC,Investors Title Company Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -2486,12 +2515,13 @@ JVA,"Coffee Holding Co., Inc. Common Stock",stock,true,true,true,robinhood_valid
 JXG,JX Luxventure Group Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 JXN,Jackson Financial,stock,true,true,true,robinhood_validated,2026-06-09
 JYNT,The Joint Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
-K,Kellanova,stock,false,false,false,robinhood_not_found,2026-06-09
 KAI,Kadant,stock,true,true,true,robinhood_validated,2026-06-09
 KALA,"KALA BIO, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 KALU,Kaiser Aluminum,stock,true,true,true,robinhood_validated,2026-06-09
 KALV,"KalVista Pharmaceuticals, Inc. Common Stock",stock,false,false,true,robinhood_validated,2026-06-11
+KARD,"Kardigan, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 KARO,Karooooo Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
+KAZR,Skyline Builders Group Holding Limited Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 KB,KB Financial Group Inc,stock,true,true,true,robinhood_validated,2026-06-15
 KBDC,"Kayne Anderson BDC, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 KBH,KB Home,stock,true,true,true,robinhood_validated,2026-06-09
@@ -2513,6 +2543,7 @@ KEQU,Kewaunee Scientific Corporation Common Stock,stock,true,true,true,robinhood
 KEX,Kirby,stock,true,true,true,robinhood_validated,2026-06-09
 KEY,Keycorp,stock,true,true,true,robinhood_validated,2026-06-09
 KEYS,Keysight Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
+KEYY,Keystone Acquisition Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 KF,"KOREA FUND, INC",stock,true,true,true,robinhood_validated,2026-06-15
 KFFB,Kentucky First Federal Bancorp Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 KFII,K&F Growth Acquisition Corp. II Class A Ordinary shares,stock,true,true,true,robinhood_validated,2026-06-10
@@ -2673,6 +2704,7 @@ LGN,Legence Corp. Class A Common stock,stock,true,true,true,robinhood_validated,
 LGND,Ligand Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
 LGO,Largo Inc. Common Shares,stock,true,true,true,robinhood_validated,2026-06-10
 LH,Laboratory Corporation Of America,stock,true,true,true,robinhood_validated,2026-06-09
+LHAI,Linkhome Holdings Inc. Common stock,stock,true,true,true,robinhood_validated,2026-07-04
 LHX,"L3Harris Technologies, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 LI,Li Auto Inc. American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 LICN,Lichen International Limited Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
@@ -2683,6 +2715,7 @@ LIFE,Ethos Technologies Inc. Class A Common Stock,stock,true,true,true,robinhood
 LII,Lennox International,stock,true,true,true,robinhood_validated,2026-06-09
 LILA,Liberty Latin America Ltd. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 LILAK,Liberty Latin America Ltd. Class C Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
+LIME,"Neutron Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 LIN,Linde Plc,stock,true,true,true,robinhood_validated,2026-06-09
 LINC,Lincoln Educational Services Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 LIND,Lindblad Expeditions Holdings Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
@@ -2836,6 +2869,7 @@ MBVI,M3-Brigade Acquisition VI Corp. Class A Ordinary Shares,stock,true,true,tru
 MBWM,Mercantile Bank Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 MBX,"MBX Biosciences, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 MC,Moelis & Company,stock,true,true,true,robinhood_validated,2026-06-09
+MCAH,Mountain Crest Acquisition 6 Corp. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 MCB,"Metropolitan Bank Holding Corp. Common Stock, $0.01 par value per share",stock,true,true,true,robinhood_validated,2026-06-15
 MCBS,"MetroCity Bankshares, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 MCD,Mcdonalds Corp,stock,true,true,true,robinhood_validated,2026-06-09
@@ -2945,7 +2979,6 @@ MLP,Maui Land & Pineapple Co.,stock,true,true,true,robinhood_validated,2026-06-1
 MLR,"Miller Industries, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 MLTX,MoonLake Immunotherapeutics Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
 MLYS,"Mineralys Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
-MMC,Marsh & McLennan Inc,stock,false,false,false,robinhood_not_found,2026-06-09
 MMD,NYLI MacKay DefinedTerm Muni Opportunities Fund,stock,true,true,true,robinhood_validated,2026-06-15
 MMED,"MiniMed Group, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 MMI,Marcus & Millichap,stock,true,true,true,robinhood_validated,2026-06-09
@@ -3003,7 +3036,6 @@ MRK,Merck & Co Inc,stock,true,true,true,robinhood_validated,2026-06-09
 MRKR,"Marker Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 MRLN,"Merlin, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 MRNA,"Moderna, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
-MRO,Marathon Oil Corp,stock,false,false,false,robinhood_not_found,2026-06-09
 MRP,Millrose Properties,stock,true,true,true,robinhood_validated,2026-06-09
 MRSH,Marsh,stock,true,true,true,robinhood_validated,2026-06-15
 MRT,"Marti Technologies, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
@@ -3039,6 +3071,7 @@ MTG,MGIC,stock,true,true,true,robinhood_validated,2026-06-09
 MTH,Meritage Homes,stock,true,true,true,robinhood_validated,2026-06-09
 MTLS,Materialise NV American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 MTN,Vail Resorts,stock,true,true,true,robinhood_validated,2026-06-09
+MTNE,CH4 Natural Solutions Corporation,stock,true,true,true,robinhood_validated,2026-07-04
 MTRN,Materion,stock,true,true,true,robinhood_validated,2026-06-09
 MTRX,Matrix Service Company Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 MTSI,MACOM,stock,true,true,true,robinhood_validated,2026-06-09
@@ -3173,6 +3206,7 @@ NINE,"Nine Energy Service, Inc.",stock,true,true,true,robinhood_validated,2026-0
 NIO,"NIO Inc. American depositary shares, each representing one Class A ordinary share",stock,true,true,true,robinhood_validated,2026-06-15
 NIQ,NIQ Global Intelligence plc,stock,true,true,true,robinhood_validated,2026-06-15
 NIU,Niu Technologies American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+NIXX,"Nixxy, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 NJR,New Jersey Resources,stock,true,true,true,robinhood_validated,2026-06-09
 NKE,Nike Inc Class B,stock,true,true,true,robinhood_validated,2026-06-09
 NKLR,Terra Innovatum Global N.V. Ordinary shares,stock,true,true,true,robinhood_validated,2026-06-10
@@ -3284,6 +3318,7 @@ NUV,"Nuveen Municipal Value Fund, Inc.",stock,true,true,true,robinhood_validated
 NUVB,Nuvation Bio Inc.,stock,true,true,true,robinhood_validated,2026-06-15
 NUVL,"Nuvalent, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 NUW,Nuveen AMT-Free Municipal Value Fund,stock,true,true,true,robinhood_validated,2026-06-15
+NVA,Nova Minerals Corp,stock,true,true,true,robinhood_validated,2026-07-04
 NVAX,"Novavax, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 NVCR,NovoCure Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 NVCT,"Nuvectis Pharma, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
@@ -3322,6 +3357,7 @@ NXST,Nexstar Media Group,stock,true,true,true,robinhood_validated,2026-06-09
 NXT,Nextpower Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 NXTT,Next Technology Holding Inc. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
 NYAX,Nayax Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+NYC,American Strategic Investment Co.,stock,true,true,true,robinhood_validated,2026-07-04
 NYT,The New York Times,stock,true,true,true,robinhood_validated,2026-06-09
 NYXH,Nyxoah SA Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 NZF,Nuveen Municipal Credit Income Fund,stock,true,true,true,robinhood_validated,2026-06-15
@@ -3408,6 +3444,7 @@ OPCH,Option Care Health,stock,true,true,true,robinhood_validated,2026-06-09
 OPEN,Opendoor Technologies Inc Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 OPFI,OppFi Inc.,stock,true,true,true,robinhood_validated,2026-06-15
 OPHC,"OptimumBank Holdings, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
+OPI,Office Properties Income Trust Common shares of beneficial interest,stock,true,true,true,robinhood_validated,2026-07-04
 OPK,"OPKO Health, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 OPLN,OPENLANE,stock,true,true,true,robinhood_validated,2026-06-09
 OPP,"RiverNorth/DoubleLine Strategic Opportunity Fund, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
@@ -3444,6 +3481,7 @@ OSS,"One Stop Systems, Inc. Common Stock",stock,true,true,true,robinhood_validat
 OSTX,OS Therapies Incorporated,stock,true,true,true,robinhood_validated,2026-06-15
 OSUR,"OraSure Technologies, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 OSW,OneSpaWorld,stock,true,true,true,robinhood_validated,2026-06-09
+OTAI,Starlink AI Acquisition Corporation,stock,true,true,true,robinhood_validated,2026-07-04
 OTEX,Open Text Corporation Common Shares,stock,true,true,true,robinhood_validated,2026-06-10
 OTF,Blue Owl Technology Finance Corp.,stock,true,true,true,robinhood_validated,2026-06-15
 OTGA,OTG Acquisition Corp. I Class A Ordinary Share,stock,true,true,true,robinhood_validated,2026-06-10
@@ -3494,6 +3532,7 @@ PARR,Par Pacific,stock,true,true,true,robinhood_validated,2026-06-09
 PATH,UiPath,stock,true,true,true,robinhood_validated,2026-06-09
 PATK,Patrick Industries,stock,true,true,true,robinhood_validated,2026-06-09
 PAVM,PAVmed Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
+PAVS,Paranovus Entertainment Technology Ltd. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 PAX,Patria Investments Limited Class A Common Shares,stock,true,true,true,robinhood_validated,2026-06-10
 PAXS,PIMCO Access Income Fund,stock,true,true,true,robinhood_validated,2026-06-15
 PAY,"Paymentus Holdings, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
@@ -3629,12 +3668,14 @@ PLNT,Planet Fitness,stock,true,true,true,robinhood_validated,2026-06-09
 PLOW,"DOUGLAS DYNAMICS, INC.",stock,true,true,true,robinhood_validated,2026-06-15
 PLPC,Preformed Line Products Company Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 PLRX,"Pliant Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+PLRZ,Polyrizon Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 PLSE,"Pulse Biosciences, Inc Common Stock (DE)",stock,true,true,true,robinhood_validated,2026-06-11
 PLSM,Pulsenmore Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
 PLTK,Playtika Holding Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 PLTR,Palantir Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
 PLTS,Platinum Analytics Cayman Limited Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
 PLUG,"Plug Power, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
+PLUN,Plutonian Acquisition Corp II,stock,true,true,true,robinhood_validated,2026-07-04
 PLUR,Pluri Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 PLUS,ePlus,stock,true,true,true,robinhood_validated,2026-06-09
 PLUT,Plutus Financial Group Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
@@ -3644,6 +3685,7 @@ PLYX,"Polaryx Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_va
 PM,Philip Morris International Inc,stock,true,true,true,robinhood_validated,2026-06-09
 PML,PIMCO MUNICIPAL INCOME FUND II COMMON SHARES OF BENEFICIAL INT.,stock,true,true,true,robinhood_validated,2026-06-15
 PMM,Putnam Managed Municipal Income,stock,true,true,true,robinhood_validated,2026-06-15
+PMN,ProMIS Neurosciences Inc. Common Shares (ON),stock,true,true,true,robinhood_validated,2026-07-04
 PMO,Putnam Municipal Opportunities Trust,stock,true,true,true,robinhood_validated,2026-06-15
 PMT,PennyMac Mortgage Investment Trust,stock,true,true,true,robinhood_validated,2026-06-09
 PMTR,Perimeter Acquisition Corp. I Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
@@ -3682,7 +3724,7 @@ PPSI,"Pioneer Power Solutions, Inc. Common Stock",stock,true,true,true,robinhood
 PPT,Putnam Premier Income Trust,stock,true,true,true,robinhood_validated,2026-06-15
 PPTA,Perpetua Resources Corp. Common Shares,stock,true,true,true,robinhood_validated,2026-06-11
 PR,Permian Resources,stock,true,true,true,robinhood_validated,2026-06-09
-PRA,ProAssurance,stock,true,true,true,robinhood_validated,2026-06-09
+PRA,ProAssurance,stock,false,false,false,broker_not_found,2026-06-26
 PRAA,PRA Group,stock,true,true,true,robinhood_validated,2026-06-09
 PRAX,"Praxis Precision Medicines, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 PRCH,"Porch Group, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
@@ -3772,6 +3814,7 @@ QDEL,QuidelOrtho,stock,true,true,true,robinhood_validated,2026-06-09
 QETA,Quetta Acquisition Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 QFIN,"Qfin Holdings, Inc. American Depositary Shares",stock,true,true,true,robinhood_validated,2026-06-10
 QGEN,QIAGEN N.V.,stock,true,true,true,robinhood_validated,2026-06-15
+QLEP,Quantum Leap Acquisition Corp,stock,true,true,true,robinhood_validated,2026-07-04
 QLYS,Qualys,stock,true,true,true,robinhood_validated,2026-06-09
 QMCO,Quantum Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 QMMM,QMMM Holdings Limited Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
@@ -3926,6 +3969,7 @@ RMMZ,"RiverNorth Managed Duration Municipal Income Fund II, Inc.",stock,true,tru
 RMNI,"Rimini Street, Inc. (DE) Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 RMR,The RMR Group Inc. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 RMT,Royce Micro-Cap Trust Inc,stock,true,true,true,robinhood_validated,2026-06-15
+RMTI,"Rockwell Medical, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 RNA,"Atrium Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 RNAC,"Cartesian Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 RNG,RingCentral,stock,true,true,true,robinhood_validated,2026-06-09
@@ -3972,6 +4016,7 @@ RSKD,Riskified Ltd.,stock,true,true,true,robinhood_validated,2026-06-15
 RSSS,"Research Solutions, Inc Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 RSVR,"Reservoir Media, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 RTAC,Renatus Tactical Acquisition Corp I Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+RTB,"RTB Digital, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 RTO,Rentokil Initial plc American Depositary Shares (each representing five (5) Ordinary Shares),stock,true,true,true,robinhood_validated,2026-06-15
 RTX,Raytheon Technologies Corporation,stock,true,true,true,robinhood_validated,2026-06-09
 RUM,Rumble Inc. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -4069,6 +4114,7 @@ SDHC,Smith Douglas Homes Corp.,stock,true,true,true,robinhood_validated,2026-06-
 SDHI,Siddhi Acquisition Corp Class A Common stock,stock,true,true,true,robinhood_validated,2026-06-10
 SDHY,PGIM Short Duration High Yield Opportunities Fund,stock,true,true,true,robinhood_validated,2026-06-15
 SDM,Smart Digital Group Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
+SDOT,Sadot Group Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 SDRL,Seadrill Limited,stock,true,true,true,robinhood_validated,2026-06-15
 SE,"Sea Limited American Depositary Shares, each representing one Class A Ordinary Share",stock,true,true,true,robinhood_validated,2026-06-15
 SEAT,Vivid Seats Inc. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -4144,6 +4190,7 @@ SILC,Silicom Ltd Ordinary Shares,stock,true,true,true,robinhood_validated,2026-0
 SIM,"Groupo Simec, S.A.B de C.V.",stock,true,true,true,robinhood_validated,2026-06-15
 SIMA,SIM Acquisition Corp. I Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 SIMO,Silicon Motion Technology Corporation American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+SIND,Sinda Ltd.,stock,true,true,true,robinhood_validated,2026-07-04
 SION,"Sionna Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 SIRI,SiriusXM Holdings Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 SITC,SITE Centers Corp. Common Shares,stock,true,true,true,robinhood_validated,2026-06-15
@@ -4166,6 +4213,7 @@ SKYW,SkyWest,stock,true,true,true,robinhood_validated,2026-06-09
 SKYX,SKYX Platforms Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 SLAB,Silicon Laboratories,stock,true,true,true,robinhood_validated,2026-06-09
 SLB,Schlumberger Nv,stock,true,true,true,robinhood_validated,2026-06-09
+SLBT,SL Science Holding Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 SLDB,Solid Biosciences Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 SLDE,"Slide Insurance Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 SLDP,"Solid Power, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -4248,6 +4296,7 @@ SPAI,Safe Pro Group Inc. Common Stock,stock,true,true,true,robinhood_validated,2
 SPB,"Spectrum Brands Holdings, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 SPCB,"SuperCom, Ltd. Ordinary Shares (Israel)",stock,true,true,true,robinhood_validated,2026-06-11
 SPCE,"Virgin Galactic Holdings, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
+SPCX,Space Exploration Technologies Corp. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 SPE,"Special Opportunities Fund, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 SPEG,Silver Pegasus Acquisition Corp Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 SPFI,"South Plains Financial, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -4434,6 +4483,7 @@ TDAY,"USA TODAY Co., Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 TDC,Teradata,stock,true,true,true,robinhood_validated,2026-06-09
 TDF,Templeton Dragon Fund,stock,true,true,true,robinhood_validated,2026-06-15
 TDG,Transdigm Group Inc,stock,true,true,true,robinhood_validated,2026-06-09
+TDIC,Dreamland Limited Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 TDOC,"Teladoc Health, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 TDS,Telephone & Data Systems,stock,true,true,true,robinhood_validated,2026-06-09
 TDUP,ThredUp Inc. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
@@ -4503,6 +4553,7 @@ TKR,Timken,stock,true,true,true,robinhood_validated,2026-06-09
 TLK,PT Telekomunikasi Indonesia,stock,true,true,true,robinhood_validated,2026-06-15
 TLN,Talen Energy,stock,true,true,true,robinhood_validated,2026-06-09
 TLNC,Talon Capital Corp. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+TLPH,"Talphera, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 TLRY,"Tilray Brands, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 TLS,Telos Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 TLSA,Tiziana Life Sciences Ltd. Common Shares,stock,true,true,true,robinhood_validated,2026-06-11
@@ -4519,6 +4570,7 @@ TMHC,Taylor Morrison Home,stock,true,true,true,robinhood_validated,2026-06-09
 TMO,Thermo Fisher Scientific Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TMP,Tompkins Financial,stock,true,true,true,robinhood_validated,2026-06-09
 TMQ,Trilogy Metals Inc,stock,true,true,true,robinhood_validated,2026-06-15
+TMS,Teamshares Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 TMTS,Spartacus Acquisition Corp. II Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 TMUS,T Mobile US Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TNC,Tennant,stock,true,true,true,robinhood_validated,2026-06-09
@@ -4627,6 +4679,7 @@ TWO,Two Harbors Investment,stock,true,true,true,robinhood_validated,2026-06-09
 TWST,Twist Bioscience Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 TX,Ternium S.A. American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-15
 TXG,"10x Genomics, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+TXMD,"TherapeuticsMD, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-07-04
 TXN,Texas Instrument Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TXNM,"TXNM Energy, Inc.",stock,true,true,true,robinhood_validated,2026-06-09
 TXRH,Texas Roadhouse,stock,true,true,true,robinhood_validated,2026-06-09
@@ -4709,6 +4762,7 @@ USAS,Americas Gold and Silver Corporation,stock,true,true,true,robinhood_validat
 USAU,U.S. Gold Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 USB,US Bancorp,stock,true,true,true,robinhood_validated,2026-06-09
 USCB,"USCB Financial Holdings, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+USEA,United Maritime Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-07-04
 USFD,US Foods,stock,true,true,true,robinhood_validated,2026-06-09
 USGO,U.S. GoldMining Inc. Common stock,stock,true,true,true,robinhood_validated,2026-06-11
 USIO,"Usio, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -4745,6 +4799,7 @@ VBNK,VersaBank Common Shares,stock,true,true,true,robinhood_validated,2026-06-10
 VC,Visteon,stock,true,true,true,robinhood_validated,2026-06-09
 VCEL,Vericel,stock,true,true,true,robinhood_validated,2026-06-09
 VCIG,VCI Global Limited Ordinary Share,stock,true,true,true,robinhood_validated,2026-06-11
+VCRE,Vicore Pharma Holding AB,stock,true,true,true,robinhood_validated,2026-07-04
 VCTR,Victory Capital Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 VCV,INVESCO  CALIFORNIA VALUE MUNI INCOME TRUST,stock,true,true,true,robinhood_validated,2026-06-15
 VCX,"Fundrise Innovation Fund, LLC",stock,true,true,true,robinhood_validated,2026-06-15
@@ -4872,7 +4927,6 @@ WATT,Energous Corporation Common Stock,stock,true,true,true,robinhood_validated,
 WAVE,Eco Wave Power Global AB (publ) American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-11
 WAY,Waystar Holding Corp.,stock,true,true,true,robinhood_validated,2026-06-09
 WB,Weibo Corporation American Depositary Share,stock,true,true,true,robinhood_validated,2026-06-10
-WBA,Walgreen Boots Alliance Inc,stock,false,false,false,robinhood_not_found,2026-06-09
 WBD,"Warner Bros. Discovery, Inc. Series A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 WBI,WaterBridge Infrastructure LLC,stock,true,true,true,robinhood_validated,2026-06-15
 WBS,Webster Bank,stock,true,true,true,robinhood_validated,2026-06-09
@@ -4939,6 +4993,7 @@ WMS,Advanced Drainage Systems,stock,true,true,true,robinhood_validated,2026-06-0
 WMT,Walmart Stores Inc,stock,true,true,true,robinhood_validated,2026-06-09
 WNC,Wabash National Corp.,stock,true,true,true,robinhood_validated,2026-06-15
 WNEB,"Western New England Bancorp, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+WNW,Meiwu Technology Company Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-07-04
 WOLF,"Wolfspeed, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 WOOF,"Petco Health and Wellness Company, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 WOR,Worthington Enterprise,stock,true,true,true,robinhood_validated,2026-06-09

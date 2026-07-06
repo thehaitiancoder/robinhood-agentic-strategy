@@ -199,8 +199,12 @@ power and concentration risk.
 
 If Robinhood rejects the fractional DD quantity, retry the same DD with only the
 integer part of the combined quantity when that integer part is at least 1
-share. Do not round up or convert the DD to a dollar order; if the integer part
-is zero, report the DD as broker-blocked.
+share. Do not round up or convert the DD to a dollar order. During regular
+market hours, a due exact-share DD with `integer_qty=0` is still executable if
+Robinhood accepts the fractional buy. If the integer part is zero after
+Robinhood rejects the exact fractional quantity, report it as a broker-blocked
+exact fractional DD, keep the symbol eligible for future DD checks, and do not
+count it as a DD coverage blocker.
 
 A DD order must pass the executable-price guard twice. Before placement, the
 fresh broker buy-side ask must be at or below every included lot trigger. For a
@@ -230,7 +234,14 @@ correct status is `DD SCAN BLOCKED` with the exact missing coverage or tool
 failure. During market-hours automations, that blocked scan must email the user
 because a due double-down may be waiting.
 
-The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
+In premarket and after-hours whole-share lanes, a verified DD whose remaining
+due quantity has `integer_qty=0` is regular-hours-only. Treat it as report-only
+for that lane, not missing coverage. `data/runtime/dd-fractional-leftovers.csv`
+is only for decimal remainders left after an integer-share execution or integer
+fallback, not for regular-market exact-share due lots.
+
+The trigger price uses a ladder profile. The default profile uses the
+spreadsheet-style drop zones. Lot 1 is the base open:
 
 | Lot range | Drop from previous trigger | Number of buys |
 | --- | ---: | ---: |
@@ -243,6 +254,18 @@ The trigger price uses the spreadsheet-style drop zones. Lot 1 is the base open:
 The 80% zone can continue indefinitely in theory. In practice, the sequence
 should stop when the stock is sold, delisted, blocked by the 10% position cap,
 or cash rules prevent another double-down.
+
+For new openings/reopens and current base-only positions whose base price is
+under `$5`, use the `under5_20` profile:
+
+| Lot range | Drop from previous trigger | Number of buys |
+| --- | ---: | ---: |
+| 1 | 0% | base open |
+| 2-11 | 20% | 10 |
+| 12+ | 40% | repeated |
+
+Do not automatically migrate existing multi-lot positions into `under5_20`.
+They keep the default profile unless explicitly reviewed and migrated later.
 
 ## Cash Priority
 

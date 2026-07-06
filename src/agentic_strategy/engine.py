@@ -115,6 +115,7 @@ def evaluate_strategy(
                 next_trigger=position.next_trigger_price,
                 next_shares=position.next_lot_shares,
                 buy_price=buy_price,
+                ladder_profile=position.ladder_profile,
             )
             order_quantity = combined_due_lot_shares(due_lots)
             estimated_cost = buy_price * order_quantity
@@ -139,12 +140,14 @@ def evaluate_strategy(
         )
         order_quantity = combined_due_lot_shares(due_lots)
         guard_trigger = due_lots[-1].trigger_price
+        ladder_profile = due_lots[0].ladder_profile
         metrics = {
             "buy_price": _money(buy_price),
             "trigger_price": _money(position.next_trigger_price),
             "price_guard_trigger": _money(guard_trigger),
             "next_lot_shares": str(position.next_lot_shares),
             "due_lots": ",".join(str(lot.lot_index) for lot in due_lots),
+            "ladder_profile": ladder_profile,
             "combined_due_lot_count": str(len(due_lots)),
             "order_sizing": "exact_share_quantity",
             "order_quantity": str(order_quantity),

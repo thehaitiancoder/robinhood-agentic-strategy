@@ -10,6 +10,10 @@ TWENTY_PCT = Decimal("0.20")
 FORTY_PCT = Decimal("0.40")
 EIGHTY_PCT = Decimal("0.80")
 WHOLE_SHARE_THRESHOLD = Decimal("1.00")
+UNDER5_ENTRY_PRICE_THRESHOLD = Decimal("5.00")
+STANDARD_LADDER_PROFILE = "standard"
+UNDER5_20_LADDER_PROFILE = "under5_20"
+REF2023_UNDER5_LADDER_PROFILE = "ref2023_under5"
 
 
 @dataclass(frozen=True)
@@ -19,6 +23,7 @@ class LadderLot:
     lot_shares: Decimal
     drop_pct: Decimal
     sizing_mode: str
+    ladder_profile: str = STANDARD_LADDER_PROFILE
 
 
 @dataclass(frozen=True)
@@ -26,11 +31,46 @@ class DueDoubleDownLot:
     lot_index: int
     trigger_price: Decimal
     lot_shares: Decimal
+    ladder_profile: str = STANDARD_LADDER_PROFILE
 
 
-def drop_pct_for_next_lot(next_lot_index: int) -> Decimal:
+def ladder_profile_for_entry_price(entry_price: Decimal) -> str:
+    if entry_price <= 0:
+        raise ValueError("entry_price must be positive")
+    if entry_price < UNDER5_ENTRY_PRICE_THRESHOLD:
+        return UNDER5_20_LADDER_PROFILE
+    return STANDARD_LADDER_PROFILE
+
+
+def ladder_profile_for_open_lot_count(entry_price: Decimal, open_lot_count: int) -> str:
+    if open_lot_count < 1:
+        raise ValueError("open_lot_count must be positive")
+    if open_lot_count == 1:
+        return ladder_profile_for_entry_price(entry_price)
+    return STANDARD_LADDER_PROFILE
+
+
+def normalize_ladder_profile(ladder_profile: str | None) -> str:
+    profile = (ladder_profile or STANDARD_LADDER_PROFILE).strip().lower()
+    if profile == REF2023_UNDER5_LADDER_PROFILE:
+        return UNDER5_20_LADDER_PROFILE
+    if profile not in {STANDARD_LADDER_PROFILE, UNDER5_20_LADDER_PROFILE}:
+        raise ValueError(f"unknown ladder_profile: {ladder_profile}")
+    return profile
+
+
+def drop_pct_for_next_lot(
+    next_lot_index: int,
+    *,
+    ladder_profile: str = STANDARD_LADDER_PROFILE,
+) -> Decimal:
     if next_lot_index < 2:
         raise ValueError("next_lot_index must be 2 or greater")
+    profile = normalize_ladder_profile(ladder_profile)
+    if profile == UNDER5_20_LADDER_PROFILE:
+        if next_lot_index <= 11:
+            return TWENTY_PCT
+        return FORTY_PCT
     if next_lot_index <= 5:
         return TEN_PCT
     if next_lot_index <= 10:
@@ -40,8 +80,15 @@ def drop_pct_for_next_lot(next_lot_index: int) -> Decimal:
     return EIGHTY_PCT
 
 
-def next_trigger_price(previous_trigger_price: Decimal, next_lot_index: int) -> Decimal:
-    return previous_trigger_price * (Decimal("1") - drop_pct_for_next_lot(next_lot_index))
+def next_trigger_price(
+    previous_trigger_price: Decimal,
+    next_lot_index: int,
+    *,
+    ladder_profile: str = STANDARD_LADDER_PROFILE,
+) -> Decimal:
+    return previous_trigger_price * (
+        Decimal("1") - drop_pct_for_next_lot(next_lot_index, ladder_profile=ladder_profile)
+    )
 
 
 def next_lot_shares(previous_lot_shares: Decimal) -> Decimal:
@@ -55,6 +102,7 @@ def due_double_down_lots(
     next_shares: Decimal,
     buy_price: Decimal,
     max_lot_index: int = 100,
+    ladder_profile: str = STANDARD_LADDER_PROFILE,
 ) -> list[DueDoubleDownLot]:
     if current_lot_index < 1:
         raise ValueError("current_lot_index must be positive")
@@ -66,6 +114,7 @@ def due_double_down_lots(
         raise ValueError("buy_price must be positive")
     if max_lot_index <= current_lot_index:
         raise ValueError("max_lot_index must exceed current_lot_index")
+    profile = normalize_ladder_profile(ladder_profile)
 
     lots: list[DueDoubleDownLot] = []
     lot_index = current_lot_index + 1
@@ -78,11 +127,12 @@ def due_double_down_lots(
                 lot_index=lot_index,
                 trigger_price=trigger_price,
                 lot_shares=lot_shares,
+                ladder_profile=profile,
             )
         )
         lot_index += 1
         if lot_index <= max_lot_index:
-            trigger_price = next_trigger_price(trigger_price, lot_index)
+            trigger_price = next_trigger_price(trigger_price, lot_index, ladder_profile=profile)
             lot_shares = next_lot_shares(lot_shares)
 
     return lots
@@ -115,13 +165,20 @@ def sizing_mode_for_price(price: Decimal) -> str:
     return "dollar_fractional"
 
 
-def build_ladder(entry_price: Decimal, base_usd: Decimal, through_lot_index: int) -> list[LadderLot]:
+def build_ladder(
+    entry_price: Decimal,
+    base_usd: Decimal,
+    through_lot_index: int,
+    *,
+    ladder_profile: str | None = None,
+) -> list[LadderLot]:
     if through_lot_index < 1:
         raise ValueError("through_lot_index must be 1 or greater")
     if entry_price <= 0:
         raise ValueError("entry_price must be positive")
     if base_usd <= 0:
         raise ValueError("base_usd must be positive")
+    profile = normalize_ladder_profile(ladder_profile or ladder_profile_for_entry_price(entry_price))
 
     lots = [
         LadderLot(
@@ -130,6 +187,7 @@ def build_ladder(entry_price: Decimal, base_usd: Decimal, through_lot_index: int
             lot_shares=lot_shares_for_target(entry_price, base_usd),
             drop_pct=Decimal("0"),
             sizing_mode=sizing_mode_for_price(entry_price),
+            ladder_profile=profile,
         )
     ]
 
@@ -139,10 +197,15 @@ def build_ladder(entry_price: Decimal, base_usd: Decimal, through_lot_index: int
         lots.append(
             LadderLot(
                 lot_index=next_index,
-                trigger_price=next_trigger_price(previous.trigger_price, next_index),
+                trigger_price=next_trigger_price(
+                    previous.trigger_price,
+                    next_index,
+                    ladder_profile=profile,
+                ),
                 lot_shares=next_lot_shares(previous.lot_shares),
-                drop_pct=drop_pct_for_next_lot(next_index),
+                drop_pct=drop_pct_for_next_lot(next_index, ladder_profile=profile),
                 sizing_mode=previous.sizing_mode,
+                ladder_profile=profile,
             )
         )
 

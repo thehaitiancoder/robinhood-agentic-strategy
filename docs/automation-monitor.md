@@ -324,8 +324,15 @@ Execution rules:
   due, use that lot's exact share count. If multiple DD lots are due for the
   same symbol at the current ask, combine those due lot shares into one broker
   order. Do not place DDs with a rounded `dollar_amount`; dollar values are
-  estimates for cash and risk checks only. If Robinhood rejects the fractional
-  DD quantity, retry the integer part only when it is at least 1 share.
+  estimates for cash and risk checks only. During regular market hours, this
+  exact share quantity remains executable even when `integer_qty=0`, assuming
+  Robinhood accepts the fractional buy. If Robinhood rejects the fractional DD
+  quantity, retry the integer part only when it is at least 1 share.
+- In premarket and after-hours whole-share lanes, a due DD with `integer_qty=0`
+  is regular-hours-only and not executable in that lane. It is not missing DD
+  coverage and not a DD blocker. `data/runtime/dd-fractional-leftovers.csv` is
+  only for decimal remainders left after an integer-share execution or integer
+  fallback, not for regular-market exact-share due lots.
 - If the full live position basket cannot be exhaustively scanned, the monitor
   must still validate the top downside holdings directly before reporting no
   DD. Any owned symbol shown by the top downside shortlist, a partial broker or
@@ -343,7 +350,15 @@ Execution rules:
   cannot be fetched, the market run is blocked. Start the report with exactly
   `DD SCAN BLOCKED`, email `rdgustave@gmail.com`, include the exact blocker and
   which symbols were/weren't verified, and do not report a routine no-action
-  result.
+  result. Regular-hours-only exact-share DDs and post-integer DD decimal
+  leftovers are verified report-only items in lanes where they are not
+  executable and must not be included in that blocker set.
+- Use `data/runtime/dd-known-blockers.csv` as an ignored same-system cache for
+  repeated non-executable DD noise. If the scan output reports
+  `suppressed_dd_blockers_sample`, those rows were already seen with the same
+  signature and should not be repeated in the blocker email/count. New or
+  changed blockers must still be reported, and executable DDs must still be
+  reviewed/placed normally.
 - Do not keep scanning other symbols while an executable candidate is waiting.
 - Do not write local ledger/state before execution.
 - Do not write `data/private/sold-today.md` while sell execution is still in
@@ -379,17 +394,22 @@ Execution rules:
   market work and leave extended-hours trading to the `13:00 PT - RH AH`
   automation.
 
-It emails `rdgustave@gmail.com` only for urgent execution outcomes:
+It emails `rdgustave@gmail.com` only when an action is blocked or an issue
+needs user attention. Do not email for successful sell fills, successful
+double-down fills, successful reopens, routine fills, routine no-action checks,
+or `OPEN CASH AVAILABLE`; record successful orders in the thread and automation
+memory only.
 
-- `URGENT SELL EXECUTED - Robinhood strategy`
+Email-worthy outcomes include:
+
 - `URGENT SELL BLOCKED - Robinhood strategy`
-- `DOUBLE-DOWN EXECUTED - Robinhood strategy`
 - `DOUBLE-DOWN BLOCKED - Robinhood strategy`
 - `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`
 
-It does not email routine no-action checks or `OPEN CASH AVAILABLE` by default.
-An incomplete DD scan is not routine no-action; it is a blocked scan and must
-email.
+Guard exceptions, broker/tool failures, reconciliation failures, or other
+attention-needed conditions should also email even if an order eventually
+filled. An incomplete DD scan is not routine no-action; it is a blocked scan
+and must email.
 
 ## Premarket Trading
 
@@ -422,7 +442,13 @@ Extended-hours execution scope is intentionally narrow:
 - For DDs, reconstruct the current lot ladder from broker filled orders. If the
   live extended-hours ask is at or below the deepest due trigger, place only
   the integer part of the combined due quantity as an extended-hours limit buy.
-  Leave fractional leftovers unplaced and report them.
+  Leave fractional leftovers unplaced, report them, and write/update
+  `data/runtime/dd-fractional-leftovers.csv`. These leftovers are not DD scan
+  blockers.
+- `python -m agentic_strategy.afterhours_scan` also maintains
+  `data/runtime/dd-known-blockers.csv` by default. Treat unchanged suppressed
+  rows from that cache as already-known noise, not as fresh blocked coverage.
+  Do not use the cache to skip an executable whole-share sell/DD candidate.
 - For sells, use live extended-hours bid as the sell-side executable price. If
   the integer sellable quantity is at least 1 share and bid-side return is at
   least 10%, place that integer quantity as an extended-hours limit sell. If

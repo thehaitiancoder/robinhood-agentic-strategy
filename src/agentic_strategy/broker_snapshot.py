@@ -19,6 +19,7 @@ POSITION_FIELDS = [
     "current_lot_index",
     "next_trigger_price",
     "next_lot_shares",
+    "ladder_profile",
 ]
 QUOTE_FIELDS = ["symbol", "bid_price", "ask_price", "last_price", "updated_at"]
 
@@ -133,6 +134,7 @@ def _position_rows(
                 "current_lot_index": state.get("current_lot_index") or "1",
                 "next_trigger_price": state.get("next_trigger_price") or "",
                 "next_lot_shares": state.get("next_lot_shares") or "",
+                "ladder_profile": state.get("ladder_profile") or "standard",
             }
         )
     return sorted(rows, key=lambda row: row["symbol"])
