@@ -55,6 +55,25 @@ in the file with `active=false` or `tradable=false` for auditability.
 | `order_id` | Broker order id |
 | `filled_at` | Fill timestamp |
 
+## Split Adjustment
+
+`data/split-adjustments.csv` is committed strategy configuration for symbols
+whose broker live quantity has been split-adjusted while raw order history still
+shows pre-split fills. The scanner applies rows from this file before declaring
+a quantity mismatch.
+
+| Field | Meaning |
+| --- | --- |
+| `symbol` | Ticker |
+| `effective_date` | First date where post-split broker quantities apply |
+| `split_ratio` | Post-split shares to pre-split shares, for example `1:15` |
+| `pre_split_base_qty` | Base-lot quantity from raw broker fill history |
+| `pre_split_base_price` | Base-lot price from raw broker fill history |
+| `adjusted_base_qty` | Broker-adjusted base-lot quantity |
+| `adjusted_base_price` | Broker-adjusted base-lot price |
+| `ladder_profile` | Ladder profile to use after adjustment |
+| `notes` | Human audit note |
+
 ## Tax Handling
 
 The strategy does not use wash-sale rules or tax-adjusted cost basis for trade

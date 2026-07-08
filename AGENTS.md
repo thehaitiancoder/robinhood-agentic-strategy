@@ -81,6 +81,10 @@ policy explicitly has `allow_double_down=false`. Always surface and act on
 executable DDs, new blockers, changed blocker signatures, quantity/order-state
 changes, and broker blocks on executable DD orders.
 
+For known split-adjusted symbols, apply committed rows in
+`data/split-adjustments.csv` before treating a live-vs-reconstructed quantity
+mismatch as a DD coverage blocker.
+
 Shortlist files under `data/private/top-10-buy-candidates.md` and
 `data/private/top-10-sell-candidates.md` are speed hints from the previous run.
 At the start of a market-hours check, quote those symbols first because the next

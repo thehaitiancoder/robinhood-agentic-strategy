@@ -12,7 +12,7 @@ from typing import Any, TypedDict
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .dd_blockers import DDBlockerEvent, DEFAULT_KNOWN_DD_BLOCKERS_CSV, update_known_dd_blockers
-from .ladder import ladder_profile_for_open_lot_count, next_lot_shares, next_trigger_price
+from .ladder import ladder_profile_for_open_lot_count, next_lot_shares, next_trigger_price, normalize_ladder_profile
 from .symbol_policy import (
     DEFAULT_SYMBOL_POLICY_CSV,
     SymbolPolicy,
@@ -24,6 +24,7 @@ from .symbol_policy import (
 
 ACTIVE_ORDER_STATES = {"new", "queued", "unconfirmed", "confirmed", "partially_filled"}
 ZERO = Decimal("0")
+DEFAULT_SPLIT_ADJUSTMENTS_CSV = Path("data/split-adjustments.csv")
 DEFAULT_DD_FRACTIONAL_LEFTOVERS_CSV = Path("data/runtime/dd-fractional-leftovers.csv")
 DD_FRACTIONAL_LEFTOVER_FIELDS = [
     "pacific_date",
@@ -43,6 +44,7 @@ DD_FRACTIONAL_LEFTOVER_FIELDS = [
 ]
 
 POST_INTEGER_DD_LEFTOVER_REASON = "post_integer_execution_decimal_leftover"
+QUANTITY_TOLERANCE = Decimal("0.000010")
 
 
 class _DueLot(TypedDict):
@@ -50,6 +52,29 @@ class _DueLot(TypedDict):
     trigger: Decimal
     shares: Decimal
     remaining: Decimal
+
+
+@dataclass(frozen=True)
+class SplitAdjustment:
+    symbol: str
+    effective_date: str
+    split_ratio: str
+    pre_split_base_qty: Decimal
+    pre_split_base_price: Decimal
+    adjusted_base_qty: Decimal
+    adjusted_base_price: Decimal
+    ladder_profile: str
+    notes: str = ""
+
+    @property
+    def quantity_multiplier(self) -> Decimal:
+        post, pre = _split_ratio_parts(self.split_ratio)
+        return post / pre
+
+    @property
+    def price_multiplier(self) -> Decimal:
+        post, pre = _split_ratio_parts(self.split_ratio)
+        return pre / post
 
 
 @dataclass(frozen=True)
@@ -146,6 +171,7 @@ def scan_afterhours(
     active_orders_payload: dict[str, Any] | None = None,
     sell_return_threshold: Decimal = Decimal("10"),
     symbol_policies: dict[str, SymbolPolicy] | None = None,
+    split_adjustments: dict[str, SplitAdjustment] | None = None,
 ) -> AfterHoursScanReport:
     positions = _positions(positions_payload)
     quotes = _quotes_by_symbol(positions_payload)
@@ -160,6 +186,7 @@ def scan_afterhours(
     owned_symbols = set(position_by_symbol)
     orders_by_symbol = _filled_orders_by_symbol(orders, owned_symbols)
     active_buys, active_sells = _active_orders_by_side(active_orders)
+    split_adjustments = split_adjustments or {}
 
     whole_share_dd: list[AfterHoursDoubleDownCandidate] = []
     exact_share_dd: list[AfterHoursDoubleDownCandidate] = []
@@ -192,18 +219,22 @@ def scan_afterhours(
             continue
 
         lots = _reconstruct_open_lots(orders_by_symbol.get(symbol, []))
+        split_adjustment = split_adjustments.get(symbol)
+        if split_adjustment is not None:
+            lots = _apply_split_adjustment(lots, split_adjustment)
         position_qty = _decimal(position.get("quantity"))
         if not lots:
             no_history.append(symbol)
             continue
 
         calculated_qty = sum((lot["qty"] for lot in lots), ZERO)
-        if abs(calculated_qty - position_qty) > Decimal("0.000010"):
+        if abs(calculated_qty - position_qty) > QUANTITY_TOLERANCE:
             incomplete.append(
                 {
                     "symbol": symbol,
                     "position_qty": str(position_qty),
                     "calculated_qty": str(calculated_qty),
+                    "split_adjustment": split_adjustment.split_ratio if split_adjustment is not None else "",
                 }
             )
             continue
@@ -346,6 +377,14 @@ def main() -> int:
         help="Optional symbol policy CSV. Defaults to data/symbol-policy.csv when present.",
     )
     parser.add_argument(
+        "--split-adjustments",
+        default=str(DEFAULT_SPLIT_ADJUSTMENTS_CSV),
+        help=(
+            "Optional committed CSV for split-adjusted symbols whose broker live quantity no longer "
+            "matches raw order history. Pass an empty string to disable."
+        ),
+    )
+    parser.add_argument(
         "--fractional-dd-cache",
         default="",
         help=(
@@ -374,6 +413,7 @@ def main() -> int:
         active_orders_payload=_read_json(args.active_orders_json) if args.active_orders_json else None,
         sell_return_threshold=Decimal(args.sell_return_pct),
         symbol_policies=read_symbol_policy_csv(args.symbol_policy) if args.symbol_policy else None,
+        split_adjustments=read_split_adjustments_csv(args.split_adjustments) if args.split_adjustments else None,
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -388,6 +428,30 @@ def main() -> int:
     output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({key: payload[key] for key in payload if key.endswith("_count") or key == "checked_positions"}))
     return 0
+
+
+def read_split_adjustments_csv(path: str | Path) -> dict[str, SplitAdjustment]:
+    csv_path = Path(path)
+    if not csv_path.exists():
+        return {}
+    adjustments: dict[str, SplitAdjustment] = {}
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        for row in DictReader(handle):
+            symbol = str(row.get("symbol") or "").strip().upper()
+            if not symbol:
+                continue
+            adjustments[symbol] = SplitAdjustment(
+                symbol=symbol,
+                effective_date=str(row.get("effective_date") or "").strip(),
+                split_ratio=str(row.get("split_ratio") or "").strip(),
+                pre_split_base_qty=_decimal(row.get("pre_split_base_qty")),
+                pre_split_base_price=_decimal(row.get("pre_split_base_price")),
+                adjusted_base_qty=_decimal(row.get("adjusted_base_qty")),
+                adjusted_base_price=_decimal(row.get("adjusted_base_price")),
+                ladder_profile=normalize_ladder_profile(row.get("ladder_profile")),
+                notes=str(row.get("notes") or "").strip(),
+            )
+    return adjustments
 
 
 def _known_dd_blocker_events(report: AfterHoursScanReport, *, source: str = "") -> list[DDBlockerEvent]:
@@ -491,6 +555,49 @@ def _now_pacific() -> datetime:
         return datetime.now(tz=ZoneInfo("America/Los_Angeles"))
     except ZoneInfoNotFoundError:
         return datetime.now().astimezone()
+
+
+def _apply_split_adjustment(
+    lots: list[dict[str, Any]],
+    adjustment: SplitAdjustment,
+) -> list[dict[str, Any]]:
+    adjusted_lots: list[dict[str, Any]] = []
+    base_adjusted = False
+    for lot in lots:
+        adjusted = dict(lot)
+        if _lot_is_before_split(lot, adjustment):
+            qty = _decimal(lot.get("qty"))
+            price = _decimal(lot.get("price"))
+            adjusted["qty"] = qty * adjustment.quantity_multiplier
+            adjusted["price"] = price * adjustment.price_multiplier
+            if (
+                not base_adjusted
+                and adjustment.adjusted_base_qty > ZERO
+                and adjustment.adjusted_base_price > ZERO
+                and abs(qty - adjustment.pre_split_base_qty) <= QUANTITY_TOLERANCE
+                and abs(price - adjustment.pre_split_base_price) <= Decimal("0.0001")
+            ):
+                adjusted["qty"] = adjustment.adjusted_base_qty
+                adjusted["price"] = adjustment.adjusted_base_price
+                base_adjusted = True
+        adjusted_lots.append(adjusted)
+    return adjusted_lots
+
+
+def _lot_is_before_split(lot: dict[str, Any], adjustment: SplitAdjustment) -> bool:
+    if not adjustment.effective_date:
+        return False
+    lot_date = str(lot.get("time") or "")[:10]
+    return bool(lot_date) and lot_date < adjustment.effective_date
+
+
+def _split_ratio_parts(split_ratio: str) -> tuple[Decimal, Decimal]:
+    raw_post, raw_pre = split_ratio.split(":", 1)
+    post = Decimal(raw_post.strip())
+    pre = Decimal(raw_pre.strip())
+    if post <= ZERO or pre <= ZERO:
+        raise ValueError(f"invalid split_ratio: {split_ratio}")
+    return post, pre
 
 
 def _double_down_candidate(

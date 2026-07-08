@@ -228,6 +228,10 @@ is at or below the deepest included trigger and cash, buffer, concentration,
 broker checks, and the post-placement order-price guard pass. Do not stop after
 checking only symbols that already doubled down recently.
 
+If raw broker order history no longer matches live broker quantity because of a
+known split adjustment, apply the committed row in `data/split-adjustments.csv`
+before treating the symbol as a quantity-mismatch DD blocker.
+
 If the monitor cannot exhaustively scan the basket and cannot verify those
 mandatory downside candidates, it must not call the result "no DD due." The
 correct status is `DD SCAN BLOCKED` with the exact missing coverage or tool
