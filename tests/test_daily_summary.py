@@ -58,6 +58,14 @@ class DailySummaryTest(unittest.TestCase):
         self.assertEqual(str(summary["hourly"]["09"]["profit"]), "8")
         self.assertEqual(str(summary["hourly"]["10"]["profit"]), "-2")
 
+        buy_deployment = summary["buy_deployment"]
+        self.assertEqual(buy_deployment["filled_buy_count"], 1)
+        self.assertEqual(str(buy_deployment["gross_buy_spend"]), "100")
+        self.assertEqual(str(buy_deployment["sell_proceeds_offset"]), "66")
+        self.assertEqual(str(buy_deployment["net_cash_deployed"]), "34")
+        self.assertEqual(str(buy_deployment["hourly"]["07"]["spend"]), "100")
+        self.assertEqual(buy_deployment["top_symbols"][0]["symbol"], "GAIN")
+
         gain_cycle = next(cycle for cycle in summary["cycles"] if cycle.symbol == "GAIN")
         self.assertEqual(str(gain_cycle.weighted_hold_minutes), "150.0")
         self.assertEqual(str(gain_cycle.return_pct), "20.0")
@@ -79,9 +87,13 @@ class DailySummaryTest(unittest.TestCase):
                 json_output=root / "daily-summary.json",
             )
 
-            self.assertIn("Paper P/L", (root / "daily-summary.md").read_text(encoding="utf-8"))
+            markdown = (root / "daily-summary.md").read_text(encoding="utf-8")
+            self.assertIn("Paper P/L", markdown)
+            self.assertIn("DD Cash Deployment", markdown)
             self.assertIn("order_id", (root / "cycles.csv").read_text(encoding="utf-8"))
-            self.assertIn('"report_date": "2026-06-15"', (root / "daily-summary.json").read_text(encoding="utf-8"))
+            summary_json = (root / "daily-summary.json").read_text(encoding="utf-8")
+            self.assertIn('"report_date": "2026-06-15"', summary_json)
+            self.assertIn('"buy_deployment"', summary_json)
 
     def test_updates_performance_history_once_per_report_date(self) -> None:
         first = build_daily_summary(

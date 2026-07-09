@@ -102,6 +102,11 @@ def build_daily_summary(
     hold_minutes = [
         cycle.weighted_hold_minutes for cycle in costed_cycles if cycle.weighted_hold_minutes is not None
     ]
+    buy_deployment = _buy_deployment(
+        orders_payload,
+        report_day=report_day,
+        sell_proceeds=total_proceeds,
+    )
 
     portfolio = _portfolio(portfolio_payload)
     return {
@@ -111,6 +116,7 @@ def build_daily_summary(
         "paper": paper,
         "cycles": cycles,
         "hourly": hourly,
+        "buy_deployment": buy_deployment,
         "totals": {
             "realized_profit": total_realized,
             "sell_proceeds": total_proceeds,
@@ -198,11 +204,54 @@ def render_markdown(summary: dict[str, Any]) -> str:
         f"| Median hold time | {_duration(totals['median_hold_minutes'])} |",
         f"| Uncosted sold quantity | {_num(totals['uncosted_quantity'])} |",
         "",
-        "## Profit By Hour",
+        "## DD Cash Deployment",
         "",
-        "| PT Hour | Sells | Proceeds | Cost | Profit | Return |",
-        "| --- | ---: | ---: | ---: | ---: | ---: |",
+        "| Metric | Value |",
+        "| --- | ---: |",
+        f"| Filled buy/DD orders | {summary.get('buy_deployment', {}).get('filled_buy_count', 0)} |",
+        f"| Gross buy/DD spend | {_money(summary.get('buy_deployment', {}).get('gross_buy_spend', ZERO))} |",
+        f"| Sell proceeds offset | {_money(summary.get('buy_deployment', {}).get('sell_proceeds_offset', ZERO))} |",
+        f"| Net cash deployed after sells | {_money(summary.get('buy_deployment', {}).get('net_cash_deployed', ZERO))} |",
+        "",
+        "### Buy/DD Spend By Hour",
+        "",
+        "| PT Hour | Orders | Spend |",
+        "| --- | ---: | ---: |",
     ]
+
+    buy_deployment = summary.get("buy_deployment", {})
+    buy_hourly = buy_deployment.get("hourly", {}) if isinstance(buy_deployment, dict) else {}
+    if not buy_hourly:
+        lines.append("| None | 0 | $0.00 |")
+    else:
+        for hour, row in sorted(buy_hourly.items()):
+            lines.append(f"| {hour}:00 | {row['count']} | {_money(row['spend'])} |")
+
+    lines.extend(
+        [
+            "",
+            "### Top Buy/DD Symbols",
+            "",
+            "| Symbol | Orders | Spend |",
+            "| --- | ---: | ---: |",
+        ]
+    )
+    top_symbols = buy_deployment.get("top_symbols", []) if isinstance(buy_deployment, dict) else []
+    if not top_symbols:
+        lines.append("| None | 0 | $0.00 |")
+    else:
+        for row in top_symbols:
+            lines.append(f"| {row['symbol']} | {row['count']} | {_money(row['spend'])} |")
+
+    lines.extend(
+        [
+            "",
+            "## Profit By Hour",
+            "",
+            "| PT Hour | Sells | Proceeds | Cost | Profit | Return |",
+            "| --- | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
 
     if not hourly:
         lines.append("| None | 0 | $0.00 | $0.00 | $0.00 |  |")
@@ -240,6 +289,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
             "",
             "- Paper P/L uses the latest broker quote in this order: after-hours last, regular last, bid, ask, close.",
             "- Realized profit uses FIFO cost reconstruction from filled equity orders.",
+            "- DD cash deployment counts all same-day filled buy orders from broker order history; it is a DD/buy cash proxy, not a separate broker order type.",
             "- If uncosted sold quantity is nonzero, the broker order history provided to the run was insufficient for those shares.",
         ]
     )
@@ -582,6 +632,60 @@ def _hourly_profit(cycles: list[SellCycle]) -> dict[str, dict[str, Decimal | int
     return hourly
 
 
+def _buy_deployment(
+    orders_payload: dict[str, Any],
+    *,
+    report_day: str,
+    sell_proceeds: Decimal,
+) -> dict[str, Any]:
+    orders: dict[str, dict[str, Any]] = {}
+    for event in _execution_events(orders_payload):
+        if event["side"] != "buy" or _pt_date(event["timestamp"]) != report_day:
+            continue
+        order_id = str(event["order_id"] or f"{event['symbol']}:{event['timestamp'].isoformat()}")
+        row = orders.setdefault(
+            order_id,
+            {
+                "symbol": event["symbol"],
+                "timestamp": event["timestamp"],
+                "spend": ZERO,
+            },
+        )
+        row["timestamp"] = min(row["timestamp"], event["timestamp"])
+        row["spend"] += event["quantity"] * event["price"]
+
+    hourly: dict[str, dict[str, Decimal | int]] = {}
+    symbols: dict[str, dict[str, Decimal | int | str]] = {}
+    gross_spend = ZERO
+    for row in orders.values():
+        spend = row["spend"]
+        gross_spend += spend
+        hour = f"{_as_pt(row['timestamp']).hour:02d}"
+        hourly_row = hourly.setdefault(hour, {"count": 0, "spend": ZERO})
+        hourly_row["count"] = int(hourly_row["count"]) + 1
+        hourly_row["spend"] = hourly_row["spend"] + spend
+
+        symbol = str(row["symbol"])
+        symbol_row = symbols.setdefault(symbol, {"symbol": symbol, "count": 0, "spend": ZERO})
+        symbol_row["count"] = int(symbol_row["count"]) + 1
+        symbol_row["spend"] = symbol_row["spend"] + spend
+
+    top_symbols = sorted(
+        symbols.values(),
+        key=lambda item: (_decimal(item["spend"]), str(item["symbol"])),
+        reverse=True,
+    )[:10]
+
+    return {
+        "filled_buy_count": len(orders),
+        "gross_buy_spend": gross_spend,
+        "sell_proceeds_offset": sell_proceeds,
+        "net_cash_deployed": gross_spend - sell_proceeds,
+        "hourly": hourly,
+        "top_symbols": top_symbols,
+    }
+
+
 def _portfolio(payload: dict[str, Any]) -> dict[str, Decimal]:
     portfolio_payload = payload.get("portfolio")
     data_payload = payload.get("data")
@@ -655,6 +759,20 @@ def _summary_json(summary: dict[str, Any]) -> dict[str, Any]:
         "hourly": {
             hour: {key: str(value) if isinstance(value, Decimal) else value for key, value in row.items()}
             for hour, row in summary["hourly"].items()
+        },
+        "buy_deployment": {
+            "filled_buy_count": summary.get("buy_deployment", {}).get("filled_buy_count", 0),
+            "gross_buy_spend": str(summary.get("buy_deployment", {}).get("gross_buy_spend", ZERO)),
+            "sell_proceeds_offset": str(summary.get("buy_deployment", {}).get("sell_proceeds_offset", ZERO)),
+            "net_cash_deployed": str(summary.get("buy_deployment", {}).get("net_cash_deployed", ZERO)),
+            "hourly": {
+                hour: {key: str(value) if isinstance(value, Decimal) else value for key, value in row.items()}
+                for hour, row in summary.get("buy_deployment", {}).get("hourly", {}).items()
+            },
+            "top_symbols": [
+                {key: str(value) if isinstance(value, Decimal) else value for key, value in row.items()}
+                for row in summary.get("buy_deployment", {}).get("top_symbols", [])
+            ],
         },
         "cycles": [_cycle_json(cycle) for cycle in summary["cycles"]],
     }

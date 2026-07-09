@@ -1,0 +1,13 @@
+version = 1
+id = "18-00-pt-rh-transcript-summary"
+kind = "cron"
+name = "18:00 PT - RH TRANSCRIPT SUMMARY"
+prompt = "Hard Pacific-time gate first. This is the 18:00 PT market-day Robinhood transcript recap lane. Run only at or after 18:00 Pacific on the current Pacific date; if started outside that window, write a concise late/early skip note if possible and stop before reading docs or calling tools for strategy work.\n\nAfter the hard time gate and before reading docs, run the local market calendar gate from the repo root: `python -m agentic_strategy.market_calendar --date today --calendar config/market-holidays.csv --market US_EQUITIES`. If it reports `market_status=closed`, write a concise `MARKET HOLIDAY SKIP` note if possible and stop.\n\nStart the first visible response with `MM-DD 18:00 PT - RH TRANSCRIPT SUMMARY`. Read `AGENTS.md` and `docs/automation-monitor.md` after the gates.\n\nThis automation is read-only reporting. Do not call Robinhood broker review/place/cancel tools, do not place or suggest orders, and do not modify trading state. Do not email routine success summaries; only email if the recap itself discovers a blocked issue that clearly needs user attention.\n\nSummarize today's Codex automation transcripts and automation memories for the current Pacific date. Use Codex thread list/read tools when available, including archived/current automation threads, and local automation memory files under `C:\\Users\\ralph\\.codex\\automations\\*\\memory.md` when available. Cover: premarket `04:00`, `05:00`, `06:00`; market hours `06:30` through `12:30`; `12:45 PT - SAUCE`; after-hours `13:00`, `14:00`, `15:00`, `16:00`; and `17:00 PT - RH DAILY`. Include any obvious manual strategy work from the main repo thread if it is visible.\n\nReport by lane and keep it concise but operationally useful. Include filled sells, filled DD buys, reopens queued or filled, blocked sell/DD actions, guard exceptions, helper/tool failures, emails sent or blocked, important file/artifact updates, end-state cash/account metrics if available, and next-session watch items. Call out unusual issues separately. Append a short memory note for this automation with the headline metrics and any follow-up items."
+status = "ACTIVE"
+rrule = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=18;BYMINUTE=0;BYSECOND=0"
+model = "gpt-5.4"
+reasoning_effort = "xhigh"
+execution_environment = "local"
+cwds = ["C:\\Users\\ralph\\Documents\\dev\\robinhood-agentic-strategy"]
+created_at = 1783568673599
+updated_at = 1783568673599
