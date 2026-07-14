@@ -1597,7 +1597,7 @@ ESLT,Elbit Systems Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated
 ESNT,Essent,stock,true,true,true,robinhood_validated,2026-06-09
 ESOA,Energy Services of America Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 ESP,Espey Mfg. & Electronics Corp,stock,true,true,true,robinhood_validated,2026-06-15
-ESPR,"Esperion Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+ESPR,"Esperion Therapeutics, Inc. Common Stock",stock,false,false,false,robinhood_inactive_instrument,2026-07-13
 ESQ,"Esquire Financial Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 ESRT,"EMPIRE STATE REALTY TRUST, INC.",stock,true,true,true,robinhood_validated,2026-06-11
 ESS,"Essex Property Trust, Inc",stock,true,true,true,robinhood_validated,2026-06-09
@@ -4466,7 +4466,7 @@ TBLA,Taboola.com Ltd. Ordinary Shares,stock,true,true,true,robinhood_validated,2
 TBLD,Thornburg Income Builder Opportunities Trust Common Stock,stock,true,true,true,robinhood_validated,2026-06-15
 TBN,Tamboran Resources Corporation,stock,true,true,true,robinhood_validated,2026-06-15
 TBPH,"Theravance Biopharma, Inc. Ordinary Shares",stock,true,true,true,robinhood_validated,2026-06-10
-TBRG,"TruBridge, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+TBRG,"TruBridge, Inc. Common Stock",stock,false,false,false,robinhood_inactive_instrument,2026-07-10
 TCBI,Texas Capital Bank,stock,true,true,true,robinhood_validated,2026-06-09
 TCBK,TriCo Bancshares Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 TCBS,"Texas Community Bancshares, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
