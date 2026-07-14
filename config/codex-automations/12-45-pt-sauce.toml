@@ -5,9 +5,9 @@ name = "12:45 PT SAUCE"
 prompt = "Start with a hard Pacific-time gate before reading docs or calling Robinhood. This is the recurring 12:45 PT SAUCE lane; if the run is outside 12:45-12:59 PM Pacific or the local market calendar gate reports US equities closed, write a concise skip and stop without broker queries or trading-state writes. Then read AGENTS.md and run SAUCE / SELL AUTO UNTIL CLOSE for the Agentic Robinhood account 878067701. This lane is sell-only through 12:59 PM Pacific and is pre-authorized to place qualifying full-position market sells at 10% or more bid-side profit after clean broker review. Use live Robinhood broker data as source of truth, process one executable candidate at a time, place qualifying sells immediately, then resume scanning until 12:59 PM Pacific. Do not place double-downs, openings, reopens, or any buy orders. Email policy: send email only when a sell is broker-blocked, a broker/tool issue occurs, or another issue needs user attention. Do not email for successful sell fills; record successful sells in the thread and automation memory only. Report executed sells and any broker-blocked sell candidates at the end."
 status = "ACTIVE"
 rrule = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=12;BYMINUTE=45;BYSECOND=0"
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 reasoning_effort = "xhigh"
 execution_environment = "local"
 cwds = ["C:\\Users\\ralph\\Documents\\dev\\robinhood-agentic-strategy"]
 created_at = 1782497247320
-updated_at = 1782974711893
+updated_at = 1784015055299

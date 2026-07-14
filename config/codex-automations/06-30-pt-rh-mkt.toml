@@ -30,9 +30,9 @@ Shortlists and closeout: top-10 files are speed hints, not trading authority. Th
 '''
 status = "ACTIVE"
 rrule = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=6;BYMINUTE=30;BYSECOND=0"
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 reasoning_effort = "xhigh"
 execution_environment = "local"
 cwds = ["C:\\Users\\ralph\\Documents\\dev\\robinhood-agentic-strategy"]
 created_at = 1781028067229
-updated_at = 1782974711893
+updated_at = 1784015044094

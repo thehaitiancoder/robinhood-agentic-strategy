@@ -15,9 +15,9 @@ Read the discovery summary JSON/Markdown. If accepted symbols were merged into d
 Report a concise summary with the discovery summary path, candidate count, local rejection count, broker checked count, accepted count, rejected count, universe rows before and after, active/tradable/fractional universe count, whether symbol-policy was refreshed, policy row counts, and any blockers. Email only if discovery, Robinhood validation, or policy validation is blocked.'''
 status = "ACTIVE"
 rrule = "FREQ=MONTHLY;BYDAY=1SA;BYHOUR=15;BYMINUTE=0;BYSECOND=0"
-model = "gpt-5.4"
-reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+reasoning_effort = "ultra"
 execution_environment = "local"
 cwds = ["C:\\Users\\ralph\\Documents\\dev\\robinhood-agentic-strategy"]
 created_at = 1781721600000
-updated_at = 1781599206423
+updated_at = 1784019042008

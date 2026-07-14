@@ -5,9 +5,9 @@ name = "Weekly RH Symbol Policy Refresh"
 prompt = "Run the weekly Robinhood symbol-policy refresh. Start by confirming it is weekend/off-market in Pacific time. Read AGENTS.md, docs/automation-monitor.md, and docs/symbol-policy.md before acting.\n\nThis automation is policy maintenance only. Do not call broker order review or placement tools. Do not place, prepare, or suggest buy, sell, reopen, double-down, or emergency-cash orders. Do not touch data/private/sold-today.md, top-10 shortlist files, order-ledger.csv, current-symbols.json, close-summary.md, or LIVE_STATE.md.\n\nRun `node scripts/weekly_symbol_policy_refresh.mjs --run --account 878067701` to refresh generated rows in data/symbol-policy.csv from six months of monthly intraday high/low ranges. The script uses Yahoo Finance as the primary historical source; if Yahoo fetching fails for a symbol, it must use Robinhood historical daily bars for that symbol before counting it as failed. The script may fetch current Agentic owned symbols read-only for no_reopen versus no_new_open classification and may write data/runtime audit artifacts and data/symbol-policy.csv only after its safety gate passes.\n\nAfter the script completes, run `python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv`. Report a concise summary with the summary path, metrics path, policy rows before and after, newly filtered count, restored-to-eligible count, owned no_reopen count, unowned no_new_open count, skipped/failed symbol count, and whether the policy file was written or safety-aborted."
 status = "ACTIVE"
 rrule = "FREQ=WEEKLY;BYDAY=SU;BYHOUR=8;BYMINUTE=0;BYSECOND=0"
-model = "gpt-5.4"
-reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+reasoning_effort = "ultra"
 execution_environment = "local"
 cwds = ["C:\\Users\\ralph\\Documents\\dev\\robinhood-agentic-strategy"]
 created_at = 1781336398730
-updated_at = 1781339121734
+updated_at = 1784019043249
