@@ -1472,7 +1472,7 @@ EDU,"New Oriental Education and Technology Group, Inc. American Depositary Share
 EE,"Excelerate Energy, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
 EEA,"The European Equity Fund, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
 EEFT,Euronet Worldwide,stock,true,true,true,robinhood_validated,2026-06-09
-EEX,"Emerald Holding, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
+EEX,"Emerald Holding, Inc.",stock,false,false,false,robinhood_inactive_instrument,2026-07-14
 EFC,Ellington Financial,stock,true,true,true,robinhood_validated,2026-06-09
 EFOR,Everforth,stock,true,true,true,robinhood_validated,2026-06-09
 EFR,Eaton Vance Senior Floating-Rate Fund,stock,true,true,true,robinhood_validated,2026-06-11
@@ -5018,7 +5018,7 @@ WSFS,WSFS,stock,true,true,true,robinhood_validated,2026-06-09
 WSHP,WeShop Holdings Limited Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-11
 WSM,Williams-Sonoma,stock,true,true,true,robinhood_validated,2026-06-09
 WSO,Watsco,stock,true,true,true,robinhood_validated,2026-06-09
-WSR,Whitestone REIT,stock,true,true,true,robinhood_validated,2026-06-09
+WSR,Whitestone REIT,stock,false,false,false,robinhood_inactive_instrument,2026-07-14
 WST,West Pharmaceutical Services Inc,stock,true,true,true,robinhood_validated,2026-06-09
 WSTN,Westin Acquisition Corp Class A Ordinary Share,stock,true,true,true,robinhood_validated,2026-06-11
 WT,WisdomTree,stock,true,true,true,robinhood_validated,2026-06-09

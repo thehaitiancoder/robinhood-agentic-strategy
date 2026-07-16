@@ -217,6 +217,7 @@ ECF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.659
 ED,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7453 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 EDF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.7301 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 EEA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.5841 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
+EEX,inactive,false,false,false,true,Robinhood tradability returned not_found and quote/fundamentals returned inactive_instruments on 2026-07-14,robinhood_tradability_2026-07-14,,2026-07-14
 EFC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7062 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 EFR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.4091 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 EFT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.9510 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
@@ -783,7 +784,7 @@ WRB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5153 
 WSBF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4542 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 WSBK,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.0077 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 WSFS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9164 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
-WSR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.2232 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
+WSR,inactive,false,false,false,true,Robinhood tradability returned not_found and quote/fundamentals returned inactive_instruments on 2026-07-14,robinhood_tradability_2026-07-14,,2026-07-14
 WSTN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.3733 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 WTG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.3559 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
 WTM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8424 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-12
