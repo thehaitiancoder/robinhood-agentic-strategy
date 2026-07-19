@@ -1134,7 +1134,7 @@ CPNG,"Coupang, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
 CPOP,"Pop Culture Group Co., Ltd Class A Ordinary Shares",stock,true,true,true,robinhood_validated,2026-06-11
 CPRI,Capri Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 CPRT,Copart Inc,stock,true,true,true,robinhood_validated,2026-06-09
-CPRX,Catalyst Pharmaceuticals,stock,true,true,true,robinhood_validated,2026-06-09
+CPRX,Catalyst Pharmaceuticals,stock,false,false,false,robinhood_inactive_instrument,2026-07-16
 CPS,Cooper-Standard Automotive Inc.,stock,true,true,true,robinhood_validated,2026-06-11
 CPSH,CPS Technologies Corp. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 CPSS,"Consumer Portfolio Services, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -2077,7 +2077,7 @@ GTEN,"Gores Holdings X, Inc. Class A ordinary shares",stock,true,true,true,robin
 GTERA,Globa Terra Acquisition Corporation Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 GTES,Gates Industrial,stock,true,true,true,robinhood_validated,2026-06-09
 GTLB,GitLab Inc. Class A Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
-GTLS,Chart Industries,stock,true,true,true,robinhood_validated,2026-06-09
+GTLS,Chart Industries,stock,false,false,false,robinhood_inactive_instrument,2026-07-16
 GTM,ZoomInfo Technologies,stock,true,true,true,robinhood_validated,2026-06-09
 GTN,"Gray Media, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 GTN.A,"Gray Media, Inc. Class A",stock,true,true,true,robinhood_validated,2026-06-15
@@ -3316,7 +3316,7 @@ NUTR,Nusatrip Incorporated Common Stock,stock,true,true,true,robinhood_validated
 NUTX,Nutex Health Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 NUV,"Nuveen Municipal Value Fund, Inc.",stock,true,true,true,robinhood_validated,2026-06-15
 NUVB,Nuvation Bio Inc.,stock,true,true,true,robinhood_validated,2026-06-15
-NUVL,"Nuvalent, Inc. Class A Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
+NUVL,"Nuvalent, Inc. Class A Common Stock",stock,false,false,false,robinhood_inactive_instrument,2026-07-16
 NUW,Nuveen AMT-Free Municipal Value Fund,stock,true,true,true,robinhood_validated,2026-06-15
 NVA,Nova Minerals Corp,stock,true,true,true,robinhood_validated,2026-07-04
 NVAX,"Novavax, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
