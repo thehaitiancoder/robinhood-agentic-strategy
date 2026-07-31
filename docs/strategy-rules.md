@@ -235,8 +235,8 @@ before treating the symbol as a quantity-mismatch DD blocker.
 If the monitor cannot exhaustively scan the basket and cannot verify those
 mandatory downside candidates, it must not call the result "no DD due." The
 correct status is `DD SCAN BLOCKED` with the exact missing coverage or tool
-failure. During market-hours automations, that blocked scan must email the user
-because a due double-down may be waiting.
+failure. During market-hours automations, report that blocked scan in the task
+transcript and automation memory because a due double-down may be waiting.
 
 In premarket and after-hours whole-share lanes, a verified DD whose remaining
 due quantity has `integer_qty=0` is regular-hours-only. Treat it as report-only

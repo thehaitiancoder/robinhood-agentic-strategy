@@ -1,3 +1,4 @@
 symbol,effective_date,split_ratio,pre_split_base_qty,pre_split_base_price,adjusted_base_qty,adjusted_base_price,ladder_profile,notes
 ABTC,2026-07-07,1:15,1.000000,0.680000,0.066667,10.200000,standard,Manual split adjustment after Robinhood changed live quantity from 1.000000 to 0.066667.
 AIFU,2026-06-16,1:20,0.357142,2.800000,0.017857,56.000000,under5_20,Manual split adjustment after Robinhood changed live quantity from 0.357142 to 0.017857; preserves later post-split buy.
+NTCL,2026-07-06,1:50,1.000000,0.276000,0.020000,13.800000,standard,Manual split adjustment after Robinhood changed eight pre-split lots totaling 255.000000 shares to 5.100000 shares.

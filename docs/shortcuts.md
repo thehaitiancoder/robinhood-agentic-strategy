@@ -69,7 +69,8 @@ and all cash/risk checks pass.
 
 If that verification cannot be completed, the shortcut result is
 `DD SCAN BLOCKED`, not "no DD due." Include the exact blocker and which symbols
-were not verified. For automation runs, this must email the user.
+were not verified. For automation runs, record this in the task transcript and
+automation memory; do not send email.
 
 ## Sold-Today Rule
 

@@ -20,14 +20,19 @@ persistence and reconciliation.
 When a qualifying sell or double-down candidate exists, execution speed is the
 priority. Do not delay a market order for local audit writes or broad reporting.
 
+Automations must not send email for any outcome. Record successful actions,
+routine no-action results, blocked actions, scan failures, guard exceptions,
+broker/tool failures, and next-session warnings in the task transcript and
+automation memory only.
+
 If Robinhood or the exchange shows a symbol is halted, paused, frozen, or not
 currently accepting orders, treat that symbol as temporarily broker-blocked.
 Do not place market buy, sell, reopen, or double-down orders while it is
 halted. Do not use the frozen displayed price as normal quote authority. If
 the halted symbol would otherwise be a qualifying sell or double-down, report
-the action as blocked by the halt and email the user with the appropriate
-blocked sell/DD subject. If it is not an executable candidate, skip it with the
-halt reason and re-check after trading resumes.
+the action as blocked by the halt in the task transcript and automation memory.
+If it is not an executable candidate, skip it with the halt reason and re-check
+after trading resumes.
 
 When the user says they canceled a pending order, do not rely on chat or local
 state alone. Refresh Robinhood orders first. If the broker shows the order is
@@ -65,9 +70,8 @@ mandatory top-downside candidates because the fast path is blocked, broker
 payloads are too large/truncated, permissions are read-only, or required order
 history cannot be fetched, the run is blocked. It must not report "no DD due,"
 "no order placed," or a routine no-action result. Start the report with
-`DD SCAN BLOCKED`, email `rdgustave@gmail.com` with subject
-`DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`, include the exact blocker, and
-state which symbols were and were not verified.
+`DD SCAN BLOCKED`, include the exact blocker, and state which symbols were and
+were not verified in the task transcript and automation memory.
 Regular-hours-only exact-share DDs and post-integer DD decimal leftovers are
 verified report-only items in lanes where they are not executable, not missing
 coverage. They must not be included in the blocker set.
@@ -75,11 +79,11 @@ coverage. They must not be included in the blocker set.
 Use the ignored known-DD-blocker cache at
 `data/runtime/dd-known-blockers.csv` to reduce repeated blocker noise without
 changing trading behavior. If the scanner reports suppressed known blockers,
-do not include those unchanged rows in `DD SCAN BLOCKED` emails or blocker
-counts. Still keep each symbol eligible for future DD checks unless symbol
-policy explicitly has `allow_double_down=false`. Always surface and act on
-executable DDs, new blockers, changed blocker signatures, quantity/order-state
-changes, and broker blocks on executable DD orders.
+do not include those unchanged rows in `DD SCAN BLOCKED` reports or blocker
+counts. Still keep each symbol eligible for future DD checks unless symbol policy
+explicitly has `allow_double_down=false`. Always surface and act on executable
+DDs, new blockers, changed blocker signatures, quantity/order-state changes,
+and broker blocks on executable DD orders.
 
 For known split-adjusted symbols, apply committed rows in
 `data/split-adjustments.csv` before treating a live-vs-reconstructed quantity
@@ -207,14 +211,11 @@ retested and proven.
 The market-hours half-hour automations and their in-thread +15 rechecks are
 pre-authorized to place qualifying
 strategy sell and double-down orders directly when the broker tool workflow
-allows placement. They email `rdgustave@gmail.com` only when an action is
-blocked or an issue needs user attention, including blocked DD scans,
-broker-blocked sell/DD attempts, guard exceptions, broker/tool failures, or
-high-priority next-session warnings. Do not email for successful sells,
-successful double-downs, successful reopens, routine fills, or routine
-no-action checks; record those outcomes in the thread and automation memory
-instead. They do not place new-opening buys unless the user explicitly
-authorizes openings in that run.
+allows placement. They do not send email. Record blocked DD scans,
+broker-blocked sell/DD attempts, guard exceptions, broker/tool failures,
+high-priority next-session warnings, successful actions, and routine no-action
+checks in the task transcript and automation memory only. They do not place
+new-opening buys unless the user explicitly authorizes openings in that run.
 
 The premarket and after-hours trade automations are extended-hours trading
 lanes. They must first check Pacific time and run only during their scheduled
@@ -283,8 +284,8 @@ before the covered date range expires.
 refresh Robinhood broker truth, import broker order history/fills/cancellations
 into the audit ledger, update `data/private/current-symbols.json`, write
 `data/private/close-summary.md`, produce the daily performance summary, update
-the private performance history, and email if DD scan coverage is blocked for
-next-session review. This 5 PM run is
+the private performance history, and report blocked DD scan coverage in the task
+transcript and automation memory for next-session review. This 5 PM run is
 explicitly authorized to update repo-local private state.
 
 `weekly-rh-symbol-policy-refresh` must run only as an off-market weekend policy
@@ -390,8 +391,8 @@ original rules, and make rule violations visible before money is put at risk.
   lot state, calculate all same-symbol due lots, and compare current ask to the
   deepest included trigger first.
 - If DD coverage remains incomplete after that fallback, report `DD SCAN
-  BLOCKED`, email the user, and do not present the run as a successful no-action
-  scan.
+  BLOCKED` in the task transcript and automation memory, and do not present the
+  run as a successful no-action scan.
 - Lot 1 is the base buy. The default ladder uses lots 2-5 at every 10% drop,
   lots 6-10 at every 20% drop, lots 11-15 at every 40% drop, and lots 16+ at
   every 80% drop; each new lot doubles the prior lot's share count. For new

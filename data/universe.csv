@@ -462,7 +462,7 @@ AVGO,Broadcom Inc.,stock,true,true,true,robinhood_validated,2026-06-09
 AVIR,"Atea Pharmaceuticals, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 AVK,Advent Convertible and Income Fund,stock,true,true,true,robinhood_validated,2026-06-15
 AVLN,Avalyn Pharma Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
-AVNS,Avanos Medical,stock,true,true,true,robinhood_validated,2026-06-09
+AVNS,Avanos Medical,stock,false,false,false,robinhood_inactive_instrument,2026-07-27
 AVNT,Avient,stock,true,true,true,robinhood_validated,2026-06-09
 AVNW,"Aviat Networks, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 AVO,"Mission Produce, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
@@ -897,7 +897,7 @@ CCEP,Coca-Cola Europacific Partners plc Ordinary Shares,stock,true,true,true,rob
 CCI,Crown Castle International Corp.,stock,true,true,true,robinhood_validated,2026-06-09
 CCIF,Carlyle Credit Income Fund Shares of Beneficial Interest,stock,true,true,true,robinhood_validated,2026-06-15
 CCII,Cohen Circle Acquisition Corp. II Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
-CCIX,Churchill Capital Corp IX Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+CCIX,Churchill Capital Corp IX Ordinary Shares,stock,false,false,false,completed_redemption,2026-07-28
 CCJ,Cameco Corporation,stock,true,true,true,robinhood_validated,2026-06-11
 CCK,Crown Holdings,stock,true,true,true,robinhood_validated,2026-06-09
 CCL,Carnival Corp,stock,true,true,true,robinhood_validated,2026-06-09
@@ -905,7 +905,7 @@ CCLD,"CareCloud, Inc. Common Stock",stock,true,true,true,robinhood_validated,202
 CCNE,CNB Financial Corporation Common Stock,stock,true,true,true,robinhood_validated,2026-06-10
 CCO,"Clear Channel Outdoor Holdings, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-11
 CCOI,Cogent Communications,stock,true,true,true,robinhood_validated,2026-06-09
-CCRN,"Cross Country Healthcare, Inc. Common Stock $0.0001 Par Value",stock,true,true,true,robinhood_validated,2026-06-10
+CCRN,"Cross Country Healthcare, Inc. Common Stock $0.0001 Par Value",stock,false,false,false,completed_cash_merger,2026-07-22
 CCS,Century Communities,stock,true,true,true,robinhood_validated,2026-06-09
 CCSI,"Consensus Cloud Solutions, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 CCU,Compania Cervecerias Unidas S.A.,stock,true,true,true,robinhood_validated,2026-06-11
@@ -4566,7 +4566,7 @@ TMCI,"Treace Medical Concepts, Inc. Common Stock",stock,true,true,true,robinhood
 TMCR,The Metals Royalty Company Inc. Common Stock,stock,true,true,true,robinhood_validated,2026-06-11
 TMDX,TransMedics Group,stock,true,true,true,robinhood_validated,2026-06-09
 TME,"Tencent Music Entertainment Group American Depositary Shares, each representing two Class A Ordinary Shares",stock,true,true,true,robinhood_validated,2026-06-15
-TMHC,Taylor Morrison Home,stock,true,true,true,robinhood_validated,2026-06-09
+TMHC,Taylor Morrison Home,stock,false,false,false,robinhood_inactive_instrument,2026-07-27
 TMO,Thermo Fisher Scientific Inc,stock,true,true,true,robinhood_validated,2026-06-09
 TMP,Tompkins Financial,stock,true,true,true,robinhood_validated,2026-06-09
 TMQ,Trilogy Metals Inc,stock,true,true,true,robinhood_validated,2026-06-15
