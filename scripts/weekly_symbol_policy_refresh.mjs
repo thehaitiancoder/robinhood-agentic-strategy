@@ -36,6 +36,8 @@ const DEFAULTS = {
   sleepMs: 60000,
   symbolPauseMs: 250,
   minSuccessRate: 0.95,
+  minNewestMonthCoverage: 0.95,
+  minGeneratedRetentionRate: 0.5,
   months: 6,
 };
 
@@ -77,6 +79,9 @@ async function main() {
     successful_symbols: finalState.results.length,
     failed_symbols: finalState.failures.length,
     success_rate: Number(policyResult.successRate.toFixed(6)),
+    newest_month_coverage: Number(policyResult.newestMonthCoverage.toFixed(6)),
+    run_date: config.runDate,
+    analysis_as_of_date: config.analysisAsOfDate,
     policy_written: policyResult.written,
     policy_rows_before: policyResult.beforeTotal,
     policy_rows_after: policyResult.afterTotal,
@@ -93,10 +98,14 @@ async function main() {
 }
 
 function buildConfig(options) {
-  const asOfDate = options["as-of"] || pacificDate();
-  const months = lastCalendarMonths(asOfDate, numberOption(options, "months", DEFAULTS.months));
+  const runDate = options["run-date"] || pacificDate();
+  const analysisAsOfDate = options["as-of"] || endOfPreviousCalendarMonth(runDate);
+  const months = lastCalendarMonths(
+    analysisAsOfDate,
+    numberOption(options, "months", DEFAULTS.months),
+  );
   const outputDir = options["output-dir"] || DEFAULTS.outputDir;
-  const basename = `weekly-symbol-policy-refresh-${asOfDate}`;
+  const basename = `weekly-symbol-policy-refresh-${runDate}`;
   return {
     account: options.account || process.env.RH_ACCOUNT_NUMBER || DEFAULTS.account,
     universe: options.universe || DEFAULTS.universe,
@@ -106,8 +115,19 @@ function buildConfig(options) {
     sleepMs: numberOption(options, "sleep-ms", DEFAULTS.sleepMs),
     symbolPauseMs: numberOption(options, "symbol-pause-ms", DEFAULTS.symbolPauseMs),
     minSuccessRate: numberOption(options, "min-success-rate", DEFAULTS.minSuccessRate),
+    minNewestMonthCoverage: numberOption(
+      options,
+      "min-newest-month-coverage",
+      DEFAULTS.minNewestMonthCoverage,
+    ),
+    minGeneratedRetentionRate: numberOption(
+      options,
+      "min-generated-retention-rate",
+      DEFAULTS.minGeneratedRetentionRate,
+    ),
     limit: options.limit === undefined ? undefined : numberOption(options, "limit", undefined),
-    asOfDate,
+    runDate,
+    analysisAsOfDate,
     months,
     run: optionBool(options, "run"),
     once: optionBool(options, "once"),
@@ -127,6 +147,7 @@ function buildConfig(options) {
 function printUsage() {
   console.log(`Usage:
   node scripts/weekly_symbol_policy_refresh.mjs --run [--account 878067701]
+  node scripts/weekly_symbol_policy_refresh.mjs --dry-run [--as-of YYYY-MM-DD] [--allow-weekday]
   node scripts/weekly_symbol_policy_refresh.mjs --once --dry-run --limit 5 --allow-weekday
   node scripts/weekly_symbol_policy_refresh.mjs --self-test
 
@@ -134,7 +155,8 @@ Refreshes generated rows in data/symbol-policy.csv from six-month monthly
 intraday high/low ranges. Yahoo Finance is the primary historical source;
 Robinhood historical bars are used as a per-symbol fallback when Yahoo fails.
 Read-only broker access is used for owned symbol classification and fallback
-historical bars only.`);
+historical bars only. By default, the analysis cutoff is the end of the last
+completed calendar month; artifacts use the current Pacific run date.`);
 }
 
 function parseArgs(argv) {
@@ -168,7 +190,12 @@ function numberOption(options, name, fallback) {
     return fallback;
   }
   const raw = options[name];
-  const value = name === "min-success-rate" ? Number.parseFloat(raw) : Number.parseInt(raw, 10);
+  const floatOptions = new Set([
+    "min-success-rate",
+    "min-newest-month-coverage",
+    "min-generated-retention-rate",
+  ]);
+  const value = floatOptions.has(name) ? Number.parseFloat(raw) : Number.parseInt(raw, 10);
   if (!Number.isFinite(value)) {
     throw new Error(`invalid --${name}: ${raw}`);
   }
@@ -226,13 +253,16 @@ function loadOrCreateState(config, symbols) {
   }
   if (fs.existsSync(config.statePath)) {
     const state = JSON.parse(fs.readFileSync(config.statePath, "utf8"));
+    assertStateCompatible(config, state);
     state.results = state.results || [];
     state.failures = state.failures || [];
     state.universe_symbols = symbols.length;
     return state;
   }
   return {
-    as_of_date: config.asOfDate,
+    run_date: config.runDate,
+    analysis_as_of_date: config.analysisAsOfDate,
+    as_of_date: config.analysisAsOfDate,
     months: config.months,
     formula: "((monthly_intraday_high - monthly_intraday_low) / monthly_intraday_low) * 100",
     universe_symbols: symbols.length,
@@ -242,6 +272,22 @@ function loadOrCreateState(config, symbols) {
     results: [],
     failures: [],
   };
+}
+
+function assertStateCompatible(config, state) {
+  const stateAnalysisAsOfDate = text(state.analysis_as_of_date || state.as_of_date);
+  const stateMonths = Array.isArray(state.months) ? state.months.map(text) : [];
+  const sameAnalysisDate = stateAnalysisAsOfDate === config.analysisAsOfDate;
+  const sameMonths = JSON.stringify(stateMonths) === JSON.stringify(config.months);
+  if (sameAnalysisDate && sameMonths) {
+    return;
+  }
+  throw new Error(
+    `incompatible state at ${config.statePath}: requested analysis cutoff ` +
+      `${config.analysisAsOfDate} with months ${config.months.join(",")}, but state has ` +
+      `${stateAnalysisAsOfDate || "(missing)"} with months ${stateMonths.join(",") || "(missing)"}; ` +
+      "use --reset instead of resuming it",
+  );
 }
 
 async function refreshMetrics({ config, state, symbols }) {
@@ -273,7 +319,7 @@ async function refreshMetrics({ config, state, symbols }) {
       }
     }
 
-    if (config.once || !config.run) {
+    if (config.once || (!config.run && !config.dryRun)) {
       writeStateJson(config, state);
       return;
     }
@@ -317,7 +363,9 @@ async function fetchYahooMonthlyRange(symbol, config) {
   const yahooSymbol = toYahooSymbol(symbol);
   const startDate = `${config.months[0]}-01`;
   const period1 = Math.floor(Date.parse(`${startDate}T00:00:00Z`) / 1000);
-  const period2 = Math.floor(Date.parse(`${addUtcDays(config.asOfDate, 1)}T00:00:00Z`) / 1000);
+  const period2 = Math.floor(
+    Date.parse(`${addUtcDays(config.analysisAsOfDate, 1)}T00:00:00Z`) / 1000,
+  );
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?period1=${period1}&period2=${period2}&interval=1d&events=history&includeAdjustedClose=true`;
   const json = await fetchJsonWithRetry(url, 3);
   if (json.chart?.error) {
@@ -357,7 +405,7 @@ async function fetchRobinhoodMonthlyRange(symbol, config) {
     {
       symbols: [symbol],
       start_time: `${config.months[0]}-01T00:00:00Z`,
-      end_time: `${addUtcDays(config.asOfDate, 1)}T00:00:00Z`,
+      end_time: `${addUtcDays(config.analysisAsOfDate, 1)}T00:00:00Z`,
       interval: "day",
       bounds: "regular",
       adjustment_type: "split",
@@ -567,8 +615,10 @@ async function maybeWritePolicy({ config, state, ownedSymbols }) {
   writePolicyDiff(config, diffRows);
 
   const successRate = state.universe_symbols === 0 ? 0 : state.results.length / state.universe_symbols;
+  const newestMonthCoverage = monthlyCoverage(state.results, config.months.at(-1));
   const result = {
     successRate,
+    newestMonthCoverage,
     aborted: false,
     abortReason: "",
     written: false,
@@ -583,9 +633,18 @@ async function maybeWritePolicy({ config, state, ownedSymbols }) {
     generatedCount: generatedRows.length,
   };
 
-  if (successRate < config.minSuccessRate) {
+  const abortReason = policyWriteAbortReason({
+    successRate,
+    minSuccessRate: config.minSuccessRate,
+    newestMonthCoverage,
+    minNewestMonthCoverage: config.minNewestMonthCoverage,
+    generatedBefore: autoBefore.length,
+    generatedAfter: generatedRows.length,
+    minGeneratedRetentionRate: config.minGeneratedRetentionRate,
+  });
+  if (abortReason) {
     result.aborted = true;
-    result.abortReason = `success rate ${(successRate * 100).toFixed(2)}% is below ${(config.minSuccessRate * 100).toFixed(2)}%; policy not replaced`;
+    result.abortReason = abortReason;
     return result;
   }
   if (config.dryRun) {
@@ -598,10 +657,50 @@ async function maybeWritePolicy({ config, state, ownedSymbols }) {
   return result;
 }
 
+function monthlyCoverage(rows, month) {
+  if (!month || rows.length === 0) {
+    return 0;
+  }
+  const covered = rows.filter((row) => {
+    const metrics = row.monthly?.[month];
+    return metrics?.range_pct != null && Number(metrics.trading_days) > 0;
+  }).length;
+  return covered / rows.length;
+}
+
+function policyWriteAbortReason({
+  successRate,
+  minSuccessRate,
+  newestMonthCoverage,
+  minNewestMonthCoverage,
+  generatedBefore,
+  generatedAfter,
+  minGeneratedRetentionRate,
+}) {
+  if (successRate < minSuccessRate) {
+    return `success rate ${(successRate * 100).toFixed(2)}% is below ${(minSuccessRate * 100).toFixed(2)}%; policy not replaced`;
+  }
+  if (newestMonthCoverage < minNewestMonthCoverage) {
+    return `newest selected month coverage ${(newestMonthCoverage * 100).toFixed(2)}% is below ${(minNewestMonthCoverage * 100).toFixed(2)}%; policy not replaced`;
+  }
+  if (generatedBefore > 0) {
+    const retentionRate = generatedAfter / generatedBefore;
+    if (retentionRate < minGeneratedRetentionRate) {
+      return `generated policy rows would collapse from ${generatedBefore} to ${generatedAfter} ` +
+        `(${(retentionRate * 100).toFixed(2)}% retained; minimum ` +
+        `${(minGeneratedRetentionRate * 100).toFixed(2)}%); policy not replaced`;
+    }
+  }
+  return "";
+}
+
 function buildGeneratedPolicyRows({ config, state, ownedSymbols }) {
   const evidence = `weekly_intraday_range_${config.months[0]}_to_${config.months[config.months.length - 1]}`;
   return state.results
-    .filter((row) => row.valid_months === 6 && Number(row.avg_monthly_range_pct) < 10)
+    .filter(
+      (row) =>
+        row.valid_months === config.months.length && Number(row.avg_monthly_range_pct) < 10,
+    )
     .map((row) => {
       const owned = ownedSymbols.has(row.symbol);
       return {
@@ -611,10 +710,10 @@ function buildGeneratedPolicyRows({ config, state, ownedSymbols }) {
         allow_reopen: "false",
         allow_double_down: "true",
         allow_sell: "true",
-        reason: `valid_months=6 avg_monthly_range_pct=${Number(row.avg_monthly_range_pct).toFixed(4)} below 10`,
+        reason: `valid_months=${config.months.length} avg_monthly_range_pct=${Number(row.avg_monthly_range_pct).toFixed(4)} below 10`,
         evidence_source: evidence,
         review_after: "",
-        updated_at: config.asOfDate,
+        updated_at: config.analysisAsOfDate,
       };
     })
     .sort((left, right) => left.symbol.localeCompare(right.symbol));
@@ -709,13 +808,15 @@ function writeSummary(config, state, symbols, ownedSymbols, policyResult) {
   const lines = [
     "# Weekly Symbol Policy Refresh",
     "",
-    `As of: ${config.asOfDate}`,
+    `Run date: ${config.runDate}`,
+    `Analysis cutoff: ${config.analysisAsOfDate}`,
     `Months: ${config.months[0]} to ${config.months[config.months.length - 1]}`,
     `Universe symbols: ${symbols.length}`,
     `Successful symbols: ${state.results.length}`,
     `Failed/skipped symbols: ${state.failures.length}`,
     `Robinhood fallback symbols: ${robinhoodFallbackCount(state)}`,
     `Success rate: ${(policyResult.successRate * 100).toFixed(2)}%`,
+    `Newest month coverage: ${(policyResult.newestMonthCoverage * 100).toFixed(2)}%`,
     `Policy written: ${policyResult.written ? "yes" : "no"}`,
     `Dry run: ${config.dryRun ? "yes" : "no"}`,
     "",
@@ -755,7 +856,8 @@ function writeSummary(config, state, symbols, ownedSymbols, policyResult) {
 
 async function runSelfTest() {
   const config = {
-    asOfDate: "2026-06-13",
+    runDate: "2026-07-01",
+    analysisAsOfDate: "2026-06-30",
     months: ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06"],
   };
   const state = {
@@ -806,6 +908,41 @@ async function runSelfTest() {
   assert(merged.some((row) => row.symbol === "HOT" && row.policy === "exit_only"), "manual HOT preserved");
   assert(diff.some((row) => row.symbol === "OLD" && row.change === "removed"), "OLD should be restored");
   validatePolicyRows(merged);
+
+  const augustConfig = buildConfig({ "run-date": "2026-08-02" });
+  assert(augustConfig.runDate === "2026-08-02", "artifacts should retain the August 2 run date");
+  assert(
+    augustConfig.analysisAsOfDate === "2026-07-31",
+    "August 2 should analyze through July 31",
+  );
+  assert(
+    JSON.stringify(augustConfig.months) ===
+      JSON.stringify(["2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07"]),
+    "August 2 should select February through July",
+  );
+
+  let incompatibleStateRejected = false;
+  try {
+    assertStateCompatible(augustConfig, {
+      as_of_date: "2026-08-02",
+      months: ["2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08"],
+    });
+  } catch (error) {
+    incompatibleStateRejected = true;
+    assert(error.message.includes("incompatible state"), "state rejection should explain the mismatch");
+  }
+  assert(incompatibleStateRejected, "an incompatible August partial state should be rejected");
+
+  const collapseReason = policyWriteAbortReason({
+    successRate: 1,
+    minSuccessRate: 0.95,
+    newestMonthCoverage: 1,
+    minNewestMonthCoverage: 0.95,
+    generatedBefore: 648,
+    generatedAfter: 0,
+    minGeneratedRetentionRate: 0.5,
+  });
+  assert(collapseReason.includes("648 to 0"), "a 648 to 0 generated-row collapse should be blocked");
 
   const fallback = await fetchMonthlyRange("FALL", {
     ...config,
@@ -922,6 +1059,11 @@ function lastCalendarMonths(asOfDate, count) {
     months.push(date.toISOString().slice(0, 7));
   }
   return months;
+}
+
+function endOfPreviousCalendarMonth(dateText) {
+  const [year, month] = dateText.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, 0)).toISOString().slice(0, 10);
 }
 
 function addUtcDays(dateText, days) {
