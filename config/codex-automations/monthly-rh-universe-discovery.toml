@@ -12,12 +12,12 @@ Run `node scripts/monthly_universe_discovery.mjs --run --account 878067701`. Thi
 
 Read the discovery summary JSON/Markdown. If accepted symbols were merged into data/universe.csv, run `node scripts/weekly_symbol_policy_refresh.mjs --run --account 878067701` so new names are classified before the next market session. Then run `python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv`.
 
-Report a concise summary with the discovery summary path, candidate count, local rejection count, broker checked count, accepted count, rejected count, universe rows before and after, active/tradable/fractional universe count, whether symbol-policy was refreshed, policy row counts, and any blockers. Email only if discovery, Robinhood validation, or policy validation is blocked.'''
+Report a concise summary with the discovery summary path, candidate count, local rejection count, broker checked count, accepted count, rejected count, universe rows before and after, active/tradable/fractional universe count, whether symbol-policy was refreshed, policy row counts, and any blockers. Do not send email for any outcome; record discovery, Robinhood validation, and policy validation blockers in the task transcript and automation memory only.'''
 status = "ACTIVE"
 rrule = "FREQ=MONTHLY;BYDAY=1SA;BYHOUR=15;BYMINUTE=0;BYSECOND=0"
-model = "gpt-5.4"
-reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+reasoning_effort = "ultra"
 execution_environment = "local"
 cwds = ["C:\\Users\\ralph\\Documents\\dev\\robinhood-agentic-strategy"]
 created_at = 1781721600000
-updated_at = 1781599206423
+updated_at = 1785026924316

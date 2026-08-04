@@ -4,9 +4,16 @@ import csv
 import tempfile
 import unittest
 from datetime import date, datetime, timedelta, timezone
+from decimal import Decimal
 from pathlib import Path
 
-from agentic_strategy.afterhours_scan import apply_known_dd_blocker_cache, report_to_json, scan_afterhours, write_fractional_dd_leftovers
+from agentic_strategy.afterhours_scan import (
+    SplitAdjustment,
+    apply_known_dd_blocker_cache,
+    report_to_json,
+    scan_afterhours,
+    write_fractional_dd_leftovers,
+)
 from agentic_strategy.symbol_policy import SymbolPolicy
 
 
@@ -83,6 +90,92 @@ class AfterHoursScanTest(unittest.TestCase):
         self.assertEqual(candidate.due_lots, "2")
         self.assertEqual(str(candidate.deepest_trigger), "0.4000")
         self.assertEqual(str(candidate.due_qty), "4.000000")
+
+    def test_split_adjustment_resolves_quantity_mismatch_and_finds_due_lots(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "ABTC",
+                        "quantity": "0.066667",
+                        "shares_available_for_sells": "0.066667",
+                        "average_buy_price": "10.20",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [{"symbol": "ABTC", "bid": "6.60", "ask": "6.61", "last_trade": "6.6005"}],
+            },
+            orders_payload={"orders": [_order("ABTC", "buy", "1.000000", "0.68")]},
+            split_adjustments={
+                "ABTC": SplitAdjustment(
+                    symbol="ABTC",
+                    effective_date="2026-07-07",
+                    split_ratio="1:15",
+                    pre_split_base_qty=Decimal("1.000000"),
+                    pre_split_base_price=Decimal("0.680000"),
+                    adjusted_base_qty=Decimal("0.066667"),
+                    adjusted_base_price=Decimal("10.200000"),
+                    ladder_profile="standard",
+                )
+            },
+        )
+
+        self.assertEqual(report.incomplete, [])
+        self.assertEqual(len(report.exact_share_dd), 1)
+        candidate = report.exact_share_dd[0]
+        self.assertEqual(candidate.symbol, "ABTC")
+        self.assertEqual(candidate.ladder_profile, "standard")
+        self.assertEqual(candidate.completed_lot, 1)
+        self.assertEqual(candidate.due_lots, "2,3,4,5")
+        self.assertEqual(str(candidate.base_shares), "0.066667")
+        self.assertEqual(str(candidate.base_price), "10.200000")
+        self.assertEqual(str(candidate.due_qty), "2.000010")
+        self.assertEqual(str(candidate.integer_qty), "2")
+        self.assertEqual(str(candidate.deepest_trigger), "6.69222000000000")
+
+    def test_split_adjustment_keeps_post_split_buys_unadjusted(self) -> None:
+        report = scan_afterhours(
+            positions_payload={
+                "positions": [
+                    {
+                        "symbol": "ABTC",
+                        "quantity": "2.066677",
+                        "shares_available_for_sells": "2.066677",
+                        "average_buy_price": "6.744000",
+                        "type": "long",
+                    }
+                ],
+                "quotes": [{"symbol": "ABTC", "bid": "6.60", "ask": "6.61", "last_trade": "6.6005"}],
+            },
+            orders_payload={
+                "orders": [
+                    _order("ABTC", "buy", "1.000000", "0.68", filled_at="2026-06-30T13:30:00Z"),
+                    _order("ABTC", "buy", "2.000010", "6.629", filled_at="2026-07-07T18:45:04Z"),
+                ]
+            },
+            split_adjustments={
+                "ABTC": SplitAdjustment(
+                    symbol="ABTC",
+                    effective_date="2026-07-07",
+                    split_ratio="1:15",
+                    pre_split_base_qty=Decimal("1.000000"),
+                    pre_split_base_price=Decimal("0.680000"),
+                    adjusted_base_qty=Decimal("0.066667"),
+                    adjusted_base_price=Decimal("10.200000"),
+                    ladder_profile="standard",
+                )
+            },
+        )
+
+        self.assertEqual(report.incomplete, [])
+        self.assertEqual(report.exact_share_dd, [])
+        self.assertEqual(len(report.dd_watch), 1)
+        watch = report.dd_watch[0]
+        self.assertEqual(watch.symbol, "ABTC")
+        self.assertEqual(watch.completed_lot, 5)
+        self.assertEqual(watch.next_lot, 6)
+        self.assertEqual(str(watch.next_trigger), "5.3537760000000000")
+        self.assertEqual(str(watch.remaining_lot_shares), "2.133344")
 
     def test_under5_base_only_position_waits_past_old_10_pct_trigger(self) -> None:
         report = scan_afterhours(
@@ -442,7 +535,14 @@ class AfterHoursScanTest(unittest.TestCase):
         self.assertEqual(changed["suppressed_dd_blocker_count"], 0)
 
 
-def _order(symbol: str, side: str, quantity: str, price: str) -> dict[str, object]:
+def _order(
+    symbol: str,
+    side: str,
+    quantity: str,
+    price: str,
+    *,
+    filled_at: str = "2026-06-15T13:30:00Z",
+) -> dict[str, object]:
     return {
         "id": f"{symbol}-{side}-{quantity}",
         "symbol": symbol,
@@ -451,12 +551,12 @@ def _order(symbol: str, side: str, quantity: str, price: str) -> dict[str, objec
         "quantity": quantity,
         "cumulative_quantity": quantity,
         "average_price": price,
-        "last_transaction_at": "2026-06-15T13:30:00Z",
+        "last_transaction_at": filled_at,
         "executions": [
             {
                 "quantity": quantity,
                 "price": price,
-                "timestamp": "2026-06-15T13:30:00Z",
+                "timestamp": filled_at,
             }
         ],
     }

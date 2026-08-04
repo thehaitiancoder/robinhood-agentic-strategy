@@ -311,8 +311,8 @@ Execution rules:
   volatility pause, or otherwise not currently accepting orders, do not place a
   market order for that symbol. Treat the frozen displayed quote as stale for
   execution. If the symbol would otherwise qualify for a sell or DD, report the
-  trade as broker-blocked by the halt, email the matching blocked sell/DD
-  subject, and re-check after trading resumes. If it is not an executable
+  trade as broker-blocked by the halt in the task transcript and automation
+  memory, and re-check after trading resumes. If it is not an executable
   candidate, skip it with the halt reason and continue the priority loop.
 - If the user says they canceled a pending order, refresh live Robinhood order
   state before using that symbol in active-order blocking logic. A broker
@@ -348,15 +348,15 @@ Execution rules:
   broker payloads are too large or truncated, workspace permissions prevent
   required state reads/writes, or order history needed for lot reconstruction
   cannot be fetched, the market run is blocked. Start the report with exactly
-  `DD SCAN BLOCKED`, email `rdgustave@gmail.com`, include the exact blocker and
-  which symbols were/weren't verified, and do not report a routine no-action
-  result. Regular-hours-only exact-share DDs and post-integer DD decimal
-  leftovers are verified report-only items in lanes where they are not
-  executable and must not be included in that blocker set.
+  `DD SCAN BLOCKED`, include the exact blocker and which symbols were/weren't
+  verified in the task transcript and automation memory, and do not report a
+  routine no-action result. Regular-hours-only exact-share DDs and post-integer
+  DD decimal leftovers are verified report-only items in lanes where they are
+  not executable and must not be included in that blocker set.
 - Use `data/runtime/dd-known-blockers.csv` as an ignored same-system cache for
   repeated non-executable DD noise. If the scan output reports
   `suppressed_dd_blockers_sample`, those rows were already seen with the same
-  signature and should not be repeated in the blocker email/count. New or
+  signature and should not be repeated in the blocker report/count. New or
   changed blockers must still be reported, and executable DDs must still be
   reviewed/placed normally.
 - Do not keep scanning other symbols while an executable candidate is waiting.
@@ -394,22 +394,12 @@ Execution rules:
   market work and leave extended-hours trading to the `13:00 PT - RH AH`
   automation.
 
-It emails `rdgustave@gmail.com` only when an action is blocked or an issue
-needs user attention. Do not email for successful sell fills, successful
-double-down fills, successful reopens, routine fills, routine no-action checks,
-or `OPEN CASH AVAILABLE`; record successful orders in the thread and automation
-memory only.
-
-Email-worthy outcomes include:
-
-- `URGENT SELL BLOCKED - Robinhood strategy`
-- `DOUBLE-DOWN BLOCKED - Robinhood strategy`
-- `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`
-
-Guard exceptions, broker/tool failures, reconciliation failures, or other
-attention-needed conditions should also email even if an order eventually
-filled. An incomplete DD scan is not routine no-action; it is a blocked scan
-and must email.
+Automations do not send email for any outcome. Record successful actions,
+routine no-action checks, `OPEN CASH AVAILABLE`, blocked actions, incomplete DD
+scans, guard exceptions, broker/tool failures, reconciliation failures, and
+other attention-needed conditions in the task transcript and automation memory
+only. An incomplete DD scan is not routine no-action; it remains a blocked scan
+and must be labeled clearly in those reporting surfaces.
 
 ## Premarket Trading
 
@@ -509,9 +499,8 @@ It should:
   comparing current ask to `next_trigger_price`; report only, do not place
   orders during the daily summary
 - if that downside/DD validation cannot complete, mark the daily report
-  `DD SCAN BLOCKED`, email `rdgustave@gmail.com` with subject
-  `DOUBLE-DOWN SCAN BLOCKED - Robinhood strategy`, and include the exact
-  blocker plus the symbols that were and were not verified
+  `DD SCAN BLOCKED` and include the exact blocker plus the symbols that were and
+  were not verified in the task transcript and automation memory
 - generate `data/private/daily-summary.md`,
   `data/private/daily-summary.json`, and
   `data/private/daily-return-cycles.csv`
@@ -526,11 +515,10 @@ paper P/L, realized trading-day profit by Pacific hour, sell-cycle hold time
 from first buy to sell, account value, cash, buying power, and any uncosted
 sold quantity caused by incomplete order history.
 
-The daily automation does not email routine no-action summaries by default. It
-emails `rdgustave@gmail.com` only if reconciliation is blocked, broker access
-fails, local ledger/cache update fails, DD scan coverage is blocked, or a
-high-priority next-session candidate is detected after extended-hours trading
-has closed.
+The daily automation does not send email. Reconciliation blocks, broker access
+failures, local ledger/cache update failures, blocked DD scan coverage, and
+high-priority next-session candidates must be reported in the task transcript
+and automation memory only.
 
 ## Weekly Symbol Policy Refresh
 
