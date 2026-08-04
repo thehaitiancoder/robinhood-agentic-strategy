@@ -9,7 +9,7 @@ AEE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.3095 
 AES,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.7219 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AEXA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.6214 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AFB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.0334 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-AFBI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.1314 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+AFBI,inactive,false,false,false,true,Robinhood tradability returned not_found on 2026-08-04 while the approved cash merger remains pending,robinhood_tradability_and_sec_merger_2026-08-04,,2026-08-04
 AFG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.2903 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AFL,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4435 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AGD,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6477 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -565,6 +565,7 @@ SELF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.14
 SFBC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9783 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SGU,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.6938 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SIMA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.6955 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+SKYT,inactive,false,false,false,true,IonQ completed its acquisition on 2026-07-31 and Robinhood tradability returned not_found on 2026-08-04,ionq_completion_and_robinhood_tradability_2026-08-04,,2026-08-04
 SMBC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6286 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SMNR,manual_trade_only,false,false,false,false,Robinhood close-only/unlisted; user must handle manually,manual,,2026-06-18
 SNA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6296 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -619,6 +620,7 @@ TSI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.243
 TVA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.0317 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 TVAI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.4312 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 TWLV,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.7545 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+TWO,exit_only,false,false,false,true,Shareholders approved the cash merger and Robinhood remains active and owned pending closing,two_merger_and_robinhood_tradability_2026-08-04,2026-08-14,2026-08-04
 TXNM,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.8858 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 TY,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.8555 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 UAC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.5164 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
