@@ -1459,7 +1459,7 @@ DYAI,"Dyadic International, Inc. Common Stock",stock,true,true,true,robinhood_va
 DYN,"Dyne Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 DYNC,Dynamix Corporation Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 DYOR,Insight Digital Partners II Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
-EA,Electronic Arts Inc,stock,true,true,true,robinhood_validated,2026-06-09
+EA,Electronic Arts Inc,stock,false,false,false,robinhood_not_found,2026-08-05
 EAD,Allspring Income Opportunities Fund,stock,true,true,true,robinhood_validated,2026-06-15
 EAF,GrafTech International Ltd.,stock,true,true,true,robinhood_validated,2026-06-11
 EARN,Ellington Credit Company,stock,true,true,true,robinhood_validated,2026-06-11

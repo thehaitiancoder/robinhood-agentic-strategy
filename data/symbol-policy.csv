@@ -165,7 +165,7 @@ DUK,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7374 
 DX,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8020 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 DYNC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.5029 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 DYOR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6264 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-EA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.4710 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+EA,inactive,false,false,false,true,Electronic Arts take-private closed after the 2026-08-04 market session; Robinhood tradability returned not_found and quotes returned inactive_instruments with no live EA position,robinhood_tradability_and_ea_take_private_2026-08-05,,2026-08-05
 EAD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.9577 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 EBF,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4136 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ECAT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4187 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
