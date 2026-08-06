@@ -1,4 +1,6 @@
-symbol,effective_date,split_ratio,pre_split_base_qty,pre_split_base_price,adjusted_base_qty,adjusted_base_price,ladder_profile,notes
-ABTC,2026-07-07,1:15,1.000000,0.680000,0.066667,10.200000,standard,Manual split adjustment after Robinhood changed live quantity from 1.000000 to 0.066667.
-AIFU,2026-06-16,1:20,0.357142,2.800000,0.017857,56.000000,under5_20,Manual split adjustment after Robinhood changed live quantity from 0.357142 to 0.017857; preserves later post-split buy.
-NTCL,2026-07-06,1:50,1.000000,0.276000,0.020000,13.800000,standard,Manual split adjustment after Robinhood changed eight pre-split lots totaling 255.000000 shares to 5.100000 shares.
+symbol,effective_date,split_ratio,pre_split_base_qty,pre_split_base_price,adjusted_base_qty,adjusted_base_price,ladder_profile,base_order_id,notes
+ABTC,2026-07-07,1:15,1.000000,0.680000,0.066667,10.200000,standard,6a439f3e-5dec-43d0-863e-f8bc9a34692b,Manual split adjustment after Robinhood changed live quantity from 1.000000 to 0.066667.
+AIFU,2026-06-16,1:20,0.357142,2.800000,0.017857,56.000000,under5_20,6a2b6511-c713-4beb-8913-459bd7ee32e3,Manual split adjustment after Robinhood changed live quantity from 0.357142 to 0.017857; preserves later post-split buy.
+NTCL,2026-07-06,1:50,1.000000,0.276000,0.020000,13.800000,standard,6a2ba99f-826d-4b1a-bd94-410f18267bd2,Manual split adjustment after Robinhood changed eight pre-split lots totaling 255.000000 shares to 5.100000 shares.
+INLF,2026-07-06,1:200,0.242130,4.130000,0.00121065,826.000000,standard,6a2b9969-c794-4872-8a91-278a2cbd0077,Verified 1-for-200 reverse split; converts 7933.64011 pre-split shares to 39.66820055 and preserves 8 post-split shares.
+GIBO,2026-06-29,1:25,0.714336,1.399900,0.02857344,34.997500,under5_20,6a2b98a8-d160-4b52-b821-1eaed73eea45,Verified 1-for-25 reverse split; converts 0.714336 pre-split shares to 0.02857344 and preserves the 0.171438 post-split buy.

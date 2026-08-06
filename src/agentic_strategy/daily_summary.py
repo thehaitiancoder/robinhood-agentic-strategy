@@ -14,6 +14,9 @@ from typing import Any
 
 UTC = timezone.utc
 ZERO = Decimal("0")
+MONEY_QUANTUM = Decimal("0.01")
+QUANTITY_TOLERANCE = Decimal("0.0000005")
+DEFAULT_SPLIT_ADJUSTMENTS = Path("data/split-adjustments.csv")
 HISTORY_FIELDS = [
     "report_date",
     "generated_at",
@@ -51,6 +54,24 @@ class Lot:
     order_id: str
 
 
+@dataclass(frozen=True)
+class SplitAdjustment:
+    symbol: str
+    effective_date: str
+    split_ratio: str
+    base_order_id: str = ""
+
+    @property
+    def quantity_multiplier(self) -> Decimal:
+        post, pre = _split_ratio_parts(self.split_ratio)
+        return post / pre
+
+    @property
+    def price_multiplier(self) -> Decimal:
+        post, pre = _split_ratio_parts(self.split_ratio)
+        return pre / post
+
+
 @dataclass
 class SellCycle:
     order_id: str
@@ -70,6 +91,10 @@ class SellCycle:
             return None
         return (self.realized_gain / self.cost_basis) * Decimal("100")
 
+    @property
+    def broker_display_gain(self) -> Decimal:
+        return self.realized_gain.quantize(MONEY_QUANTUM, rounding=ROUND_HALF_UP)
+
 
 @dataclass(frozen=True)
 class PaperSummary:
@@ -88,14 +113,20 @@ def build_daily_summary(
     positions_payload: dict[str, Any],
     orders_payload: dict[str, Any],
     report_date: str | None = None,
+    split_adjustments: dict[str, tuple[SplitAdjustment, ...]] | None = None,
 ) -> dict[str, Any]:
     report_day = _report_day(report_date)
     paper = _paper_summary(positions_payload)
-    cycles = _sell_cycles(orders_payload, report_day=report_day)
+    cycles = _sell_cycles(
+        orders_payload,
+        report_day=report_day,
+        split_adjustments=split_adjustments,
+    )
     hourly = _hourly_profit(cycles)
 
     costed_cycles = [cycle for cycle in cycles if cycle.cost_basis > ZERO]
-    total_realized = sum((cycle.realized_gain for cycle in costed_cycles), ZERO)
+    raw_realized = sum((cycle.realized_gain for cycle in costed_cycles), ZERO)
+    total_realized = sum((cycle.broker_display_gain for cycle in costed_cycles), ZERO)
     total_proceeds = sum((cycle.proceeds for cycle in cycles), ZERO)
     total_cost = sum((cycle.cost_basis for cycle in costed_cycles), ZERO)
     uncosted_qty = sum((cycle.uncosted_quantity for cycle in cycles), ZERO)
@@ -119,6 +150,7 @@ def build_daily_summary(
         "buy_deployment": buy_deployment,
         "totals": {
             "realized_profit": total_realized,
+            "raw_realized_profit": raw_realized,
             "sell_proceeds": total_proceeds,
             "sold_cost_basis": total_cost,
             "realized_return_pct": (total_realized / total_cost * Decimal("100")) if total_cost > ZERO else None,
@@ -194,7 +226,8 @@ def render_markdown(summary: dict[str, Any]) -> str:
         "",
         "| Metric | Value |",
         "| --- | ---: |",
-        f"| Realized profit | {_money(totals['realized_profit'])} |",
+        f"| Broker-display realized P/L | {_money(totals['realized_profit'])} |",
+        f"| Raw fill P/L (audit) | {_money(totals.get('raw_realized_profit', totals['realized_profit']))} |",
         f"| Sell proceeds | {_money(totals['sell_proceeds'])} |",
         f"| Sold cost basis | {_money(totals['sold_cost_basis'])} |",
         f"| Realized return | {_pct(totals['realized_return_pct'])} |",
@@ -288,7 +321,8 @@ def render_markdown(summary: dict[str, Any]) -> str:
             "## Notes",
             "",
             "- Paper P/L uses the latest broker quote in this order: after-hours last, regular last, bid, ask, close.",
-            "- Realized profit uses FIFO cost reconstruction from filled equity orders.",
+            "- Broker-display realized P/L matches Robinhood by rounding each costed sell cycle to cents before summing; raw fill P/L preserves the unrounded aggregate for audit.",
+            "- Cost reconstruction uses broker order-average fill prices and FIFO from filled equity orders; committed split adjustments normalize pre-split fills.",
             "- DD cash deployment counts all same-day filled buy orders from broker order history; it is a DD/buy cash proxy, not a separate broker order type.",
             "- If uncosted sold quantity is nonzero, the broker order history provided to the run was insufficient for those shares.",
         ]
@@ -396,6 +430,14 @@ def main() -> int:
     parser.add_argument("--output-json")
     parser.add_argument("--history-csv")
     parser.add_argument("--history-md")
+    parser.add_argument(
+        "--split-adjustments",
+        default=str(DEFAULT_SPLIT_ADJUSTMENTS),
+        help=(
+            "Committed split-adjustment CSV used to normalize pre-split fills before FIFO cost "
+            "reconstruction. Pass an empty string to disable."
+        ),
+    )
     parser.add_argument("--summary-json-input", help="Existing daily-summary.json to seed/update history only.")
     parser.add_argument("--date", help="Pacific date YYYY-MM-DD. Defaults to today's PT date.")
     args = parser.parse_args()
@@ -435,6 +477,9 @@ def main() -> int:
         positions_payload=_read_json(args.positions_json),
         orders_payload=_read_json(args.orders_json),
         report_date=args.date,
+        split_adjustments=(
+            read_split_adjustments_csv(args.split_adjustments) if args.split_adjustments else None
+        ),
     )
     write_daily_summary(
         summary=summary,
@@ -462,11 +507,24 @@ def main() -> int:
     return 0
 
 
-def _sell_cycles(orders_payload: dict[str, Any], *, report_day: str) -> list[SellCycle]:
+def _sell_cycles(
+    orders_payload: dict[str, Any],
+    *,
+    report_day: str,
+    split_adjustments: dict[str, tuple[SplitAdjustment, ...]] | None = None,
+) -> list[SellCycle]:
     lots_by_symbol: dict[str, deque[Lot]] = defaultdict(deque)
     cycles_by_order: dict[str, SellCycle] = {}
 
-    for event in sorted(_execution_events(orders_payload), key=lambda item: (item["timestamp"], item["side"] == "sell")):
+    events = [
+        _split_adjusted_execution(
+            event,
+            report_day=report_day,
+            split_adjustments=split_adjustments or {},
+        )
+        for event in _execution_events(orders_payload)
+    ]
+    for event in sorted(events, key=lambda item: (item["timestamp"], item["side"] == "sell")):
         symbol = event["symbol"]
         quantity = event["quantity"]
         price = event["price"]
@@ -494,8 +552,11 @@ def _sell_cycles(orders_payload: dict[str, Any], *, report_day: str) -> list[Sel
             first_buy_at = lot.timestamp if first_buy_at is None else min(first_buy_at, lot.timestamp)
             lot.quantity -= consumed
             left -= consumed
-            if lot.quantity <= Decimal("0.0000005"):
+            if lot.quantity <= QUANTITY_TOLERANCE:
                 lots.popleft()
+
+        if left <= QUANTITY_TOLERANCE:
+            left = ZERO
 
         if _pt_date(timestamp) != report_day:
             continue
@@ -536,6 +597,70 @@ def _sell_cycles(orders_payload: dict[str, Any], *, report_day: str) -> list[Sel
     return list(cycles_by_order.values())
 
 
+def read_split_adjustments_csv(
+    path: str | Path,
+) -> dict[str, tuple[SplitAdjustment, ...]]:
+    csv_path = Path(path)
+    if not csv_path.exists():
+        return {}
+    adjustments: dict[str, list[SplitAdjustment]] = defaultdict(list)
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            symbol = str(row.get("symbol") or "").strip().upper()
+            effective_date = str(row.get("effective_date") or "").strip()
+            split_ratio = str(row.get("split_ratio") or "").strip()
+            if not symbol:
+                continue
+            try:
+                datetime.fromisoformat(effective_date)
+            except ValueError as exc:
+                raise ValueError(
+                    f"invalid split effective_date for {symbol}: {effective_date}"
+                ) from exc
+            _split_ratio_parts(split_ratio)
+            adjustments[symbol].append(
+                SplitAdjustment(
+                    symbol=symbol,
+                    effective_date=effective_date,
+                    split_ratio=split_ratio,
+                    base_order_id=str(row.get("base_order_id") or "").strip(),
+                )
+            )
+    return {
+        symbol: tuple(sorted(rows, key=lambda adjustment: adjustment.effective_date))
+        for symbol, rows in adjustments.items()
+    }
+
+
+def _split_adjusted_execution(
+    event: dict[str, Any],
+    *,
+    report_day: str,
+    split_adjustments: dict[str, tuple[SplitAdjustment, ...]],
+) -> dict[str, Any]:
+    adjusted = dict(event)
+    for adjustment in split_adjustments.get(event["symbol"], ()):
+        if adjustment.effective_date > report_day:
+            continue
+        if _pt_date(event["timestamp"]) >= adjustment.effective_date:
+            continue
+        adjusted["quantity"] *= adjustment.quantity_multiplier
+        adjusted["price"] *= adjustment.price_multiplier
+    return adjusted
+
+
+def _split_ratio_parts(split_ratio: str) -> tuple[Decimal, Decimal]:
+    try:
+        raw_post, raw_pre = split_ratio.split(":", 1)
+        post = Decimal(raw_post.strip())
+        pre = Decimal(raw_pre.strip())
+    except (ValueError, ArithmeticError) as exc:
+        raise ValueError(f"invalid split_ratio: {split_ratio}") from exc
+    if post <= ZERO or pre <= ZERO:
+        raise ValueError(f"invalid split_ratio: {split_ratio}")
+    return post, pre
+
+
 def _execution_events(orders_payload: dict[str, Any]) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     for order in _orders(orders_payload):
@@ -551,7 +676,9 @@ def _execution_events(orders_payload: dict[str, Any]) -> list[dict[str, Any]]:
         if executions:
             for execution in executions:
                 quantity = _decimal(execution.get("quantity"))
-                price = _decimal(execution.get("price") or order.get("average_price") or order.get("price"))
+                # Reconcile to Robinhood's broker-displayed order basis while retaining each
+                # execution timestamp for FIFO holding-period calculations.
+                price = _decimal(order.get("average_price") or execution.get("price") or order.get("price"))
                 timestamp = _parse_dt(execution.get("timestamp") or order.get("last_transaction_at"))
                 if quantity > ZERO and price > ZERO and timestamp:
                     events.append(
@@ -624,11 +751,15 @@ def _hourly_profit(cycles: list[SellCycle]) -> dict[str, dict[str, Decimal | int
     hourly: dict[str, dict[str, Decimal | int]] = {}
     for cycle in cycles:
         hour = f"{_as_pt(cycle.sold_at).hour:02d}"
-        row = hourly.setdefault(hour, {"count": 0, "proceeds": ZERO, "cost": ZERO, "profit": ZERO})
+        row = hourly.setdefault(
+            hour,
+            {"count": 0, "proceeds": ZERO, "cost": ZERO, "profit": ZERO, "raw_profit": ZERO},
+        )
         row["count"] = int(row["count"]) + 1
         row["proceeds"] = row["proceeds"] + cycle.proceeds
         row["cost"] = row["cost"] + cycle.cost_basis
-        row["profit"] = row["profit"] + cycle.realized_gain
+        row["profit"] = row["profit"] + cycle.broker_display_gain
+        row["raw_profit"] = row["raw_profit"] + cycle.realized_gain
     return hourly
 
 
@@ -1015,7 +1146,7 @@ def _read_json(path: str | Path) -> dict[str, Any]:
 def _money(value: Any) -> str:
     if value in (None, ""):
         return ""
-    amount = _decimal(value).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    amount = _decimal(value).quantize(MONEY_QUANTUM, rounding=ROUND_HALF_UP)
     sign = "-" if amount < ZERO else ""
     return f"{sign}${abs(amount):,.2f}"
 

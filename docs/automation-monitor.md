@@ -438,6 +438,9 @@ Extended-hours execution scope is intentionally narrow:
 - `python -m agentic_strategy.afterhours_scan` also maintains
   `data/runtime/dd-known-blockers.csv` by default. Treat unchanged suppressed
   rows from that cache as already-known noise, not as fresh blocked coverage.
+  The JSON keeps raw provenance blockers separately because they still block
+  unsafe DD output and shortlist publication; only new or changed provenance
+  blockers remain in the reportable blocker count and message.
   Do not use the cache to skip an executable whole-share sell/DD candidate.
 - For sells, use live extended-hours bid as the sell-side executable price. If
   the integer sellable quantity is at least 1 share and bid-side return is at

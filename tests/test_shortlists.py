@@ -323,6 +323,28 @@ class ShortlistsTest(unittest.TestCase):
             self.assertIn("# Top 10 Buy Candidates", buy_path.read_text())
             self.assertIn("# Top 10 Sell Candidates", sell_path.read_text())
 
+    def test_unresolved_ladder_profile_does_not_publish_shortlists(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            buy_path = Path(tmpdir) / "top-10-buy-candidates.md"
+            sell_path = Path(tmpdir) / "top-10-sell-candidates.md"
+            buy_path.write_text("existing buy\n", encoding="utf-8")
+            sell_path.write_text("existing sell\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "ladder_profile_provenance_unresolved"):
+                write_shortlists(
+                    positions_payload={"data": {"positions": []}},
+                    quotes_payload={"data": {"results": []}},
+                    dd_scan_payload={
+                        "dd_shortlist_publishable": False,
+                        "ladder_profile_provenance_unresolved_count": 1,
+                    },
+                    buy_output=buy_path,
+                    sell_output=sell_path,
+                )
+
+            self.assertEqual(buy_path.read_text(encoding="utf-8"), "existing buy\n")
+            self.assertEqual(sell_path.read_text(encoding="utf-8"), "existing sell\n")
+
     def test_accepts_rh_fast_positions_with_quotes_payload_for_quotes(self) -> None:
         candidates = build_return_candidates(
             positions_payload={

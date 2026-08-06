@@ -4,9 +4,16 @@ import tempfile
 import unittest
 import csv
 import json
+from decimal import Decimal
 from pathlib import Path
 
-from agentic_strategy.daily_summary import build_daily_summary, write_daily_summary, write_performance_history
+from agentic_strategy.daily_summary import (
+    SplitAdjustment,
+    build_daily_summary,
+    read_split_adjustments_csv,
+    write_daily_summary,
+    write_performance_history,
+)
 
 
 class DailySummaryTest(unittest.TestCase):
@@ -48,15 +55,15 @@ class DailySummaryTest(unittest.TestCase):
         self.assertEqual(str(summary["paper"].net_paper_gain), "10")
 
         totals = summary["totals"]
-        self.assertEqual(str(totals["realized_profit"]), "6")
+        self.assertEqual(totals["realized_profit"], Decimal("6.00"))
         self.assertEqual(str(totals["sell_proceeds"]), "66")
         self.assertEqual(str(totals["sold_cost_basis"]), "60")
         self.assertEqual(totals["sell_count"], 2)
         self.assertEqual(totals["winning_sells"], 1)
         self.assertEqual(totals["losing_sells"], 1)
 
-        self.assertEqual(str(summary["hourly"]["09"]["profit"]), "8")
-        self.assertEqual(str(summary["hourly"]["10"]["profit"]), "-2")
+        self.assertEqual(summary["hourly"]["09"]["profit"], Decimal("8.00"))
+        self.assertEqual(summary["hourly"]["10"]["profit"], Decimal("-2.00"))
 
         buy_deployment = summary["buy_deployment"]
         self.assertEqual(buy_deployment["filled_buy_count"], 1)
@@ -69,6 +76,125 @@ class DailySummaryTest(unittest.TestCase):
         gain_cycle = next(cycle for cycle in summary["cycles"] if cycle.symbol == "GAIN")
         self.assertEqual(str(gain_cycle.weighted_hold_minutes), "150.0")
         self.assertEqual(str(gain_cycle.return_pct), "20.0")
+
+    def test_applies_inlf_reverse_split_to_realized_fifo_cost(self) -> None:
+        pre_split_buys = [
+            ("old-1", "0.242130", "4.130000"),
+            ("old-2", "0.484260", "3.689900"),
+            ("old-3", "2.905560", "2.689900"),
+            ("old-4", "244.067040", "0.769600"),
+            ("old-5", "247.941120", "0.515400"),
+            ("old-6", "247.000000", "0.489600"),
+            ("old-7", "992.000000", "0.191800"),
+            ("old-8", "248.000000", "0.218200"),
+            ("old-9", "1984.000000", "0.115100"),
+            ("old-10", "3967.000000", "0.069000"),
+        ]
+        orders = [
+            _order(order_id, "INLF", "buy", quantity, price, "2026-06-30T16:00:00Z")
+            for order_id, quantity, price in pre_split_buys
+        ]
+        # Robinhood's displayed realized result uses the broker order average, even when
+        # the execution-level price carries finer precision.
+        orders[4]["executions"][0]["price"] = "0.51535708"
+        orders.extend(
+            [
+                _order("new-1", "INLF", "buy", "2", "2.225000", "2026-07-21T19:59:47Z"),
+                _order("new-2", "INLF", "buy", "1", "3.869900", "2026-07-22T22:35:33Z"),
+                _order("new-3", "INLF", "buy", "5", "3.679100", "2026-07-23T19:51:23Z"),
+                _order(
+                    "inlf-sell",
+                    "INLF",
+                    "sell",
+                    "47.668201",
+                    "8.315000",
+                    "2026-08-05T15:31:31Z",
+                ),
+            ]
+        )
+
+        summary = build_daily_summary(
+            portfolio_payload={"portfolio": {}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={"orders": orders},
+            report_date="2026-08-05",
+            split_adjustments={
+                "INLF": (
+                    SplitAdjustment(
+                        symbol="INLF",
+                        effective_date="2026-07-06",
+                        split_ratio="1:200",
+                        base_order_id="old-1",
+                    ),
+                )
+            },
+        )
+
+        self.assertEqual(summary["totals"]["sell_count"], 1)
+        self.assertEqual(summary["totals"]["sold_cost_basis"], Decimal("1220.332580950000"))
+        self.assertEqual(summary["totals"]["sell_proceeds"], Decimal("396.361091315000"))
+        self.assertEqual(summary["totals"]["realized_profit"], Decimal("-823.97"))
+        self.assertEqual(
+            summary["totals"]["raw_realized_profit"],
+            Decimal("-823.971489635000"),
+        )
+        cycle = summary["cycles"][0]
+        self.assertEqual(cycle.broker_display_gain, Decimal("-823.97"))
+        self.assertEqual(str(cycle.quantity), "47.668201")
+        self.assertEqual(str(cycle.uncosted_quantity), "0")
+
+    def test_applies_gibo_reverse_split_and_sums_broker_display_cents(self) -> None:
+        summary = build_daily_summary(
+            portfolio_payload={"portfolio": {}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={
+                "orders": [
+                    _order("old-base", "GIBO", "buy", "0.714336", "1.399900", "2026-06-12T13:30:01Z"),
+                    _order("new-buy", "GIBO", "buy", "0.171438", "25.999900", "2026-06-30T19:06:34Z"),
+                    _order("gibo-sell", "GIBO", "sell", "0.200011", "30.250000", "2026-08-05T16:41:09Z"),
+                ]
+            },
+            report_date="2026-08-05",
+            split_adjustments={
+                "GIBO": (
+                    SplitAdjustment(
+                        symbol="GIBO",
+                        effective_date="2026-06-29",
+                        split_ratio="1:25",
+                        base_order_id="old-base",
+                    ),
+                )
+            },
+        )
+
+        cycle = summary["cycles"][0]
+        self.assertEqual(cycle.cost_basis, Decimal("5.45735838264400"))
+        self.assertEqual(cycle.realized_gain, Decimal("0.59297436735600"))
+        self.assertEqual(summary["totals"]["realized_profit"], Decimal("0.59"))
+        self.assertEqual(
+            summary["totals"]["raw_realized_profit"],
+            Decimal("0.59297436735600"),
+        )
+
+    def test_reads_expanded_split_adjustment_csv_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "split-adjustments.csv"
+            path.write_text(
+                "symbol,effective_date,split_ratio,pre_split_base_qty,pre_split_base_price,"
+                "adjusted_base_qty,adjusted_base_price,ladder_profile,base_order_id,notes\n"
+                "INLF,2026-07-06,1:200,0.242130,4.130000,0.00121065,826.000000,"
+                "standard,old-base,verified reverse split\n",
+                encoding="utf-8",
+            )
+
+            adjustments = read_split_adjustments_csv(path)
+
+        self.assertEqual(len(adjustments["INLF"]), 1)
+        adjustment = adjustments["INLF"][0]
+        self.assertEqual(adjustment.effective_date, "2026-07-06")
+        self.assertEqual(adjustment.quantity_multiplier, Decimal("0.005"))
+        self.assertEqual(adjustment.price_multiplier, Decimal("200"))
+        self.assertEqual(adjustment.base_order_id, "old-base")
 
     def test_writes_markdown_json_and_cycle_csv(self) -> None:
         summary = build_daily_summary(

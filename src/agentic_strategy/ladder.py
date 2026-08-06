@@ -42,14 +42,6 @@ def ladder_profile_for_entry_price(entry_price: Decimal) -> str:
     return STANDARD_LADDER_PROFILE
 
 
-def ladder_profile_for_open_lot_count(entry_price: Decimal, open_lot_count: int) -> str:
-    if open_lot_count < 1:
-        raise ValueError("open_lot_count must be positive")
-    if open_lot_count == 1:
-        return ladder_profile_for_entry_price(entry_price)
-    return STANDARD_LADDER_PROFILE
-
-
 def normalize_ladder_profile(ladder_profile: str | None) -> str:
     profile = (ladder_profile or STANDARD_LADDER_PROFILE).strip().lower()
     if profile == REF2023_UNDER5_LADDER_PROFILE:
