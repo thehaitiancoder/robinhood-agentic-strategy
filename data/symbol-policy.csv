@@ -3,7 +3,7 @@ AACB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7533
 ACP,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.7611 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ADAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.9435 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ADC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.9112 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ADX,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1467 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ADX,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1467 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AEAQ,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7229 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AEE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.3095 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AES,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.7219 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -23,19 +23,19 @@ ALDF,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6796
 ALF,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.1643 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ALIS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8015 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ALUB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7257 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-AMH,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9671 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+AMH,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9671 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ANSC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.9073 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-AOD,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6387 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+AOD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6387 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 APAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6065 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 APXT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8101 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ARCC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4450 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ARCC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4450 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ARDC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.8972 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ARTC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5754 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ARTNA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.7544 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ARTNA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.7544 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ASG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.1062 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ASRT,broker_unavailable,false,false,false,true,Robinhood tradability returned not_found and app shows stock not supported,manual_broker_check_2026-06-17,,2026-06-17
 ATII,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.7096 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ATLO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0020 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ATLO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0020 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ATO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.6547 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AVA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7803 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AVB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.1897 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -55,7 +55,7 @@ BCAT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.8218
 BCE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0970 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BCSS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.0113 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BDCI,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5498 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-BDJ,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.7344 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+BDJ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.7344 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BEAG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.4160 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BGB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.4103 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BGH,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.8640 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -77,7 +77,7 @@ BMEZ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.13
 BMN,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.1506 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BNL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8547 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BNS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8995 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-BOE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.6021 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+BOE,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.6021 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BPAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.4732 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BRK.B,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.2306 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 BRT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0805 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -108,13 +108,13 @@ CET,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.048
 CEV,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.0002 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CHAR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.1631 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CHCO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0966 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-CHD,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9351 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+CHD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9351 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CHEC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.1349 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CHPG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6329 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CHT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.2436 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CIK,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.5542 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CLM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7419 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-CLST,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.4185 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+CLST,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.4185 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CMII,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.3824 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CMS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6348 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CNP,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1652 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -122,7 +122,7 @@ CNTA,broker_unavailable,false,false,false,true,Robinhood quote returned inactive
 CNTA^,broker_unavailable,false,false,false,true,Live Robinhood position symbol is CNTA^ with average_buy_price=0 and direct CNTA/CNTA^ quote checks return inactive_instruments or broker API errors,manual_broker_check_2026-06-26,,2026-06-26
 COLA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.3633 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 COPL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.3078 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-COSO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7322 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+COSO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7322 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 COST,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2916 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CPBI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.8250 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CPHC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.7175 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -135,7 +135,7 @@ CRAN,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.0176
 CRAQ,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5066 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CRF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0777 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CSQ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4699 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-CSWC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.8956 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+CSWC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.8956 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CUB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.7666 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CVBF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9936 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 CWAN,broker_unavailable,false,false,false,true,Robinhood quote returned inactive_instruments and tradability/orders returned not_found/instrument not found after Clearwater take-private deal; live fast position snapshot no longer includes CWAN,manual_broker_check_2026-06-25,,2026-06-25
@@ -145,7 +145,7 @@ DBL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.9796 
 DBRG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.3017 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 DFP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.5308 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 DHF,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.3648 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-DLY,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.2968 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+DLY,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.2968 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 DMA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6758 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 DMAA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7840 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 DMB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.3907 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -167,9 +167,9 @@ DYNC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.5029
 DYOR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6264 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 EA,inactive,false,false,false,true,Electronic Arts take-private closed after the 2026-08-04 market session; Robinhood tradability returned not_found and quotes returned inactive_instruments with no live EA position,robinhood_tradability_and_ea_take_private_2026-08-05,,2026-08-05
 EAD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.9577 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-EBF,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4136 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ECAT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4187 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ED,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.0611 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+EBF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4136 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ECAT,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4187 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ED,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.0611 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 EDF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.2531 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 EEA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.5841 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 EEX,inactive,false,false,false,true,Robinhood tradability returned not_found and quote/fundamentals returned inactive_instruments on 2026-07-14,robinhood_tradability_2026-07-14,,2026-07-14
@@ -202,9 +202,9 @@ ESS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.1611 
 ETB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.9825 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ETG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.7829 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ETJ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.1446 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ETO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.6013 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ETO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.6013 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ETV,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.8718 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ETW,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.4625 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ETW,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.4625 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ETX,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.6228 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ETY,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7875 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 EVAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8249 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -219,7 +219,7 @@ EXC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9328 
 EXG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.5003 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FACT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7935 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FAX,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.3270 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-FBLA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.2801 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+FBLA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.2801 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FCF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7689 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FCPT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8486 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FCRS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.5114 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -228,7 +228,7 @@ FDSB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.25
 FE,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2434 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FERA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5641 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FFA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.8641 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-FHI,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8744 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+FHI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8744 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FIGX,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6735 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FINS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.3069 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FLC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.2871 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -251,7 +251,7 @@ GAB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.185
 GAM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.0176 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GBAB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.7492 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GBDC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5863 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-GBLI,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9898 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+GBLI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9898 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GCV,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.0101 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9460 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GDL,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.6040 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -265,7 +265,7 @@ GLO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.628
 GLQ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8306 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GLU,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1827 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GLV,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.6507 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-GNL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.0600 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+GNL,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.0600 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GOF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.5805 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GPAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5541 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GPAT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.4359 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -281,21 +281,21 @@ GTY,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4558 
 GUG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.1530 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 GUT,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.2771 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HAVA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.4478 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-HBCP,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.3503 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+HBCP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.3503 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HCAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5600 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HCMA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8460 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HEQ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.6679 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HIG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1816 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HIO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.6469 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HIX,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.8649 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-HLXC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.6992 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+HLXC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.6992 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HNNA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.2290 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HPF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.0467 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HPI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.3612 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HSPT,broker_unavailable,false,false,true,true,Robinhood symbol lookup/tradability returned not_found after canceled reopen order 6a2f4ab0-b84d-4a84-8903-661c5f9abaad,manual_broker_check_2026-06-15,,2026-06-15
 HTB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8696 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HTD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.7357 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-HTH,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5770 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+HTH,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5770 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HTO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9089 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HVII,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6668 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 HVMC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7283 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -314,10 +314,10 @@ IHS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.381
 IIM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.3766 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 IMXI,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7436 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 INAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7724 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-INDB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9774 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+INDB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9774 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 INGR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8279 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-INVH,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8008 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-IPCX,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.1458 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+INVH,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8008 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+IPCX,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.1458 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 IPEX,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6497 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 IQI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.6408 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 IRAB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.6740 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -353,6 +353,7 @@ KRG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4357 
 KRSP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.0233 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 KTF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.9697 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 KTWO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.1113 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+KVAC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.2138 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 KW,broker_unavailable,false,false,false,true,Robinhood tradability returned not_found and app shows stock not supported,manual_broker_check_2026-06-17,,2026-06-17
 KYN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4874 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 L,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4968 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -418,7 +419,7 @@ NCV,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.847
 NDMO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.4232 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NEA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.3896 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NEE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.9471 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-NFG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6567 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+NFG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6567 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NFJ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.4106 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NHIC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.6424 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NHS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.2536 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -427,7 +428,7 @@ NIE,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.424
 NIM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.8471 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NJR,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4221 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NKX,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.7350 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-NLY,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2459 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+NLY,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2459 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NMAI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.2846 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NMCO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.0175 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 NMI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.0947 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -462,7 +463,7 @@ O,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.9672 
 OACC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.3292 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 OBA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5008 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 OGE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0394 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-OGS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.9815 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+OGS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.9815 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 OIA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.2708 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 OLP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.3973 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ONCH,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7446 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -470,7 +471,7 @@ OPP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.869
 ORC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.9433 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ORIQ,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5953 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 OTGA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5711 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-OTTR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.3503 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+OTTR,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.3503 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 OVLY,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2226 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 OYSE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7065 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PACH,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5826 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -484,7 +485,7 @@ PCM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.606
 PCN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.1754 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PCQ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.9920 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PDI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.3933 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-PDLB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8930 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+PDLB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8930 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PDO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.8418 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PDT,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.3479 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PDX,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.3085 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -492,7 +493,7 @@ PEBO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.53
 PECO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0189 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PEG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8297 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PEN,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.0135 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-PFE,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2223 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+PFE,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2223 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PFL,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.2751 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PFN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.4935 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PGAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.9309 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -500,7 +501,7 @@ PGP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.422
 PGZ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.0244 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PHK,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.5291 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PIM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.2870 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-PKBK,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5600 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+PKBK,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5600 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PLMK,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.4278 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PLTS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.0000 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PML,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.1420 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -514,11 +515,10 @@ POR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.1679 
 PPL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.3633 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PPT,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.6371 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PRA,broker_unavailable,false,false,false,true,Robinhood app shows stock not supported and rh_fast quote/orders returned broker errors while live positions snapshot no longer includes PRA,manual_broker_check_2026-06-26,,2026-06-26
-PROV,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.1796 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+PROV,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.1796 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PSF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=4.7029 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PSO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6996 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PTA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.5041 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-PTNM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.0000 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 PTY,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.3611 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 QETA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.2930 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 QMMM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.0000 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -568,7 +568,7 @@ SIMA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.69
 SKYT,inactive,false,false,false,true,IonQ completed its acquisition on 2026-07-31 and Robinhood tradability returned not_found on 2026-08-04,ionq_completion_and_robinhood_tradability_2026-08-04,,2026-08-04
 SMBC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6286 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SMNR,manual_trade_only,false,false,false,false,Robinhood close-only/unlisted; user must handle manually,manual,,2026-06-18
-SNA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6296 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+SNA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6296 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1013 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SOCA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8319 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SOR,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.3188 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -592,7 +592,7 @@ STWD,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.6210
 SUI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9344 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SVAQ,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.9891 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SVCC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6447 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-SWX,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.5835 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+SWX,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.5835 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SWZ,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.7612 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 SZZL,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5526 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 TACH,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8373 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -631,7 +631,7 @@ UGI,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6391 
 UMH,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.6193 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 USA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.3285 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 UTF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.1580 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-UTL,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.6823 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+UTL,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.6823 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 UYSC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.6858 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 VACI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.3869 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 VBF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.5900 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -651,7 +651,7 @@ VTN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.223
 VVR,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.9321 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 WABC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0410 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 WBD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.2497 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-WBS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.7794 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+WBS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.7794 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 WDI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.4473 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 WEC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.1799 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 WENN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5060 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
