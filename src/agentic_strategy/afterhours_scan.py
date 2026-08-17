@@ -411,6 +411,14 @@ def scan_afterhours(
 
 
 def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
+    dd_shortlist_blockers: list[str] = []
+    if report.no_history:
+        dd_shortlist_blockers.append("missing_lot_history")
+    if report.incomplete:
+        dd_shortlist_blockers.append("quantity_mismatch")
+    if report.ladder_profile_provenance_unresolved:
+        dd_shortlist_blockers.append("ladder_profile_provenance_unresolved")
+
     return {
         "checked_positions": report.checked_positions,
         "exact_share_dd_count": len(report.exact_share_dd),
@@ -425,7 +433,8 @@ def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
         "no_history_count": len(report.no_history),
         "incomplete_count": len(report.incomplete),
         "ladder_profile_provenance_unresolved_count": len(report.ladder_profile_provenance_unresolved),
-        "dd_shortlist_publishable": not report.ladder_profile_provenance_unresolved,
+        "dd_shortlist_publishable": not dd_shortlist_blockers,
+        "dd_shortlist_blockers": dd_shortlist_blockers,
         "ladder_profile_blocker_message": (
             "DD SCAN BLOCKED: ladder_profile_provenance_unresolved"
             if report.ladder_profile_provenance_unresolved
@@ -470,6 +479,13 @@ def apply_known_dd_blocker_cache(
     raw_no_history = list(report.no_history)
     raw_incomplete = list(report.incomplete)
     raw_provenance = list(report.ladder_profile_provenance_unresolved)
+    raw_shortlist_blockers: list[str] = []
+    if raw_no_history:
+        raw_shortlist_blockers.append("missing_lot_history")
+    if raw_incomplete:
+        raw_shortlist_blockers.append("quantity_mismatch")
+    if raw_provenance:
+        raw_shortlist_blockers.append("ladder_profile_provenance_unresolved")
     filtered_no_history = [
         symbol for symbol in raw_no_history if (symbol.upper(), "missing_lot_history") not in suppressed_keys
     ]
@@ -484,6 +500,8 @@ def apply_known_dd_blocker_cache(
     payload["raw_no_history_count"] = len(raw_no_history)
     payload["raw_incomplete_count"] = len(raw_incomplete)
     payload["raw_ladder_profile_provenance_unresolved_count"] = len(raw_provenance)
+    payload["raw_no_history_sample"] = raw_no_history[:25]
+    payload["raw_incomplete_sample"] = raw_incomplete[:25]
     payload["raw_ladder_profile_provenance_unresolved"] = [
         _json_row(issue) for issue in raw_provenance
     ]
@@ -495,10 +513,8 @@ def apply_known_dd_blocker_cache(
     payload["ladder_profile_provenance_unresolved"] = [
         _json_row(issue) for issue in filtered_provenance
     ]
-    payload["dd_shortlist_publishable"] = not raw_provenance
-    payload["dd_shortlist_blockers"] = (
-        ["ladder_profile_provenance_unresolved"] if raw_provenance else []
-    )
+    payload["dd_shortlist_publishable"] = not raw_shortlist_blockers
+    payload["dd_shortlist_blockers"] = raw_shortlist_blockers
     payload["ladder_profile_blocker_message"] = (
         "DD SCAN BLOCKED: ladder_profile_provenance_unresolved"
         if filtered_provenance

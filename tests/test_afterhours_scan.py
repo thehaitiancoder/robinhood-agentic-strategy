@@ -1189,6 +1189,7 @@ class AfterHoursScanTest(unittest.TestCase):
             },
             orders_payload={"orders": []},
         )
+        uncached = report_to_json(report)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "dd-known-blockers.csv"
@@ -1207,11 +1208,17 @@ class AfterHoursScanTest(unittest.TestCase):
                 recorded_at=datetime(2026, 6, 30, 4, 30, tzinfo=timezone(timedelta(hours=-7))),
             )
 
+        self.assertFalse(uncached["dd_shortlist_publishable"])
+        self.assertEqual(uncached["dd_shortlist_blockers"], ["missing_lot_history"])
         self.assertEqual(first["no_history_count"], 1)
         self.assertEqual(first["new_dd_blocker_count"], 1)
         self.assertEqual(first["suppressed_dd_blocker_count"], 0)
         self.assertEqual(second["raw_no_history_count"], 1)
+        self.assertEqual(second["raw_no_history_sample"], ["LILAP"])
         self.assertEqual(second["no_history_count"], 0)
+        self.assertFalse(second["dd_shortlist_publishable"])
+        self.assertEqual(second["dd_shortlist_blockers"], ["missing_lot_history"])
+        self.assertEqual(second["dd_scan_blockers"], [])
         self.assertEqual(second["new_dd_blocker_count"], 0)
         self.assertEqual(second["suppressed_dd_blocker_count"], 1)
 
@@ -1328,12 +1335,26 @@ class AfterHoursScanTest(unittest.TestCase):
                 path=path,
                 recorded_at=datetime(2026, 6, 30, 5, 0, tzinfo=timezone(timedelta(hours=-7))),
             )
+            suppressed = apply_known_dd_blocker_cache(
+                report_to_json(changed_report),
+                changed_report,
+                path=path,
+                recorded_at=datetime(2026, 6, 30, 5, 30, tzinfo=timezone(timedelta(hours=-7))),
+            )
 
         self.assertEqual(first["incomplete_count"], 1)
         self.assertEqual(first["new_dd_blocker_count"], 1)
         self.assertEqual(changed["incomplete_count"], 1)
         self.assertEqual(changed["new_dd_blocker_count"], 1)
         self.assertEqual(changed["suppressed_dd_blocker_count"], 0)
+        self.assertEqual(suppressed["raw_incomplete_count"], 1)
+        self.assertEqual(suppressed["raw_incomplete_sample"][0]["symbol"], "AIFU")
+        self.assertEqual(suppressed["incomplete_count"], 0)
+        self.assertFalse(suppressed["dd_shortlist_publishable"])
+        self.assertEqual(suppressed["dd_shortlist_blockers"], ["quantity_mismatch"])
+        self.assertEqual(suppressed["dd_scan_blockers"], [])
+        self.assertEqual(suppressed["new_dd_blocker_count"], 0)
+        self.assertEqual(suppressed["suppressed_dd_blocker_count"], 1)
 
 
 def _order(

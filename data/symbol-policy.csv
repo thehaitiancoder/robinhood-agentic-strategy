@@ -24,7 +24,7 @@ ALF,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.1643 
 ALIS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8015 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ALUB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7257 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AMH,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9671 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-ANSC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.9073 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ANSC,inactive,false,false,false,true,Robinhood tradability returned not_found and quote lookup returned inactive_instruments while a residual 0.087565-share position remains pending broker corporate-action resolution,robinhood_tradability_2026-08-13,,2026-08-13
 AOD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6387 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 APAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.6065 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 APXT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.8101 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -37,6 +37,7 @@ ASRT,broker_unavailable,false,false,false,true,Robinhood tradability returned no
 ATII,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.7096 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ATLO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.0020 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ATO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.6547 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+ATROB,inactive,false,false,false,true,Robinhood quote state is unlisted and broker symbol lookup returns instrument not found; residual 0.002063-share position is sell-only but below Robinhood's one-share minimum,robinhood_live_check_2026-08-14,,2026-08-14
 AVA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.7803 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AVB,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.1897 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AVK,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6824 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -223,7 +224,7 @@ FBLA,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.28
 FCF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7689 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FCPT,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.8486 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FCRS,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.5114 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-FCT,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.6905 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+FCT,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=2.6111 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FDSB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.2553 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FE,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.2434 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 FERA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.5641 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -312,7 +313,7 @@ IGD,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=7.403
 IGI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.7407 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 IHS,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.3810 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 IIM,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=6.3766 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-IMXI,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7436 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
+IMXI,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.7436 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 INAC,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=0.7724 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 INDB,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.9774 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 INGR,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.8279 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
@@ -353,7 +354,6 @@ KRG,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4357 
 KRSP,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=5.0233 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 KTF,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.9697 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 KTWO,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.1113 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-KVAC,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=3.2138 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 KW,broker_unavailable,false,false,false,true,Robinhood tradability returned not_found and app shows stock not supported,manual_broker_check_2026-06-17,,2026-06-17
 KYN,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4874 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 L,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.4968 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31

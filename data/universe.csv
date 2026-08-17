@@ -298,7 +298,7 @@ ANNA,"AleAnna, Inc. Class A Common Stock",stock,true,true,true,robinhood_validat
 ANNX,"Annexon, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 ANPA,Rich Sparkle Holdings Limited Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 ANRO,Alto Neuroscience Inc.,stock,true,true,true,robinhood_validated,2026-06-11
-ANSC,Agriculture & Natural Solutions Acquisition Corporation Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+ANSC,Agriculture & Natural Solutions Acquisition Corporation Class A Ordinary Shares,stock,false,false,false,robinhood_inactive_instrument,2026-08-13
 ANTA,Antalpha Platform Holding Company Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 ANTX,"AN2 Therapeutics, Inc. Common Stock",stock,true,true,true,robinhood_validated,2026-06-10
 ANVS,"Annovis Bio, Inc.",stock,true,true,true,robinhood_validated,2026-06-11
