@@ -14,7 +14,7 @@ AFG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.290
 AFL,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=8.4435 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AGD,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.6477 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AGO,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.3607 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
-AIFU,manual_trade_only,false,false,false,false,User requested manual-only mode after repeated live-vs-filled lot-history mismatch,manual,,2026-06-23
+AIFU,eligible,true,true,true,true,User restored full automation after split-adjusted lot history reconciled,manual,,2026-08-18
 AIG,no_new_open,false,false,true,true,valid_months=6 avg_monthly_range_pct=9.5753 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 AIIA,no_reopen,false,false,true,true,valid_months=6 avg_monthly_range_pct=1.1779 below 10,weekly_intraday_range_2026-02_to_2026-07,,2026-07-31
 ALAR,manual_no_buy_no_dd,false,false,false,true,User unloading ALAR after FBI probe/domain seizure report; block opens reopens and double-downs while preserving sell permission,manual_news_2026-07-02,,2026-07-02
