@@ -1,7 +1,7 @@
 symbol,name,asset_type,tradable,fractional_eligible,active,source,updated_at
 A,Agilent Technologies Inc,stock,true,true,true,robinhood_validated,2026-06-09
 AA,Alcoa,stock,true,true,true,robinhood_validated,2026-06-09
-AACB,Artius II Acquisition Inc. Class A Ordinary Shares,stock,true,true,true,robinhood_validated,2026-06-10
+AACB,Artius II Acquisition Inc. Class A Ordinary Shares,stock,false,false,false,nasdaq_redemption_suspended,2026-08-20
 AACG,ATA Creativity Global American Depositary Shares,stock,true,true,true,robinhood_validated,2026-06-10
 AACI,Armada Acquisition Corp. III Class A Ordinary Share,stock,true,true,true,robinhood_validated,2026-06-10
 AACO,Abony Acquisition Corp. I Class A Ordinary Share,stock,true,true,true,robinhood_validated,2026-06-10
