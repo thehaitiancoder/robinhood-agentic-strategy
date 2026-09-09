@@ -508,11 +508,13 @@ requests and the 5 PM daily automation:
 - `scripts/rh_fast_mcp_client.mjs`: shared read-only Robinhood MCP session
   helper for fast broad scans.
 - `scripts/rh_fast.mjs`: read-only fast commands for quotes, orders, positions,
-  portfolio, open planning, and sell/DD watch screens. These scripts must not place
+  portfolio, broker realized P/L, open planning, and sell/DD watch screens. These scripts must not place
   orders.
 - `agentic_strategy.daily_summary`: writes the 5 PM read-only performance
   report and private performance history from fresh broker portfolio,
-  position/quote, and order-history payloads. The 5 PM daily automation also
+  position/quote, order-history, and broker realized-P/L payloads. Broker P/L
+  is authoritative when supplied; split-adjusted FIFO remains audit evidence.
+  The 5 PM daily automation also
   performs the end-of-day reconciliation/cache/audit work that used to live in
   the former close lane.
 - `scripts/weekly_symbol_policy_refresh.mjs`: weekend read-only historical

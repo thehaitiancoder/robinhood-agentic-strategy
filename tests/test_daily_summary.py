@@ -11,6 +11,7 @@ from agentic_strategy.daily_summary import (
     SplitAdjustment,
     build_daily_summary,
     read_split_adjustments_csv,
+    render_markdown,
     write_daily_summary,
     write_performance_history,
 )
@@ -76,6 +77,187 @@ class DailySummaryTest(unittest.TestCase):
         gain_cycle = next(cycle for cycle in summary["cycles"] if cycle.symbol == "GAIN")
         self.assertEqual(str(gain_cycle.weighted_hold_minutes), "150.0")
         self.assertEqual(str(gain_cycle.return_pct), "20.0")
+        markdown = render_markdown(summary)
+        self.assertIn("FIFO-reconstructed realized P/L", markdown)
+        self.assertIn("FIFO rounding adjustment", markdown)
+        self.assertNotIn("Broker-authoritative realized P/L", markdown)
+
+    def test_uses_robinhood_realized_pnl_as_authoritative_profit(self) -> None:
+        orders = {
+            "orders": [
+                _order("gain-buy", "GAIN", "buy", "10", "10", "2026-06-15T14:00:00Z"),
+                _order("gain-sell", "GAIN", "sell", "4", "12", "2026-06-15T16:30:00Z"),
+                _order("loss-buy", "LOSS", "buy", "2", "20", "2026-06-14T16:00:00Z"),
+                _order("loss-sell", "LOSS", "sell", "1", "18", "2026-06-15T17:05:00Z"),
+            ]
+        }
+        pnl = {
+            "report_date": "2026-06-15",
+            "aggregate": {"data": {"total_returns": "5.99"}},
+            "trades": [
+                {
+                    "timestamp": "2026-06-15T16:30:00Z",
+                    "symbol": "GAIN",
+                    "side": "sell",
+                    "quantity": "4",
+                    "realized_gain": "7.99",
+                },
+                {
+                    "timestamp": "2026-06-15T17:05:00Z",
+                    "symbol": "LOSS",
+                    "side": "sell",
+                    "quantity": "1",
+                    "realized_gain": "-2.00",
+                },
+            ],
+        }
+
+        summary = build_daily_summary(
+            portfolio_payload={"portfolio": {}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload=orders,
+            realized_pnl_payload=pnl,
+            report_date="2026-06-15",
+        )
+
+        self.assertEqual(summary["totals"]["realized_profit"], Decimal("5.99"))
+        self.assertEqual(summary["totals"]["raw_realized_profit"], Decimal("6"))
+        self.assertEqual(summary["totals"]["realized_profit_adjustment"], Decimal("-0.01"))
+        self.assertEqual(summary["totals"]["realized_profit_source"], "robinhood_realized_pnl")
+        self.assertEqual(summary["hourly"]["09"]["profit"], Decimal("7.99"))
+        self.assertEqual(summary["hourly"]["10"]["profit"], Decimal("-2.00"))
+        markdown = render_markdown(summary)
+        self.assertIn("Broker-authoritative realized P/L", markdown)
+        self.assertIn("Broker reconciliation adjustment", markdown)
+
+    def test_rejects_invalid_authoritative_pnl_amounts(self) -> None:
+        for field in ("realized_gain", "total_returns"):
+            for invalid in (None, "", " ", "NaN", "Infinity", "-Infinity", "invalid"):
+                with self.subTest(field=field, value=invalid):
+                    pnl = {
+                        "report_date": "2026-06-15",
+                        "aggregate": {"data": {"total_returns": "0"}},
+                        "trades": [{
+                            "timestamp": "2026-06-15T16:30:00Z",
+                            "symbol": "FLAT",
+                            "side": "sell",
+                            "quantity": "1",
+                            "realized_gain": "0",
+                        }],
+                    }
+                    if field == "total_returns":
+                        pnl["aggregate"]["data"][field] = invalid
+                    else:
+                        pnl["trades"][0][field] = invalid
+                    with self.assertRaisesRegex(ValueError, f"{field} must be a finite number"):
+                        build_daily_summary(
+                            portfolio_payload={},
+                            positions_payload={},
+                            orders_payload={"orders": [
+                                _order("flat-buy", "FLAT", "buy", "1", "10", "2026-06-15T14:00:00Z"),
+                                _order("flat-sell", "FLAT", "sell", "1", "10", "2026-06-15T16:30:00Z"),
+                            ]},
+                            realized_pnl_payload=pnl,
+                            report_date="2026-06-15",
+                        )
+
+    def test_accepts_zero_authoritative_pnl_amounts(self) -> None:
+        for zero in (0, 0.0, "0", "0.00"):
+            with self.subTest(value=zero):
+                summary = build_daily_summary(
+                    portfolio_payload={},
+                    positions_payload={},
+                    orders_payload={"orders": [
+                        _order("flat-buy", "FLAT", "buy", "1", "10", "2026-06-15T14:00:00Z"),
+                        _order("flat-sell", "FLAT", "sell", "1", "10", "2026-06-15T16:30:00Z"),
+                    ]},
+                    realized_pnl_payload={
+                        "report_date": "2026-06-15",
+                        "aggregate": {"data": {"total_returns": zero}},
+                        "trades": [{
+                            "timestamp": "2026-06-15T16:30:00Z",
+                            "symbol": "FLAT",
+                            "side": "sell",
+                            "quantity": "1",
+                            "realized_gain": zero,
+                        }],
+                    },
+                    report_date="2026-06-15",
+                )
+                self.assertEqual(summary["totals"]["realized_profit"], Decimal("0"))
+                self.assertEqual(summary["totals"]["realized_profit_source"], "robinhood_realized_pnl")
+
+    def test_rejects_incomplete_robinhood_realized_pnl_capture(self) -> None:
+        orders = {
+            "orders": [
+                _order("gain-buy", "GAIN", "buy", "10", "10", "2026-06-15T14:00:00Z"),
+                _order("gain-sell", "GAIN", "sell", "4", "12", "2026-06-15T16:30:00Z"),
+            ]
+        }
+        pnl = {
+            "report_date": "2026-06-15",
+            "aggregate": {"data": {"total_returns": "8.00"}},
+            "trades": [],
+        }
+
+        with self.assertRaisesRegex(ValueError, "could not be matched"):
+            build_daily_summary(
+                portfolio_payload={"portfolio": {}},
+                positions_payload={"positions": [], "quotes": []},
+                orders_payload=orders,
+                realized_pnl_payload=pnl,
+                report_date="2026-06-15",
+            )
+
+    def test_includes_broker_only_corporate_action_realization(self) -> None:
+        pnl = {
+            "report_date": "2026-08-20",
+            "aggregate": {
+                "data": {
+                    "total_returns": "0.01",
+                    "data_points": [{"number_of_trades": 1}],
+                }
+            },
+            "trades": [
+                {
+                    "timestamp": "2026-08-20T20:00:00Z",
+                    "symbol": "AACB",
+                    "side": "",
+                    "quantity": "0.095057",
+                    "price": "10.62520382507337702641572951",
+                    "realized_gain": "0.01",
+                }
+            ],
+        }
+
+        summary = build_daily_summary(
+            portfolio_payload={"portfolio": {}},
+            positions_payload={"positions": [], "quotes": []},
+            orders_payload={
+                "orders": [
+                    _order(
+                        "aacb-buy",
+                        "AACB",
+                        "buy",
+                        "0.095057",
+                        "10.52",
+                        "2026-06-11T13:30:01Z",
+                    )
+                ]
+            },
+            realized_pnl_payload=pnl,
+            report_date="2026-08-20",
+        )
+
+        self.assertEqual(summary["totals"]["sell_count"], 1)
+        self.assertEqual(summary["totals"]["realized_profit"], Decimal("0.01"))
+        self.assertEqual(summary["totals"]["uncosted_quantity"], Decimal("0"))
+        cycle = summary["cycles"][0]
+        self.assertEqual(cycle.symbol, "AACB")
+        self.assertTrue(cycle.order_id.startswith("broker-realized:AACB:"))
+        self.assertIsNone(cycle.weighted_hold_minutes)
+        self.assertEqual(cycle.proceeds, Decimal("1.010000000000000000000000000"))
+        self.assertEqual(cycle.cost_basis, Decimal("1.000000000000000000000000000"))
 
     def test_applies_inlf_reverse_split_to_realized_fifo_cost(self) -> None:
         pre_split_buys = [

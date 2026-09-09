@@ -4,9 +4,9 @@ import argparse
 import csv
 import json
 from collections import defaultdict, deque
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 from statistics import median
 from typing import Any
@@ -112,21 +112,36 @@ def build_daily_summary(
     portfolio_payload: dict[str, Any],
     positions_payload: dict[str, Any],
     orders_payload: dict[str, Any],
+    realized_pnl_payload: dict[str, Any] | None = None,
     report_date: str | None = None,
     split_adjustments: dict[str, tuple[SplitAdjustment, ...]] | None = None,
 ) -> dict[str, Any]:
     report_day = _report_day(report_date)
     paper = _paper_summary(positions_payload)
-    cycles = _sell_cycles(
+    raw_cycles = _sell_cycles(
         orders_payload,
         report_day=report_day,
         split_adjustments=split_adjustments,
     )
+    raw_costed_cycles = [cycle for cycle in raw_cycles if cycle.cost_basis > ZERO]
+    raw_realized = sum((cycle.realized_gain for cycle in raw_costed_cycles), ZERO)
+    cycles = raw_cycles
+    broker_realized: Decimal | None = None
+    if realized_pnl_payload is not None:
+        cycles, broker_realized = _apply_broker_realized_pnl(
+            raw_cycles,
+            realized_pnl_payload,
+            report_day=report_day,
+        )
     hourly = _hourly_profit(cycles)
 
     costed_cycles = [cycle for cycle in cycles if cycle.cost_basis > ZERO]
-    raw_realized = sum((cycle.realized_gain for cycle in costed_cycles), ZERO)
-    total_realized = sum((cycle.broker_display_gain for cycle in costed_cycles), ZERO)
+    reconstructed_display_realized = sum(
+        (cycle.broker_display_gain for cycle in raw_costed_cycles), ZERO
+    )
+    total_realized = (
+        broker_realized if broker_realized is not None else reconstructed_display_realized
+    )
     total_proceeds = sum((cycle.proceeds for cycle in cycles), ZERO)
     total_cost = sum((cycle.cost_basis for cycle in costed_cycles), ZERO)
     uncosted_qty = sum((cycle.uncosted_quantity for cycle in cycles), ZERO)
@@ -151,6 +166,10 @@ def build_daily_summary(
         "totals": {
             "realized_profit": total_realized,
             "raw_realized_profit": raw_realized,
+            "realized_profit_adjustment": total_realized - raw_realized,
+            "realized_profit_source": (
+                "robinhood_realized_pnl" if broker_realized is not None else "order_fifo_reconstruction"
+            ),
             "sell_proceeds": total_proceeds,
             "sold_cost_basis": total_cost,
             "realized_return_pct": (total_realized / total_cost * Decimal("100")) if total_cost > ZERO else None,
@@ -197,6 +216,9 @@ def render_markdown(summary: dict[str, Any]) -> str:
     totals = summary["totals"]
     cycles: list[SellCycle] = summary["cycles"]
     hourly = summary["hourly"]
+    uses_broker_pnl = totals.get("realized_profit_source") == "robinhood_realized_pnl"
+    realized_label = "Broker-authoritative realized P/L" if uses_broker_pnl else "FIFO-reconstructed realized P/L"
+    adjustment_label = "Broker reconciliation adjustment" if uses_broker_pnl else "FIFO rounding adjustment"
 
     lines = [
         f"# Robinhood Strategy Daily Summary - {summary['report_date']} PT",
@@ -226,8 +248,10 @@ def render_markdown(summary: dict[str, Any]) -> str:
         "",
         "| Metric | Value |",
         "| --- | ---: |",
-        f"| Broker-display realized P/L | {_money(totals['realized_profit'])} |",
+        f"| {realized_label} | {_money(totals['realized_profit'])} |",
+        f"| Realized P/L source | {totals.get('realized_profit_source', 'order_fifo_reconstruction')} |",
         f"| Raw fill P/L (audit) | {_money(totals.get('raw_realized_profit', totals['realized_profit']))} |",
+        f"| {adjustment_label} | {_money(totals.get('realized_profit_adjustment', ZERO))} |",
         f"| Sell proceeds | {_money(totals['sell_proceeds'])} |",
         f"| Sold cost basis | {_money(totals['sold_cost_basis'])} |",
         f"| Realized return | {_pct(totals['realized_return_pct'])} |",
@@ -321,7 +345,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
             "## Notes",
             "",
             "- Paper P/L uses the latest broker quote in this order: after-hours last, regular last, bid, ask, close.",
-            "- Broker-display realized P/L matches Robinhood by rounding each costed sell cycle to cents before summing; raw fill P/L preserves the unrounded aggregate for audit.",
+            "- When a Robinhood realized-P&L capture is supplied, its matched per-trade gains and daily total are authoritative; raw fill P/L preserves split-adjusted FIFO reconstruction for audit.",
             "- Cost reconstruction uses broker order-average fill prices and FIFO from filled equity orders; committed split adjustments normalize pre-split fills.",
             "- DD cash deployment counts all same-day filled buy orders from broker order history; it is a DD/buy cash proxy, not a separate broker order type.",
             "- If uncosted sold quantity is nonzero, the broker order history provided to the run was insufficient for those shares.",
@@ -425,6 +449,13 @@ def main() -> int:
     parser.add_argument("--portfolio-json")
     parser.add_argument("--positions-json")
     parser.add_argument("--orders-json")
+    parser.add_argument(
+        "--pnl-json",
+        help=(
+            "Optional read-only Robinhood realized-P&L capture. When supplied, per-trade "
+            "broker gains and the daily total override local FIFO profit reconstruction."
+        ),
+    )
     parser.add_argument("--output-md")
     parser.add_argument("--cycles-csv")
     parser.add_argument("--output-json")
@@ -476,6 +507,7 @@ def main() -> int:
         portfolio_payload=_read_json(args.portfolio_json),
         positions_payload=_read_json(args.positions_json),
         orders_payload=_read_json(args.orders_json),
+        realized_pnl_payload=_read_json(args.pnl_json) if args.pnl_json else None,
         report_date=args.date,
         split_adjustments=(
             read_split_adjustments_csv(args.split_adjustments) if args.split_adjustments else None
@@ -595,6 +627,168 @@ def _sell_cycles(
             existing.sold_at = min(existing.sold_at, timestamp)
 
     return list(cycles_by_order.values())
+
+
+def _apply_broker_realized_pnl(
+    cycles: list[SellCycle],
+    payload: dict[str, Any],
+    *,
+    report_day: str,
+) -> tuple[list[SellCycle], Decimal]:
+    captured_day = str(payload.get("report_date") or "").strip()
+    if captured_day and captured_day != report_day:
+        raise ValueError(
+            f"realized P&L report_date mismatch: expected {report_day}, got {captured_day}"
+        )
+
+    trades = payload.get("trades")
+    if not isinstance(trades, list):
+        trade_history = payload.get("trade_history") or payload.get("trade_history_payload") or {}
+        trades = _pnl_data(trade_history).get("trades")
+    if not isinstance(trades, list):
+        raise ValueError("realized P&L payload is missing per-trade rows")
+
+    report_trades: list[dict[str, Any]] = []
+    for row in trades:
+        if not isinstance(row, dict):
+            continue
+        side = str(row.get("side") or "").lower()
+        if side not in {"", "sell"}:
+            continue
+        timestamp = _parse_dt(row.get("timestamp"))
+        if timestamp is None or _pt_date(timestamp) != report_day:
+            continue
+        if "realized_gain" not in row:
+            raise ValueError("realized P&L trade is missing realized_gain")
+        report_trades.append(
+            {
+                **row,
+                "_timestamp": timestamp,
+                "_realized_gain": _required_pnl_decimal(row.get("realized_gain"), field="realized_gain"),
+            }
+        )
+
+    aggregate = payload.get("aggregate") or payload.get("realized_pnl") or payload
+    aggregate_data = _pnl_data(aggregate)
+    data_points = aggregate_data.get("data_points")
+    if isinstance(data_points, list):
+        aggregate_trade_count = sum(
+            int(row.get("number_of_trades") or 0)
+            for row in data_points
+            if isinstance(row, dict)
+        )
+        if aggregate_trade_count != len(report_trades):
+            raise ValueError(
+                "realized P&L aggregate trade count mismatch: "
+                f"broker={aggregate_trade_count} captured={len(report_trades)}"
+            )
+
+    unused = set(range(len(report_trades)))
+    adjusted: list[SellCycle] = []
+    for cycle in cycles:
+        candidates = [
+            index
+            for index in unused
+            if str(report_trades[index].get("symbol") or "").strip().upper() == cycle.symbol
+            and abs(_decimal(report_trades[index].get("quantity")) - cycle.quantity)
+            <= QUANTITY_TOLERANCE
+            and abs((report_trades[index]["_timestamp"] - cycle.sold_at).total_seconds()) <= 2
+        ]
+        if not candidates:
+            raise ValueError(
+                "realized P&L trade could not be matched: "
+                f"{cycle.symbol} qty={cycle.quantity} sold_at={cycle.sold_at.isoformat()}"
+            )
+        index = min(
+            candidates,
+            key=lambda candidate: abs(
+                (report_trades[candidate]["_timestamp"] - cycle.sold_at).total_seconds()
+            ),
+        )
+        unused.remove(index)
+        realized_gain = report_trades[index]["_realized_gain"]
+        adjusted.append(
+            replace(
+                cycle,
+                cost_basis=cycle.proceeds - realized_gain,
+                realized_gain=realized_gain,
+                uncosted_quantity=ZERO,
+            )
+        )
+
+    for index in sorted(unused):
+        trade = report_trades[index]
+        side = str(trade.get("side") or "").lower()
+        symbol = str(trade.get("symbol") or "").strip().upper()
+        if side == "sell":
+            raise ValueError(
+                "realized P&L sell is missing from reconstructed order history: "
+                f"{symbol} qty={trade.get('quantity')} "
+                f"sold_at={trade['_timestamp'].isoformat()}"
+            )
+        quantity = _decimal(trade.get("quantity"))
+        price = _decimal(trade.get("price"))
+        realized_gain = trade["_realized_gain"]
+        if not symbol or quantity <= ZERO or price <= ZERO:
+            raise ValueError(
+                "broker-only realized P&L row is missing symbol, quantity, or price"
+            )
+        proceeds = quantity * price
+        cost_basis = proceeds - realized_gain
+        if cost_basis < ZERO:
+            raise ValueError(
+                "broker-only realized P&L row implies negative cost basis: "
+                f"{symbol} proceeds={proceeds} realized_gain={realized_gain}"
+            )
+        adjusted.append(
+            SellCycle(
+                order_id=(
+                    f"broker-realized:{symbol}:"
+                    f"{trade['_timestamp'].astimezone(UTC).isoformat()}"
+                ),
+                symbol=symbol,
+                sold_at=trade["_timestamp"],
+                quantity=quantity,
+                proceeds=proceeds,
+                cost_basis=cost_basis,
+                realized_gain=realized_gain,
+                first_buy_at=None,
+                weighted_hold_minutes=None,
+                uncosted_quantity=ZERO,
+            )
+        )
+
+    adjusted.sort(key=lambda cycle: (cycle.sold_at, cycle.symbol, cycle.order_id))
+
+    if "total_returns" not in aggregate_data:
+        raise ValueError("realized P&L payload is missing total_returns")
+    broker_total = _required_pnl_decimal(aggregate_data.get("total_returns"), field="total_returns")
+    trade_total = sum((cycle.realized_gain for cycle in adjusted), ZERO)
+    if trade_total.quantize(MONEY_QUANTUM, rounding=ROUND_HALF_UP) != broker_total.quantize(
+        MONEY_QUANTUM, rounding=ROUND_HALF_UP
+    ):
+        raise ValueError(
+            "realized P&L total mismatch: "
+            f"aggregate={broker_total} matched_trades={trade_total}"
+        )
+    return adjusted, broker_total
+
+
+def _required_pnl_decimal(value: Any, *, field: str) -> Decimal:
+    try:
+        amount = Decimal(str(value))
+    except (InvalidOperation, ValueError) as error:
+        raise ValueError(f"realized P&L {field} must be a finite number") from error
+    if not amount.is_finite():
+        raise ValueError(f"realized P&L {field} must be a finite number")
+    return amount
+
+
+def _pnl_data(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        return {}
+    data = payload.get("data")
+    return data if isinstance(data, dict) else payload
 
 
 def read_split_adjustments_csv(
