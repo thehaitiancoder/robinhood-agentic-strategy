@@ -271,6 +271,32 @@ under `$5`, use the `under5_20` profile:
 Do not automatically migrate existing multi-lot positions into `under5_20`.
 They keep the default profile unless explicitly reviewed and migrated later.
 
+The selected profile is immutable for the life of an ownership cycle. The
+cycle key is the symbol plus the filled base-order id. Later DD fills increase
+ladder progress but do not select a new profile. A full sell closes the cycle;
+a later reopen creates a new base order and a new profile.
+
+The `under5_20` adoption cutoff is `2026-06-24T09:09:09Z`. Broker history is
+backfilled against that cutoff:
+
+- cycles opened after the cutoff use the profile selected from their base fill;
+- cycles that were base-only at the cutoff use the profile selected from their
+  base fill;
+- cycles with multiple buy orders at the cutoff remain `standard`;
+- a committed split-adjustment profile takes precedence;
+- split fills are quantity/price-normalized before FIFO reconstruction, and a
+  split profile/base override applies only to its configured base order;
+- orders retain first and last execution timestamps; an order whose fills span
+  the adoption cutoff is unresolved rather than assigned from its final fill;
+- ladder completion uses a lot-relative tolerance separate from the wider
+  ownership-cycle reconciliation tolerance, preserving micro-fractional lots;
+- unresolved base-order or timestamp provenance blocks DD execution and DD
+  shortlist publication with `ladder_profile_provenance_unresolved`.
+
+Filled shares remain broker truth even if a prior scanner bought them before
+their correct trigger. Those shares count toward completed ladder progression;
+the strategy does not buy them again or place an automatic compensating trade.
+
 ## Cash Priority
 
 For openings and reopens, disposable cash is not simply buying power. It must

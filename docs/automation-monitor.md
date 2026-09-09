@@ -438,6 +438,9 @@ Extended-hours execution scope is intentionally narrow:
 - `python -m agentic_strategy.afterhours_scan` also maintains
   `data/runtime/dd-known-blockers.csv` by default. Treat unchanged suppressed
   rows from that cache as already-known noise, not as fresh blocked coverage.
+  The JSON keeps raw provenance blockers separately because they still block
+  unsafe DD output and shortlist publication; only new or changed provenance
+  blockers remain in the reportable blocker count and message.
   Do not use the cache to skip an executable whole-share sell/DD candidate.
 - For sells, use live extended-hours bid as the sell-side executable price. If
   the integer sellable quantity is at least 1 share and bid-side return is at
@@ -476,11 +479,13 @@ It should:
 - fetch portfolio, positions, open/recent orders, queued orders, filled orders,
   cancellations, rejections, buying power, and cash
 - fetch the Agentic account portfolio with
-  `node scripts/rh_fast.mjs portfolio --account 878067701 --output data/runtime/daily-summary-portfolio.json`
+  `node scripts/rh_fast.mjs portfolio --account $env:RH_ACCOUNT_NUMBER --output data/runtime/daily-summary-portfolio.json`
+- fetch the Pacific-day broker realized P/L and matching trade history with
+  `node scripts/rh_fast.mjs pnl --account $env:RH_ACCOUNT_NUMBER --date YYYY-MM-DD --timezone America/Los_Angeles --output data/runtime/daily-summary-realized-pnl.json`
 - fetch positions with quotes with
-  `node scripts/rh_fast.mjs positions --account 878067701 --with-quotes --output data/runtime/daily-summary-positions-quotes.json --summary-output data/runtime/daily-summary-positions.csv`
+  `node scripts/rh_fast.mjs positions --account $env:RH_ACCOUNT_NUMBER --with-quotes --output data/runtime/daily-summary-positions-quotes.json --summary-output data/runtime/daily-summary-positions.csv`
 - fetch all equity orders with
-  `node scripts/rh_fast.mjs orders --account 878067701 --all --output data/runtime/daily-summary-orders-all.json`
+  `node scripts/rh_fast.mjs orders --account $env:RH_ACCOUNT_NUMBER --all --output data/runtime/daily-summary-orders-all.json`
 - import broker order history, fills, cancellations, rejections, and known
   skipped-action reasons into `data/private/order-ledger.csv`; this is audit
   history only
@@ -508,7 +513,11 @@ It should:
   `data/private/performance-history.md`; reruns for the same Pacific date must
   replace that date's row instead of appending duplicates
 - use this command for the performance report and history:
-  `python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json --history-csv data/private/performance-history.csv --history-md data/private/performance-history.md`
+  `python -m agentic_strategy.daily_summary --portfolio-json data/runtime/daily-summary-portfolio.json --positions-json data/runtime/daily-summary-positions-quotes.json --orders-json data/runtime/daily-summary-orders-all.json --pnl-json data/runtime/daily-summary-realized-pnl.json --output-md data/private/daily-summary.md --cycles-csv data/private/daily-return-cycles.csv --output-json data/private/daily-summary.json --history-csv data/private/performance-history.csv --history-md data/private/performance-history.md`
+
+The Robinhood realized-P&L capture is the source of truth for the daily realized
+profit total and per-trade gains. The order-history FIFO reconstruction remains
+in the report as raw audit evidence and must apply committed split adjustments.
 
 The report should highlight portfolio paper gain, portfolio paper loss, net
 paper P/L, realized trading-day profit by Pacific hour, sell-cycle hold time
@@ -529,7 +538,7 @@ It should:
 
 - start by confirming it is weekend/off-market in Pacific time
 - read `AGENTS.md`, `docs/automation-monitor.md`, and `docs/symbol-policy.md`
-- run `node scripts/weekly_symbol_policy_refresh.mjs --run --account 878067701`
+- run `node scripts/weekly_symbol_policy_refresh.mjs --run --account $env:RH_ACCOUNT_NUMBER`
 - run `python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv`
 - report the summary path, metrics path, policy row counts, newly filtered
   symbols, restored symbols, owned `no_reopen` count, and unowned `no_new_open`
@@ -568,9 +577,9 @@ It should:
   at or after 8:00 AM Pacific
 - read `AGENTS.md`, `docs/automation-monitor.md`, `docs/universe-management.md`,
   and `docs/symbol-policy.md`
-- run `node scripts/monthly_universe_discovery.mjs --run --account 878067701`
+- run `node scripts/monthly_universe_discovery.mjs --run --account $env:RH_ACCOUNT_NUMBER`
 - if accepted symbols were merged, run
-  `node scripts/weekly_symbol_policy_refresh.mjs --run --account 878067701`
+  `node scripts/weekly_symbol_policy_refresh.mjs --run --account $env:RH_ACCOUNT_NUMBER`
 - run `python -m agentic_strategy.validate_symbol_policy --policy data/symbol-policy.csv`
 - report candidate count, accepted count, rejected count, universe rows before
   and after, active/tradable/fractional universe count, policy row counts, and

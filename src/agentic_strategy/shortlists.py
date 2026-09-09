@@ -211,6 +211,10 @@ def write_shortlists(
 
 
 def top_dd_candidates(scan_payload: dict[str, Any], *, limit: int = 10) -> list[DoubleDownShortlistCandidate]:
+    if scan_payload.get("dd_shortlist_publishable") is False or _int_or_zero(
+        scan_payload.get("ladder_profile_provenance_unresolved_count")
+    ) > 0:
+        raise ValueError("DD shortlist publication blocked: ladder_profile_provenance_unresolved")
     by_symbol: dict[str, DoubleDownShortlistCandidate] = {}
     for row in _scan_rows(scan_payload, "exact_share_dd"):
         candidate = _due_dd_shortlist_candidate(row)

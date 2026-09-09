@@ -80,10 +80,12 @@ Use the ignored known-DD-blocker cache at
 `data/runtime/dd-known-blockers.csv` to reduce repeated blocker noise without
 changing trading behavior. If the scanner reports suppressed known blockers,
 do not include those unchanged rows in `DD SCAN BLOCKED` reports or blocker
-counts. Still keep each symbol eligible for future DD checks unless symbol policy
-explicitly has `allow_double_down=false`. Always surface and act on executable
-DDs, new blockers, changed blocker signatures, quantity/order-state changes,
-and broker blocks on executable DD orders.
+counts. Raw unresolved provenance must still block that symbol from DD output
+and block DD shortlist publication even when the unchanged blocker is omitted
+from the reportable count. Still keep each symbol eligible for future DD checks
+unless symbol policy explicitly has `allow_double_down=false`. Always surface
+and act on executable DDs, new blockers, changed blocker signatures,
+quantity/order-state changes, and broker blocks on executable DD orders.
 
 For known split-adjusted symbols, apply committed rows in
 `data/split-adjustments.csv` before treating a live-vs-reconstructed quantity
@@ -400,6 +402,24 @@ original rules, and make rule violations visible before money is put at risk.
   `$5`, use the `under5_20` ladder profile instead: the first 10 double-down
   steps after base use 20% drops, and every later step uses 40% drops. Do not
   migrate existing multi-lot positions to `under5_20` automatically.
+- A ladder profile belongs to an ownership cycle and must remain unchanged
+  through every DD in that cycle. Key the cycle by the symbol and its base buy
+  order; a confirmed full sell followed by a reopen starts a new cycle. For
+  cycles that existed when `under5_20` was adopted on 2026-06-24, base-only
+  under-$5 cycles use `under5_20`, while cycles already containing multiple buy
+  lots remain `standard`. A committed split-adjustment profile overrides the
+  inferred profile only for the configured base order. Normalize pre-split
+  fills before FIFO reconstruction so post-split sells can close the old cycle.
+  Use execution timestamps and weighted execution prices as fill truth; never
+  use order creation time or a bare limit price to classify a ladder. Preserve
+  the first and last execution timestamps and fail closed if one filled order
+  spans the `under5_20` adoption boundary. Keep cycle-reconciliation tolerance
+  separate from ladder-progress tolerance; ladder tolerance must be bounded by
+  the current lot size so micro-fractional positions cannot skip a lot. If
+  broker history cannot prove the cycle profile, exclude
+  the symbol from DD candidates and DD shortlists and report `DD SCAN BLOCKED:
+  ladder_profile_provenance_unresolved`. Never infer the profile from the
+  current count of filled buy orders.
 - Double-down orders must follow the share ladder, not a rounded dollar amount.
   When multiple DD lots are due for the same symbol at the current ask, combine
   them into one broker order with `quantity` equal to the sum of the due lot
@@ -488,11 +508,13 @@ requests and the 5 PM daily automation:
 - `scripts/rh_fast_mcp_client.mjs`: shared read-only Robinhood MCP session
   helper for fast broad scans.
 - `scripts/rh_fast.mjs`: read-only fast commands for quotes, orders, positions,
-  portfolio, open planning, and sell/DD watch screens. These scripts must not place
+  portfolio, broker realized P/L, open planning, and sell/DD watch screens. These scripts must not place
   orders.
 - `agentic_strategy.daily_summary`: writes the 5 PM read-only performance
   report and private performance history from fresh broker portfolio,
-  position/quote, and order-history payloads. The 5 PM daily automation also
+  position/quote, order-history, and broker realized-P/L payloads. Broker P/L
+  is authoritative when supplied; split-adjusted FIFO remains audit evidence.
+  The 5 PM daily automation also
   performs the end-of-day reconciliation/cache/audit work that used to live in
   the former close lane.
 - `scripts/weekly_symbol_policy_refresh.mjs`: weekend read-only historical

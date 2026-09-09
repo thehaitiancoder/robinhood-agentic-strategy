@@ -11,7 +11,6 @@ from agentic_strategy import (
     due_double_down_lots,
     integer_part_quantity,
     ladder_profile_for_entry_price,
-    ladder_profile_for_open_lot_count,
     lot_shares_for_target,
     sizing_mode_for_price,
 )
@@ -28,11 +27,6 @@ class LotLadderTest(unittest.TestCase):
     def test_under5_profile_uses_ref2023_drops(self) -> None:
         self.assertEqual(ladder_profile_for_entry_price(Decimal("4.99")), UNDER5_20_LADDER_PROFILE)
         self.assertEqual(ladder_profile_for_entry_price(Decimal("5.00")), "standard")
-        self.assertEqual(
-            ladder_profile_for_open_lot_count(Decimal("4.99"), 1),
-            UNDER5_20_LADDER_PROFILE,
-        )
-        self.assertEqual(ladder_profile_for_open_lot_count(Decimal("4.99"), 2), "standard")
         self.assertEqual(
             [drop_pct_for_next_lot(index, ladder_profile=UNDER5_20_LADDER_PROFILE) for index in range(2, 12)],
             [Decimal("0.20")] * 10,

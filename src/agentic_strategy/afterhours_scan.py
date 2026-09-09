@@ -5,14 +5,20 @@ import json
 from csv import DictReader, DictWriter
 from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from decimal import Decimal, ROUND_DOWN, ROUND_FLOOR
 from pathlib import Path
 from typing import Any, TypedDict
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .dd_blockers import DDBlockerEvent, DEFAULT_KNOWN_DD_BLOCKERS_CSV, update_known_dd_blockers
-from .ladder import ladder_profile_for_open_lot_count, next_lot_shares, next_trigger_price, normalize_ladder_profile
+from .ladder import (
+    STANDARD_LADDER_PROFILE,
+    ladder_profile_for_entry_price,
+    next_lot_shares,
+    next_trigger_price,
+    normalize_ladder_profile,
+)
 from .symbol_policy import (
     DEFAULT_SYMBOL_POLICY_CSV,
     SymbolPolicy,
@@ -44,7 +50,11 @@ DD_FRACTIONAL_LEFTOVER_FIELDS = [
 ]
 
 POST_INTEGER_DD_LEFTOVER_REASON = "post_integer_execution_decimal_leftover"
-QUANTITY_TOLERANCE = Decimal("0.000010")
+# Broker reconciliation may absorb rounding residue; ladder completion may not absorb a tiny lot.
+CYCLE_QUANTITY_TOLERANCE = Decimal("0.000010")
+LADDER_PROGRESS_MAX_TOLERANCE = Decimal("0.000001")
+LADDER_PROGRESS_RELATIVE_TOLERANCE = Decimal("0.001")
+UNDER5_20_ADOPTION_AT = datetime(2026, 6, 24, 9, 9, 9, tzinfo=timezone.utc)
 
 
 class _DueLot(TypedDict):
@@ -65,6 +75,7 @@ class SplitAdjustment:
     adjusted_base_price: Decimal
     ladder_profile: str
     notes: str = ""
+    base_order_id: str = ""
 
     @property
     def quantity_multiplier(self) -> Decimal:
@@ -78,6 +89,45 @@ class SplitAdjustment:
 
 
 @dataclass(frozen=True)
+class LadderProfileProvenanceIssue:
+    symbol: str
+    blocker_type: str
+    reason: str
+    base_order_id: str
+    cycle_started_at: str
+
+
+@dataclass(frozen=True)
+class _OwnershipCycle:
+    lots: list[dict[str, Any]]
+    base_order_id: str
+    base_price: Decimal
+    base_shares: Decimal
+    raw_base_price: Decimal
+    raw_base_shares: Decimal
+    started_at: datetime
+    buy_order_times: tuple[tuple[str, datetime, datetime], ...]
+
+
+@dataclass(frozen=True)
+class _LadderProfileResolution:
+    ladder_profile: str
+    provenance: str
+
+
+@dataclass(frozen=True)
+class _NormalizedFilledOrder:
+    side: str
+    quantity: Decimal
+    price: Decimal
+    raw_quantity: Decimal
+    raw_price: Decimal
+    order_id: str
+    first_filled_at: datetime
+    last_filled_at: datetime
+
+
+@dataclass(frozen=True)
 class AfterHoursDoubleDownCandidate:
     symbol: str
     ask: Decimal
@@ -88,7 +138,9 @@ class AfterHoursDoubleDownCandidate:
     buy_price_basis: str
     base_price: Decimal
     base_shares: Decimal
+    base_order_id: str
     ladder_profile: str
+    ladder_profile_provenance: str
     position_qty: Decimal
     completed_lot: int
     partial_next: Decimal
@@ -115,7 +167,9 @@ class AfterHoursDoubleDownWatchCandidate:
     buy_price_basis: str
     base_price: Decimal
     base_shares: Decimal
+    base_order_id: str
     ladder_profile: str
+    ladder_profile_provenance: str
     position_qty: Decimal
     completed_lot: int
     partial_next: Decimal
@@ -162,6 +216,7 @@ class AfterHoursScanReport:
     policy_blocked_sell: list[str]
     no_history: list[str]
     incomplete: list[dict[str, str]]
+    ladder_profile_provenance_unresolved: list[LadderProfileProvenanceIssue]
 
 
 def scan_afterhours(
@@ -197,6 +252,7 @@ def scan_afterhours(
     policy_blocked_sell: list[str] = []
     no_history: list[str] = []
     incomplete: list[dict[str, str]] = []
+    ladder_profile_provenance_unresolved: list[LadderProfileProvenanceIssue] = []
     not_due_count = 0
 
     for symbol, position in sorted(position_by_symbol.items()):
@@ -218,17 +274,31 @@ def scan_afterhours(
             policy_blocked_dd.append(symbol)
             continue
 
-        lots = _reconstruct_open_lots(orders_by_symbol.get(symbol, []))
         split_adjustment = split_adjustments.get(symbol)
-        if split_adjustment is not None:
-            lots = _apply_split_adjustment(lots, split_adjustment)
-        position_qty = _decimal(position.get("quantity"))
-        if not lots:
+        try:
+            ownership_cycle = _reconstruct_current_ownership_cycle(
+                orders_by_symbol.get(symbol, []),
+                split_adjustment=split_adjustment,
+            )
+        except ValueError as exc:
+            ladder_profile_provenance_unresolved.append(
+                LadderProfileProvenanceIssue(
+                    symbol=symbol,
+                    blocker_type="ladder_profile_provenance_unresolved",
+                    reason=str(exc),
+                    base_order_id="",
+                    cycle_started_at="",
+                )
+            )
+            continue
+        if ownership_cycle is None:
             no_history.append(symbol)
             continue
 
+        lots = ownership_cycle.lots
+        position_qty = _decimal(position.get("quantity"))
         calculated_qty = sum((lot["qty"] for lot in lots), ZERO)
-        if abs(calculated_qty - position_qty) > QUANTITY_TOLERANCE:
+        if abs(calculated_qty - position_qty) > CYCLE_QUANTITY_TOLERANCE:
             incomplete.append(
                 {
                     "symbol": symbol,
@@ -239,10 +309,59 @@ def scan_afterhours(
             )
             continue
 
+        try:
+            cycle_split_adjustment = _split_adjustment_for_cycle(ownership_cycle, split_adjustment)
+        except ValueError as exc:
+            ladder_profile_provenance_unresolved.append(
+                LadderProfileProvenanceIssue(
+                    symbol=symbol,
+                    blocker_type="ladder_profile_provenance_unresolved",
+                    reason=str(exc),
+                    base_order_id=ownership_cycle.base_order_id,
+                    cycle_started_at=ownership_cycle.started_at.isoformat(),
+                )
+            )
+            continue
+
+        try:
+            profile_resolution = _resolve_ladder_profile(
+                ownership_cycle,
+                cycle_split_adjustment,
+            )
+        except ValueError as exc:
+            ladder_profile_provenance_unresolved.append(
+                LadderProfileProvenanceIssue(
+                    symbol=symbol,
+                    blocker_type="ladder_profile_provenance_unresolved",
+                    reason=str(exc),
+                    base_order_id=ownership_cycle.base_order_id,
+                    cycle_started_at=ownership_cycle.started_at.isoformat(),
+                )
+            )
+            continue
+        if profile_resolution is None:
+            ladder_profile_provenance_unresolved.append(
+                LadderProfileProvenanceIssue(
+                    symbol=symbol,
+                    blocker_type="ladder_profile_provenance_unresolved",
+                    reason="ownership_cycle_cannot_be_classified_at_under5_20_adoption",
+                    base_order_id=ownership_cycle.base_order_id,
+                    cycle_started_at=ownership_cycle.started_at.isoformat(),
+                )
+            )
+            continue
+
+        base_price = ownership_cycle.base_price
+        base_shares = ownership_cycle.base_shares
+
         dd_candidate = _double_down_candidate(
             symbol=symbol,
             position_qty=position_qty,
-            lots=lots,
+            base_price=base_price,
+            base_shares=base_shares,
+            base_order_id=ownership_cycle.base_order_id,
+            ladder_profile=profile_resolution.ladder_profile,
+            ladder_profile_provenance=profile_resolution.provenance,
             quote=quote,
             active_buys=active_buys.get(symbol, []),
         )
@@ -250,7 +369,11 @@ def scan_afterhours(
             watch_candidate = _double_down_watch_candidate(
                 symbol=symbol,
                 position_qty=position_qty,
-                lots=lots,
+                base_price=base_price,
+                base_shares=base_shares,
+                base_order_id=ownership_cycle.base_order_id,
+                ladder_profile=profile_resolution.ladder_profile,
+                ladder_profile_provenance=profile_resolution.provenance,
                 quote=quote,
                 active_buys=active_buys.get(symbol, []),
             )
@@ -283,10 +406,19 @@ def scan_afterhours(
         policy_blocked_sell=policy_blocked_sell,
         no_history=no_history,
         incomplete=incomplete,
+        ladder_profile_provenance_unresolved=ladder_profile_provenance_unresolved,
     )
 
 
 def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
+    dd_shortlist_blockers: list[str] = []
+    if report.no_history:
+        dd_shortlist_blockers.append("missing_lot_history")
+    if report.incomplete:
+        dd_shortlist_blockers.append("quantity_mismatch")
+    if report.ladder_profile_provenance_unresolved:
+        dd_shortlist_blockers.append("ladder_profile_provenance_unresolved")
+
     return {
         "checked_positions": report.checked_positions,
         "exact_share_dd_count": len(report.exact_share_dd),
@@ -300,6 +432,14 @@ def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
         "policy_blocked_sell_count": len(report.policy_blocked_sell),
         "no_history_count": len(report.no_history),
         "incomplete_count": len(report.incomplete),
+        "ladder_profile_provenance_unresolved_count": len(report.ladder_profile_provenance_unresolved),
+        "dd_shortlist_publishable": not dd_shortlist_blockers,
+        "dd_shortlist_blockers": dd_shortlist_blockers,
+        "ladder_profile_blocker_message": (
+            "DD SCAN BLOCKED: ladder_profile_provenance_unresolved"
+            if report.ladder_profile_provenance_unresolved
+            else ""
+        ),
         "exact_share_dd": [_json_row(item) for item in report.exact_share_dd],
         "whole_share_dd": [_json_row(item) for item in report.whole_share_dd],
         "regular_hours_only_dd": [_json_row(item) for item in report.regular_hours_only_dd],
@@ -310,6 +450,14 @@ def report_to_json(report: AfterHoursScanReport) -> dict[str, Any]:
         "policy_blocked_sell_sample": report.policy_blocked_sell[:25],
         "no_history_sample": report.no_history[:25],
         "incomplete_sample": report.incomplete[:25],
+        "ladder_profile_provenance_unresolved": [
+            _json_row(item) for item in report.ladder_profile_provenance_unresolved
+        ],
+        "dd_scan_blockers": (
+            ["ladder_profile_provenance_unresolved"]
+            if report.ladder_profile_provenance_unresolved
+            else []
+        ),
     }
 
 
@@ -330,18 +478,51 @@ def apply_known_dd_blocker_cache(
     }
     raw_no_history = list(report.no_history)
     raw_incomplete = list(report.incomplete)
+    raw_provenance = list(report.ladder_profile_provenance_unresolved)
+    raw_shortlist_blockers: list[str] = []
+    if raw_no_history:
+        raw_shortlist_blockers.append("missing_lot_history")
+    if raw_incomplete:
+        raw_shortlist_blockers.append("quantity_mismatch")
+    if raw_provenance:
+        raw_shortlist_blockers.append("ladder_profile_provenance_unresolved")
     filtered_no_history = [
         symbol for symbol in raw_no_history if (symbol.upper(), "missing_lot_history") not in suppressed_keys
     ]
     filtered_incomplete = [
         row for row in raw_incomplete if (row.get("symbol", "").upper(), "quantity_mismatch") not in suppressed_keys
     ]
+    filtered_provenance = [
+        issue
+        for issue in raw_provenance
+        if (issue.symbol.upper(), issue.blocker_type) not in suppressed_keys
+    ]
     payload["raw_no_history_count"] = len(raw_no_history)
     payload["raw_incomplete_count"] = len(raw_incomplete)
+    payload["raw_ladder_profile_provenance_unresolved_count"] = len(raw_provenance)
+    payload["raw_no_history_sample"] = raw_no_history[:25]
+    payload["raw_incomplete_sample"] = raw_incomplete[:25]
+    payload["raw_ladder_profile_provenance_unresolved"] = [
+        _json_row(issue) for issue in raw_provenance
+    ]
     payload["no_history_count"] = len(filtered_no_history)
     payload["incomplete_count"] = len(filtered_incomplete)
+    payload["ladder_profile_provenance_unresolved_count"] = len(filtered_provenance)
     payload["no_history_sample"] = filtered_no_history[:25]
     payload["incomplete_sample"] = filtered_incomplete[:25]
+    payload["ladder_profile_provenance_unresolved"] = [
+        _json_row(issue) for issue in filtered_provenance
+    ]
+    payload["dd_shortlist_publishable"] = not raw_shortlist_blockers
+    payload["dd_shortlist_blockers"] = raw_shortlist_blockers
+    payload["ladder_profile_blocker_message"] = (
+        "DD SCAN BLOCKED: ladder_profile_provenance_unresolved"
+        if filtered_provenance
+        else ""
+    )
+    payload["dd_scan_blockers"] = (
+        ["ladder_profile_provenance_unresolved"] if filtered_provenance else []
+    )
     payload["known_dd_blocker_cache"] = str(path)
     payload["known_dd_blocker_count"] = len(update.cache_rows)
     payload["new_dd_blocker_count"] = len(update.reported)
@@ -449,6 +630,7 @@ def read_split_adjustments_csv(path: str | Path) -> dict[str, SplitAdjustment]:
                 adjusted_base_qty=_decimal(row.get("adjusted_base_qty")),
                 adjusted_base_price=_decimal(row.get("adjusted_base_price")),
                 ladder_profile=normalize_ladder_profile(row.get("ladder_profile")),
+                base_order_id=str(row.get("base_order_id") or "").strip(),
                 notes=str(row.get("notes") or "").strip(),
             )
     return adjustments
@@ -476,6 +658,20 @@ def _known_dd_blocker_events(report: AfterHoursScanReport, *, source: str = "") 
                 quantity=row.get("position_qty", ""),
                 source=source,
                 notes=f"calculated_qty={row.get('calculated_qty', '')}",
+            )
+        )
+    for issue in report.ladder_profile_provenance_unresolved:
+        events.append(
+            DDBlockerEvent(
+                symbol=issue.symbol,
+                blocker_type=issue.blocker_type,
+                status="coverage_blocker",
+                reason=issue.reason,
+                source=source,
+                notes=(
+                    f"base_order_id={issue.base_order_id};"
+                    f"cycle_started_at={issue.cycle_started_at}"
+                ),
             )
         )
     for candidate in report.regular_hours_only_dd:
@@ -557,38 +753,15 @@ def _now_pacific() -> datetime:
         return datetime.now().astimezone()
 
 
-def _apply_split_adjustment(
-    lots: list[dict[str, Any]],
-    adjustment: SplitAdjustment,
-) -> list[dict[str, Any]]:
-    adjusted_lots: list[dict[str, Any]] = []
-    base_adjusted = False
-    for lot in lots:
-        adjusted = dict(lot)
-        if _lot_is_before_split(lot, adjustment):
-            qty = _decimal(lot.get("qty"))
-            price = _decimal(lot.get("price"))
-            adjusted["qty"] = qty * adjustment.quantity_multiplier
-            adjusted["price"] = price * adjustment.price_multiplier
-            if (
-                not base_adjusted
-                and adjustment.adjusted_base_qty > ZERO
-                and adjustment.adjusted_base_price > ZERO
-                and abs(qty - adjustment.pre_split_base_qty) <= QUANTITY_TOLERANCE
-                and abs(price - adjustment.pre_split_base_price) <= Decimal("0.0001")
-            ):
-                adjusted["qty"] = adjustment.adjusted_base_qty
-                adjusted["price"] = adjustment.adjusted_base_price
-                base_adjusted = True
-        adjusted_lots.append(adjusted)
-    return adjusted_lots
+def _split_effective_date(adjustment: SplitAdjustment) -> date:
+    try:
+        return date.fromisoformat(adjustment.effective_date)
+    except ValueError as exc:
+        raise ValueError("split_adjustment_effective_date_invalid") from exc
 
 
-def _lot_is_before_split(lot: dict[str, Any], adjustment: SplitAdjustment) -> bool:
-    if not adjustment.effective_date:
-        return False
-    lot_date = str(lot.get("time") or "")[:10]
-    return bool(lot_date) and lot_date < adjustment.effective_date
+def _filled_before_split(filled_at: datetime, adjustment: SplitAdjustment) -> bool:
+    return filled_at.date() < _split_effective_date(adjustment)
 
 
 def _split_ratio_parts(split_ratio: str) -> tuple[Decimal, Decimal]:
@@ -604,7 +777,11 @@ def _double_down_candidate(
     *,
     symbol: str,
     position_qty: Decimal,
-    lots: list[dict[str, Any]],
+    base_price: Decimal,
+    base_shares: Decimal,
+    base_order_id: str,
+    ladder_profile: str,
+    ladder_profile_provenance: str,
     quote: dict[str, Any],
     active_buys: list[dict[str, Any]],
 ) -> AfterHoursDoubleDownCandidate | None:
@@ -617,12 +794,9 @@ def _double_down_candidate(
     if buy_price <= ZERO:
         return None
 
-    base_price = lots[0]["price"]
-    base_shares = lots[0]["qty"]
     if base_price <= ZERO or base_shares <= ZERO:
         return None
 
-    ladder_profile = ladder_profile_for_open_lot_count(base_price, _open_buy_order_count(lots))
     completed_lot, partial_next = _current_ladder_progress(
         position_qty=position_qty,
         base_price=base_price,
@@ -656,7 +830,9 @@ def _double_down_candidate(
         buy_price_basis=buy_price_basis,
         base_price=base_price,
         base_shares=base_shares,
+        base_order_id=base_order_id,
         ladder_profile=ladder_profile,
+        ladder_profile_provenance=ladder_profile_provenance,
         position_qty=position_qty,
         completed_lot=completed_lot,
         partial_next=partial_next,
@@ -677,7 +853,11 @@ def _double_down_watch_candidate(
     *,
     symbol: str,
     position_qty: Decimal,
-    lots: list[dict[str, Any]],
+    base_price: Decimal,
+    base_shares: Decimal,
+    base_order_id: str,
+    ladder_profile: str,
+    ladder_profile_provenance: str,
     quote: dict[str, Any],
     active_buys: list[dict[str, Any]],
 ) -> AfterHoursDoubleDownWatchCandidate | None:
@@ -690,12 +870,9 @@ def _double_down_watch_candidate(
     if buy_price <= ZERO:
         return None
 
-    base_price = lots[0]["price"]
-    base_shares = lots[0]["qty"]
     if base_price <= ZERO or base_shares <= ZERO:
         return None
 
-    ladder_profile = ladder_profile_for_open_lot_count(base_price, _open_buy_order_count(lots))
     completed_lot, partial_next = _current_ladder_progress(
         position_qty=position_qty,
         base_price=base_price,
@@ -726,7 +903,9 @@ def _double_down_watch_candidate(
         buy_price_basis=buy_price_basis,
         base_price=base_price,
         base_shares=base_shares,
+        base_order_id=base_order_id,
         ladder_profile=ladder_profile,
+        ladder_profile_provenance=ladder_profile_provenance,
         position_qty=position_qty,
         completed_lot=completed_lot,
         partial_next=partial_next,
@@ -812,7 +991,11 @@ def _current_ladder_progress(
         else:
             trigger = next_trigger_price(trigger, lot_index, ladder_profile=ladder_profile)
             shares = next_lot_shares(shares)
-        if position_qty + Decimal("0.000001") >= cumulative + shares:
+        progress_tolerance = min(
+            LADDER_PROGRESS_MAX_TOLERANCE,
+            shares * LADDER_PROGRESS_RELATIVE_TOLERANCE,
+        )
+        if position_qty + progress_tolerance >= cumulative + shares:
             cumulative += shares
             completed_lot = lot_index
             partial_next = ZERO
@@ -870,50 +1053,245 @@ def _ladder_lot(
     return trigger, shares
 
 
-def _open_buy_order_count(lots: list[dict[str, Any]]) -> int:
-    order_ids = {str(lot.get("order_id") or "").strip() for lot in lots if lot.get("order_id")}
-    return len(order_ids) if order_ids else len(lots)
+def _resolve_ladder_profile(
+    cycle: _OwnershipCycle,
+    split_adjustment: SplitAdjustment | None,
+) -> _LadderProfileResolution | None:
+    if split_adjustment is not None:
+        return _LadderProfileResolution(
+            ladder_profile=normalize_ladder_profile(split_adjustment.ladder_profile),
+            provenance=f"split_adjustment:{split_adjustment.effective_date}",
+        )
+
+    if any(
+        first_filled_at < UNDER5_20_ADOPTION_AT <= last_filled_at
+        for _, first_filled_at, last_filled_at in cycle.buy_order_times
+    ):
+        raise ValueError("filled_buy_order_crosses_under5_20_adoption_boundary")
+
+    if cycle.started_at >= UNDER5_20_ADOPTION_AT:
+        return _LadderProfileResolution(
+            ladder_profile=ladder_profile_for_entry_price(cycle.base_price),
+            provenance="ownership_cycle_entry_after_under5_20_adoption",
+        )
+
+    buy_orders_at_adoption = {
+        order_id
+        for order_id, _, last_filled_at in cycle.buy_order_times
+        if last_filled_at <= UNDER5_20_ADOPTION_AT
+    }
+    if len(buy_orders_at_adoption) == 1:
+        return _LadderProfileResolution(
+            ladder_profile=ladder_profile_for_entry_price(cycle.base_price),
+            provenance="base_only_at_under5_20_adoption",
+        )
+    if len(buy_orders_at_adoption) > 1:
+        return _LadderProfileResolution(
+            ladder_profile=STANDARD_LADDER_PROFILE,
+            provenance="legacy_multi_lot_at_under5_20_adoption",
+        )
+    return None
 
 
-def _reconstruct_open_lots(orders: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _split_adjustment_for_cycle(
+    cycle: _OwnershipCycle,
+    adjustment: SplitAdjustment | None,
+) -> SplitAdjustment | None:
+    if adjustment is None:
+        return None
+    if cycle.started_at.date() >= _split_effective_date(adjustment):
+        return None
+    if adjustment.base_order_id:
+        if cycle.base_order_id == adjustment.base_order_id:
+            return adjustment
+        raise ValueError("split_adjustment_base_order_mismatch")
+    if (
+        abs(cycle.raw_base_shares - adjustment.pre_split_base_qty) <= CYCLE_QUANTITY_TOLERANCE
+        and abs(cycle.raw_base_price - adjustment.pre_split_base_price) <= Decimal("0.0001")
+    ):
+        return adjustment
+    raise ValueError("split_adjustment_base_provenance_unresolved")
+
+
+def _reconstruct_current_ownership_cycle(
+    orders: list[dict[str, Any]],
+    *,
+    split_adjustment: SplitAdjustment | None = None,
+) -> _OwnershipCycle | None:
+    normalized_orders = [
+        _normalize_filled_order(order, split_adjustment=split_adjustment)
+        for order in orders
+    ]
+
     lots: deque[dict[str, Any]] = deque()
-    for order in sorted(orders, key=_event_time):
-        side = str(order.get("side") or "").lower()
-        quantity = _decimal(order.get("cumulative_quantity") or order.get("quantity"))
-        if side == "buy":
-            average_price = _decimal(order.get("average_price") or order.get("price"))
-            executions = order.get("executions") or []
-            if executions:
-                for execution in executions:
-                    execution_qty = _decimal(execution.get("quantity"))
-                    if execution_qty > ZERO:
-                        lots.append(
-                            {
-                                "qty": execution_qty,
-                                "price": _decimal(execution.get("price") or average_price),
-                                "order_id": order.get("id"),
-                                "time": execution.get("timestamp") or _event_time(order),
-                            }
-                        )
-            elif quantity > ZERO:
-                lots.append(
-                    {
-                        "qty": quantity,
-                        "price": average_price,
-                        "order_id": order.get("id"),
-                        "time": _event_time(order),
-                    }
-                )
-        elif side == "sell":
-            left = quantity
-            while left > ZERO and lots:
-                if lots[0]["qty"] <= left + Decimal("0.0000005"):
-                    left -= lots[0]["qty"]
+    base_order_id = ""
+    base_price = ZERO
+    base_shares = ZERO
+    raw_base_price = ZERO
+    raw_base_shares = ZERO
+    started_at: datetime | None = None
+    buy_order_times: list[tuple[str, datetime, datetime]] = []
+
+    for order in sorted(normalized_orders, key=lambda item: item.first_filled_at):
+        if order.quantity <= ZERO:
+            continue
+        if order.side == "buy":
+            if not lots:
+                base_order_id = order.order_id
+                base_price = order.price
+                base_shares = order.quantity
+                raw_base_price = order.raw_price
+                raw_base_shares = order.raw_quantity
+                started_at = order.first_filled_at
+                buy_order_times = []
+            lots.append(
+                {
+                    "qty": order.quantity,
+                    "price": order.price,
+                    "order_id": order.order_id,
+                    "time": order.first_filled_at.isoformat(),
+                }
+            )
+            buy_order_times.append(
+                (order.order_id, order.first_filled_at, order.last_filled_at)
+            )
+        elif order.side == "sell":
+            left = order.quantity
+            while left > CYCLE_QUANTITY_TOLERANCE and lots:
+                if lots[0]["qty"] <= left + CYCLE_QUANTITY_TOLERANCE:
+                    left = max(left - lots[0]["qty"], ZERO)
                     lots.popleft()
                 else:
                     lots[0]["qty"] -= left
                     left = ZERO
-    return list(lots)
+            remaining_qty = sum((lot["qty"] for lot in lots), ZERO)
+            if not lots or remaining_qty <= CYCLE_QUANTITY_TOLERANCE:
+                lots.clear()
+                base_order_id = ""
+                base_price = ZERO
+                base_shares = ZERO
+                raw_base_price = ZERO
+                raw_base_shares = ZERO
+                started_at = None
+                buy_order_times = []
+
+    if not lots or started_at is None:
+        return None
+    return _OwnershipCycle(
+        lots=list(lots),
+        base_order_id=base_order_id,
+        base_price=base_price,
+        base_shares=base_shares,
+        raw_base_price=raw_base_price,
+        raw_base_shares=raw_base_shares,
+        started_at=started_at,
+        buy_order_times=tuple(buy_order_times),
+    )
+
+
+def _normalize_filled_order(
+    order: dict[str, Any],
+    *,
+    split_adjustment: SplitAdjustment | None,
+) -> _NormalizedFilledOrder:
+    side = str(order.get("side") or "").lower()
+    order_id = str(order.get("id") or "").strip()
+    fill_window = _event_datetime_range(order)
+    if fill_window is None:
+        raise ValueError("filled_order_timestamp_missing_or_invalid")
+    first_filled_at, last_filled_at = fill_window
+    if side == "buy" and not order_id:
+        raise ValueError("filled_buy_order_id_missing")
+
+    raw_quantity = _filled_order_quantity(order)
+    raw_price = _filled_order_price(order) if side == "buy" else ZERO
+    if side == "buy" and raw_price <= ZERO:
+        raise ValueError("filled_buy_order_price_missing_or_invalid")
+
+    quantity = raw_quantity
+    price = raw_price
+    if split_adjustment is not None:
+        first_is_pre_split = _filled_before_split(first_filled_at, split_adjustment)
+        last_is_pre_split = _filled_before_split(last_filled_at, split_adjustment)
+        if first_is_pre_split != last_is_pre_split:
+            raise ValueError("filled_order_crosses_split_effective_date")
+        if first_is_pre_split:
+            quantity = raw_quantity * split_adjustment.quantity_multiplier
+            price = raw_price * split_adjustment.price_multiplier
+            if side == "buy" and _is_configured_split_base(
+                order_id=order_id,
+                raw_quantity=raw_quantity,
+                raw_price=raw_price,
+                adjustment=split_adjustment,
+            ):
+                if (
+                    split_adjustment.adjusted_base_qty <= ZERO
+                    or split_adjustment.adjusted_base_price <= ZERO
+                ):
+                    raise ValueError("split_adjustment_base_values_invalid")
+                quantity = split_adjustment.adjusted_base_qty
+                price = split_adjustment.adjusted_base_price
+
+    return _NormalizedFilledOrder(
+        side=side,
+        quantity=quantity,
+        price=price,
+        raw_quantity=raw_quantity,
+        raw_price=raw_price,
+        order_id=order_id,
+        first_filled_at=first_filled_at,
+        last_filled_at=last_filled_at,
+    )
+
+
+def _is_configured_split_base(
+    *,
+    order_id: str,
+    raw_quantity: Decimal,
+    raw_price: Decimal,
+    adjustment: SplitAdjustment,
+) -> bool:
+    if adjustment.base_order_id:
+        return order_id == adjustment.base_order_id
+    return (
+        abs(raw_quantity - adjustment.pre_split_base_qty) <= CYCLE_QUANTITY_TOLERANCE
+        and abs(raw_price - adjustment.pre_split_base_price) <= Decimal("0.0001")
+    )
+
+
+def _filled_order_quantity(order: dict[str, Any]) -> Decimal:
+    quantity = _decimal(order.get("cumulative_quantity") or order.get("quantity"))
+    if quantity > ZERO:
+        return quantity
+    executions = order.get("executions") or []
+    return sum(
+        (_decimal(execution.get("quantity")) for execution in executions if isinstance(execution, dict)),
+        ZERO,
+    )
+
+
+def _filled_order_price(order: dict[str, Any]) -> Decimal:
+    executions = [execution for execution in (order.get("executions") or []) if isinstance(execution, dict)]
+    filled_executions = [execution for execution in executions if _decimal(execution.get("quantity")) > ZERO]
+    if filled_executions:
+        if any(_decimal(execution.get("price")) <= ZERO for execution in filled_executions):
+            return ZERO
+        total_quantity = sum((_decimal(execution.get("quantity")) for execution in filled_executions), ZERO)
+        reported_quantity = _decimal(order.get("cumulative_quantity") or order.get("quantity"))
+        if (
+            reported_quantity > ZERO
+            and abs(total_quantity - reported_quantity) > CYCLE_QUANTITY_TOLERANCE
+        ):
+            return ZERO
+        total_cost = sum(
+            (
+                _decimal(execution.get("quantity")) * _decimal(execution.get("price"))
+                for execution in filled_executions
+            ),
+            ZERO,
+        )
+        return total_cost / total_quantity
+    return _decimal(order.get("average_price"))
 
 
 def _filled_orders_by_symbol(
@@ -996,8 +1374,34 @@ def _decimal(value: Any) -> Decimal:
     return Decimal(str(value))
 
 
-def _event_time(order: dict[str, Any]) -> str:
-    return str(order.get("last_transaction_at") or order.get("created_at") or "")
+def _event_datetime_range(order: dict[str, Any]) -> tuple[datetime, datetime] | None:
+    filled_executions = [
+        execution
+        for execution in (order.get("executions") or [])
+        if isinstance(execution, dict) and _decimal(execution.get("quantity")) > ZERO
+    ]
+    if filled_executions:
+        execution_times = [_parse_datetime(execution.get("timestamp")) for execution in filled_executions]
+        if all(parsed is not None for parsed in execution_times):
+            parsed_times = [parsed for parsed in execution_times if parsed is not None]
+            return min(parsed_times), max(parsed_times)
+    last_transaction_at = _parse_datetime(order.get("last_transaction_at"))
+    if last_transaction_at is None:
+        return None
+    return last_transaction_at, last_transaction_at
+
+
+def _parse_datetime(value: Any) -> datetime | None:
+    raw = str(value or "").strip()
+    if not raw:
+        return None
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
 def _limit_round(price: Decimal) -> Decimal:

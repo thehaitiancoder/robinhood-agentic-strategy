@@ -16,6 +16,7 @@ function usage() {
   console.log(`Usage:
   node scripts/rh_fast.mjs quotes SYMBOL... [--file path] [--output path]
   node scripts/rh_fast.mjs portfolio --account <account> [--output path]
+  node scripts/rh_fast.mjs pnl --account <account> --date YYYY-MM-DD [--timezone America/Los_Angeles] [--output path]
   node scripts/rh_fast.mjs orders --account <account> [--symbol INLF] [--state queued] [--all] [--since ISO] [--output path]
   node scripts/rh_fast.mjs positions --account <account> [--with-quotes] [--output path] [--summary-output path]
   node scripts/rh_fast.mjs open-plan --account <account> [--limit 100] [--universe data/universe.csv] [--symbol-policy data/symbol-policy.csv] [--output path]
@@ -389,6 +390,54 @@ async function commandPortfolio(args) {
   console.log(JSON.stringify({ output }));
 }
 
+async function commandPnl(args) {
+  const { options } = parseArgs(args);
+  const account = accountNumber(options);
+  const reportDate = text(options.date);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(reportDate)) {
+    throw new Error("pnl requires --date YYYY-MM-DD");
+  }
+  const timezone = text(options.timezone) || "America/Los_Angeles";
+  const client = new RobinhoodFastClient({ clientName: "codex-rh-fast-pnl" });
+  const aggregate = await client.tool("get_realized_pnl", {
+    account_number: account,
+    asset_classes: ["equity"],
+    display_currency: "USD",
+    start_date: reportDate,
+    end_date: reportDate,
+    timezone,
+  });
+
+  const trades = [];
+  const tradeHistoryPayloads = [];
+  let cursor;
+  for (let page = 0; page < 100; page += 1) {
+    const payload = await client.tool("get_pnl_trade_history", {
+      account_number: account,
+      span: "week",
+      ...(cursor ? { cursor } : {}),
+    });
+    tradeHistoryPayloads.push(payload);
+    const data = payload?.data || payload || {};
+    trades.push(...(Array.isArray(data.trades) ? data.trades : []));
+    cursor = text(data.next_cursor);
+    if (!cursor) {
+      break;
+    }
+  }
+
+  const output = options.output || "data/runtime/rh-fast-pnl.json";
+  writeJson(output, {
+    generated_at: new Date().toISOString(),
+    report_date: reportDate,
+    timezone,
+    aggregate,
+    trades,
+    trade_history_payloads: tradeHistoryPayloads,
+  });
+  console.log(JSON.stringify({ output, report_date: reportDate, trades: trades.length }));
+}
+
 async function commandPositions(args) {
   const { options } = parseArgs(args);
   const account = accountNumber(options);
@@ -520,6 +569,8 @@ async function main() {
     await commandQuotes(args);
   } else if (command === "portfolio") {
     await commandPortfolio(args);
+  } else if (command === "pnl") {
+    await commandPnl(args);
   } else if (command === "positions") {
     await commandPositions(args);
   } else if (command === "orders") {

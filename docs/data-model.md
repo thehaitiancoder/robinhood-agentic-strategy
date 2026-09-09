@@ -39,6 +39,8 @@ in the file with `active=false` or `tradable=false` for auditability.
 | `next_lot_shares` | Shares required for next double-down |
 | `next_trigger_price` | Price that triggers next double-down from the ladder |
 | `ladder_profile` | DD trigger profile, usually `standard` or `under5_20` |
+| `base_order_id` | Filled base order that identifies the current ownership cycle |
+| `ladder_profile_provenance` | Evidence used to assign the cycle-sticky ladder profile |
 | `target_sell_price` | Combined price needed for 10% return |
 
 ## Lot
@@ -72,6 +74,7 @@ a quantity mismatch.
 | `adjusted_base_qty` | Broker-adjusted base-lot quantity |
 | `adjusted_base_price` | Broker-adjusted base-lot price |
 | `ladder_profile` | Ladder profile to use after adjustment |
+| `base_order_id` | Filled base order that binds this adjustment to one ownership cycle |
 | `notes` | Human audit note |
 
 ## Tax Handling
